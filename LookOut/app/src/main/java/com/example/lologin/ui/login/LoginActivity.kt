@@ -10,11 +10,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
+//new
+import android.content.Intent
+
 
 import com.example.lologin.R
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -114,6 +120,7 @@ class LoginActivity : AppCompatActivity() {
     }
 }
 
+
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.
  */
@@ -128,3 +135,19 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
 }
+//NEW CODE -- Adam
+class TestName : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        val skipLogButton = findViewById<Button>(R.id.SkipLoginButton)
+        skipLogButton.setOnClickListener {
+            val intent = Intent(this, alarms_page::class.java) //error
+            startActivity(intent)
+        }
+    }
+}
+
+

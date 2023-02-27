@@ -11,4 +11,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="alarms">Alarms</string>
     <string name="timers">Timers</string>
+    <string name="skip_login">Or, Skip Login Here</string>
 </resources>
