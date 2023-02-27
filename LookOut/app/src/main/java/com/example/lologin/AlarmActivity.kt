@@ -22,7 +22,7 @@ class AlarmActivity : AppCompatActivity() {
                     // Add more cases for each tab as needed
                 }
             }
-            //
+            //things we want to run when tab is reselected/unselected
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 // Handle tab unselection
             }
