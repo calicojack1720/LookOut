@@ -105,6 +105,13 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        //Navigation to ALarmsActivity.kt
+        val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
+        skipLoginButton.setOnClickListener {
+            startActivity(Intent(this, AlarmActivity::class.java))
+        }
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
@@ -140,20 +147,5 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
-}
-
-class NavToAlarm: AppCompatActivity(){
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("TAG", "onCreate function started!")
-        super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_login)
-            val skipLogButton = findViewById<Button>(R.id.SkipLoginButton)
-            skipLogButton.setOnClickListener {
-            Log.d("TAG", "Skip Login Button Clicked")
-            startActivity(Intent(this, AlarmActivity::class.java))
-        }
-    }
 }
 
