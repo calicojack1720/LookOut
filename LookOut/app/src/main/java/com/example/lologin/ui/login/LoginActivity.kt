@@ -122,6 +122,8 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
 
+
+
 }
 
 
@@ -142,13 +144,16 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
 class NavToAlarm: AppCompatActivity(){
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("TAG", "onCreate function started!")
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        val skipLogButton = findViewById<Button>(R.id.SkipLoginButton)
-        skipLogButton.setOnClickListener {
+            setContentView(R.layout.activity_login)
+            val skipLogButton = findViewById<Button>(R.id.SkipLoginButton)
+            skipLogButton.setOnClickListener {
             Log.d("TAG", "Skip Login Button Clicked")
             startActivity(Intent(this, AlarmActivity::class.java))
         }
     }
 }
+
