@@ -17,6 +17,8 @@ import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
 //new
 import android.content.Intent
+import com.example.lologin.AlarmActivity
+import android.util.Log
 
 
 import com.example.lologin.R
@@ -26,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +121,7 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
 }
 
 
@@ -135,19 +139,16 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
 }
-//NEW CODE -- Adam
-class TestName : AppCompatActivity() {
+
+class NavToAlarm: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         val skipLogButton = findViewById<Button>(R.id.SkipLoginButton)
         skipLogButton.setOnClickListener {
-            val intent = Intent(this, alarms_page::class.java) //error
-            startActivity(intent)
+            Log.d("TAG", "Skip Login Button Clicked")
+            startActivity(Intent(this, AlarmActivity::class.java))
         }
     }
 }
-
-
