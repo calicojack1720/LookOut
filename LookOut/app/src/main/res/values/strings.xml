@@ -12,4 +12,5 @@
     <string name="alarms">Alarms</string>
     <string name="timers">Timers</string>
     <string name="skip_login">Or, Skip Login Here</string>
+    <string name="new_alarm">New Alarm</string>
 </resources>
