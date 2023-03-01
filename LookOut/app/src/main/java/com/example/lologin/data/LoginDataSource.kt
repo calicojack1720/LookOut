@@ -1,6 +1,8 @@
 package com.example.lologin.data
 
 import com.example.lologin.data.model.LoggedInUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.io.IOException
 
 /**
@@ -19,6 +21,7 @@ class LoginDataSource {
     }
 
     fun logout() {
-        // TODO: revoke authentication
+        // calls sign out from Firebase
+        Firebase.auth.signOut()
     }
 }
