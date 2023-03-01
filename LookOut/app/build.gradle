@@ -36,6 +36,8 @@ android {
     }
 }
 
+apply plugin: 'com.android.application'
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -47,6 +49,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
+    //Including dependency for One-Tap Sign-In and Sign-Up
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

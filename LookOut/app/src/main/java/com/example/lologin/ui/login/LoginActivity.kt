@@ -43,19 +43,19 @@ class LoginActivity : AppCompatActivity() {
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
                     // Using API key 1 from Google Cloud APIs and Services
-                    .setServerClientId("AIzaSyDNLJL2GiQ4ukivD1Lq2n5L-p17IsZzr7Q")
+                    .setServerClientId("486612106496-5j9befb9iphu5lobt16rbkbehqncegjh.apps.googleusercontent.com")
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(true)
                     .build())
             .build()
         //Get a shared instance and initialize
         auth = Firebase.auth
-        paoverride fun onStart() {
+        /*paoverride fun onStart() {
             super.onStart()
             // Check if user is signed in (non-null) and update UI accordingly.
             var currentUser = auth.getCurrentUser()
             updateUI(currentUser);
-        }
+        }*/
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
