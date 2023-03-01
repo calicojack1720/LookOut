@@ -15,15 +15,47 @@ import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
 
 import com.example.lologin.R
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
 
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var auth: FirebaseAuth
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Integrating Google sign-in with the BeginSignInRequest object calling setGoogleIdTokenRequestOptions
+        oneTapClient = Identity.getSignInClient(this)
+        signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    // Your server's client ID, not your Android client ID.
+                    // Using API key 1 from Google Cloud APIs and Services
+                    .setServerClientId("AIzaSyDNLJL2GiQ4ukivD1Lq2n5L-p17IsZzr7Q")
+                    // Only show accounts previously used to sign in.
+                    .setFilterByAuthorizedAccounts(true)
+                    .build())
+            .build()
+        //Get a shared instance and initialize
+        auth = Firebase.auth
+        paoverride fun onStart() {
+            super.onStart()
+            // Check if user is signed in (non-null) and update UI accordingly.
+            var currentUser = auth.getCurrentUser()
+            updateUI(currentUser);
+        }
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
