@@ -45,6 +45,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_input_add"
-        android:focusable="true" />
+        android:focusable="true"
+        android:onClick="onAddAlarmButtonClick"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
