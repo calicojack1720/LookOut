@@ -89,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+                updateUiWithUser(loginResult.success, username.text.toString())
             }
             setResult(Activity.RESULT_OK)
 
@@ -130,13 +130,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
+    //Precondition: model is an object of the LoggedInUserView class
+    //              user is a String of the username/email
+    //Postcondition: Updates the UI after login and displays welcome message
+    private fun updateUiWithUser(model: LoggedInUserView, user: String) {
         val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
+        //val displayName = model.displayName
         // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
-            "$welcome $displayName",
+            "$welcome $user",
             Toast.LENGTH_LONG
         ).show()
     }
