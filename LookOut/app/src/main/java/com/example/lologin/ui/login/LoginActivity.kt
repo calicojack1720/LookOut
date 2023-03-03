@@ -1,6 +1,7 @@
 package com.example.lologin.ui.login
 
 import android.app.Activity
+import android.content.ContentValues.TAG
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
@@ -35,6 +37,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //initialize Firebase
+        auth = Firebase.auth
+
+        // TODO: Integrate sign in with entered email and password
         //Integrating Google sign-in with the BeginSignInRequest object calling setGoogleIdTokenRequestOptions
         oneTapClient = Identity.getSignInClient(this)
         signInRequest = BeginSignInRequest.builder()
@@ -46,10 +52,9 @@ class LoginActivity : AppCompatActivity() {
                     .setServerClientId("486612106496-5j9befb9iphu5lobt16rbkbehqncegjh.apps.googleusercontent.com")
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(true)
-                    .build())
+                    .build()
+            )
             .build()
-        //Get a shared instance and initialize
-        auth = Firebase.auth
         /*paoverride fun onStart() {
             super.onStart()
             // Check if user is signed in (non-null) and update UI accordingly.
@@ -66,6 +71,28 @@ class LoginActivity : AppCompatActivity() {
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
+
+        //authenticate with Firebase using email and password
+        // TODO: App CRASHES here
+        /*auth.createUserWithEmailAndPassword(username.text.toString(), password.text.toString())
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "createUserWithEmail:success")
+                    val user = auth.currentUser
+                    // TODO: Need to figure out how the UI/Result should be updated
+                    //updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // TODO: Need to figure out how the UI/Result should be updated
+                    //updateUI(null)
+                }
+            }*/
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
