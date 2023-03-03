@@ -134,7 +134,7 @@ class LoginActivity : AppCompatActivity() {
     //              user is a String of the username/email
     //Postcondition: Updates the UI after login and displays welcome message
     private fun updateUiWithUser(model: LoggedInUserView, user: String) {
-        val welcome = getString(R.string.welcome)
+        val welcome = "Welcome"
         //val displayName = model.displayName
         // TODO : initiate successful logged in experience
         Toast.makeText(
