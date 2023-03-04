@@ -10,16 +10,25 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
+//new
+import android.content.Intent
+import com.example.lologin.AlarmActivity
+import android.util.Log
+
 
 import com.example.lologin.R
+
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +105,13 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        //Navigation to ALarmsActivity.kt
+        val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
+        skipLoginButton.setOnClickListener {
+            startActivity(Intent(this, AlarmActivity::class.java))
+        }
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
@@ -112,7 +128,11 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
+
+
 }
+
 
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.
@@ -128,3 +148,4 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
 }
+
