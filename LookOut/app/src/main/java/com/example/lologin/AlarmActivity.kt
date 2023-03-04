@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
+import android.widget.Toast
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -25,8 +26,12 @@ class AlarmActivity : AppCompatActivity() {
         navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
-                    0 -> startActivity(Intent(this@AlarmActivity, LoginActivity::class.java))
-                    1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
+                    //
+                    0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
+                    //Here for TimerActivity page
+                    //1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
+
+                    1 -> Toast.makeText(applicationContext,"Timer Page is under Construction.", Toast.LENGTH_LONG).show()
                     // Add more cases for each tab as needed
                 }
             }
