@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "486612106496",
+    "project_id": "lookout-6686b",
+    "storage_bucket": "lookout-6686b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486612106496:android:145cdd0db5d6da866887e5",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486612106496-7fifb55c06lovqml9b3e474khv5c7ikn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhtd44BsGC1a9hTzi1dPMsRo-0DeX9UDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486612106496-7fifb55c06lovqml9b3e474khv5c7ikn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486612106496:android:09db5ade80f027936887e5",
+        "android_client_info": {
+          "package_name": "com.example.lologin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486612106496-7fifb55c06lovqml9b3e474khv5c7ikn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhtd44BsGC1a9hTzi1dPMsRo-0DeX9UDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486612106496-7fifb55c06lovqml9b3e474khv5c7ikn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
