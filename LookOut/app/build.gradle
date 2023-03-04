@@ -52,6 +52,8 @@ dependencies {
 
     //Including dependency for One-Tap Sign-In and Sign-Up
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:+'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

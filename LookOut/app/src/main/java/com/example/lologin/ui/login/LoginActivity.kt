@@ -12,9 +12,15 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
+//new
+import android.content.Intent
+import com.example.lologin.AlarmActivity
+
 
 import com.example.lologin.R
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -24,10 +30,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+
 
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
@@ -155,6 +163,13 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        //Navigation to ALarmsActivity.kt
+        val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
+        skipLoginButton.setOnClickListener {
+            startActivity(Intent(this, AlarmActivity::class.java))
+        }
+
     }
 
     //Precondition: model is an object of the LoggedInUserView class
