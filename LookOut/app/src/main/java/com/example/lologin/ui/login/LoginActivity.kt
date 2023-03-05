@@ -1,7 +1,6 @@
 package com.example.lologin.ui.login
 
 import android.app.Activity
-import android.content.ContentValues.TAG
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -9,12 +8,10 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import com.example.lologin.databinding.ActivityLoginBinding
 //new
@@ -178,7 +175,8 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUiWithUser(model: LoggedInUserView, user: String) {
         val welcome = "Welcome"
         //val displayName = model.displayName
-        // TODO : initiate successful logged in experience
+        //TODO : initiate successful logged in experience and switch to AlarmActivity
+        startActivity(Intent(this, AlarmActivity::class.java))
         Toast.makeText(
             applicationContext,
             "$welcome $user",
