@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 
 
@@ -47,18 +48,14 @@ class AlarmActivity : AppCompatActivity() {
                 // Handle tab reselection
             }
         })
-        //New Code -- ABD
-        //Goal - Create a listener that opens a window to add new alarms
 
     }
     fun onAddAlarmButtonClick(view: View) {
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popupView = inflater.inflate(R.layout.popup_window, null)
-        val popupWindow = PopupWindow(
-            popupView,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
+        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, -800)
+//        val editAlarmName = popupView.findViewById<EditText>(R.id.EnterName)
+//        editAlarmName.requestFocus()
     }
 }

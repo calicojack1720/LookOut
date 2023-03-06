@@ -6,6 +6,7 @@
     android:background="#62def8">
 
     <EditText
+        android:id="@+id/EnterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -13,8 +14,8 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
+        android:hint="Enter Alarm Name"
         android:inputType="textPersonName"
-        android:text="Enter Alarm Name"
         android:textSize="22sp" />
 
 
