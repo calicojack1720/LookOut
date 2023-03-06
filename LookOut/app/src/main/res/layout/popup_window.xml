@@ -13,7 +13,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:text="This is a popup window."
+        android:text="Create New Alarm"
         android:textSize="22sp" />
 
 </RelativeLayout>
