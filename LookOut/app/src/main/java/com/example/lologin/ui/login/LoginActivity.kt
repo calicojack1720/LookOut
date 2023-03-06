@@ -150,9 +150,9 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
+                    Toast.makeText(baseContext, "Authentication failed, please enter a real email",
                         Toast.LENGTH_SHORT).show()
-                   updateUiWithUser(null)
+                    //updateUiWithUser(null)
                 }
             }
         // [END create_user_with_email]
@@ -163,14 +163,14 @@ class LoginActivity : AppCompatActivity() {
     //Postcondition: Updates the UI after login and displays welcome message
     private fun updateUiWithUser(user: FirebaseUser?) {
         val welcome = "Welcome"
-        //val displayName = model.displayName
-        //TODO : initiate successful logged in experience and switch to AlarmActivity
+
         startActivity(Intent(this, AlarmActivity::class.java))
         Toast.makeText(
             applicationContext,
             "$welcome $user",
             Toast.LENGTH_LONG
         ).show()
+
         startActivity(Intent(this, AlarmActivity::class.java))
     }
 
