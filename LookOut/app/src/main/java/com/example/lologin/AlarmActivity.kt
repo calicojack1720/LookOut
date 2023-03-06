@@ -14,8 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -49,13 +51,37 @@ class AlarmActivity : AppCompatActivity() {
             }
         })
 
+        //new
+        val addAlarmButton = findViewById<FloatingActionButton>(R.id.addalarm)
+        addAlarmButton.setOnClickListener {showPopup()}
     }
-    fun onAddAlarmButtonClick(view: View) {
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val popupView = inflater.inflate(R.layout.popup_window, null)
-        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
-        popupWindow.showAtLocation(view, Gravity.CENTER, 0, -800)
+    private fun showPopup() {
+        val popUpView = layoutInflater.inflate(R.layout.popup_window, null)
+
+        val popupWindow = PopupWindow(popUpView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+        popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
+
+        val cancelButton = popUpView.findViewById<Button>(R.id.cancel_button)
+        cancelButton.setOnClickListener {popupWindow.dismiss()}
+
+        val submitButton = popUpView.findViewById<Button>(R.id.submitbutton)
+        submitButton.setOnClickListener {
+            val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
+            val name = alarmName.text.toString()
+            //FIXME: Currently does nothing with name
+            popupWindow.dismiss()
+        }
+    }
+
+//    fun onAddAlarmButtonClick(view: View) {
+//        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//        val popupView = inflater.inflate(R.layout.popup_window, null)
+//        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
+//        popupWindow.showAtLocation(view, Gravity.CENTER, 0, -800)
 //        val editAlarmName = popupView.findViewById<EditText>(R.id.EnterName)
-//        editAlarmName.requestFocus()
-    }
+////        val editAlarmName = popupView.findViewById<EditText>(R.id.EnterName)
+////        editAlarmName.requestFocus()
+//    }
+    //Add new Alarm
+
 }

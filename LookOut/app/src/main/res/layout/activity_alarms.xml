@@ -42,7 +42,6 @@
         android:clickable="true"
         android:contentDescription="@string/new_alarm"
         android:focusable="true"
-        android:onClick="onAddAlarmButtonClick"
         app:backgroundTint="@color/button_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
