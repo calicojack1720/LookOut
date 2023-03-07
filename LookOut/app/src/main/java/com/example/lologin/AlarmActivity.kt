@@ -69,8 +69,9 @@ class AlarmActivity : AppCompatActivity() {
         val submitButton = popUpView.findViewById<Button>(R.id.submitbutton)
         submitButton.setOnClickListener {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
+            val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
             val name = alarmName.text.toString()
-            //TODO: Currently does nothing with name
+            //TODO: Currently does nothing with any data
             popupWindow.dismiss()
         }
     }
