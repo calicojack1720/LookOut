@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
             val password = inputPassword.text.toString()
 
             //checks to see if Email and Password Boxes are empty and alerts the user.
-            if (email.isEmpty() == true || password.isEmpty() == true) {
+            if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "SignIn:Email Or Password is Null")
                 Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
             }  else {
@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
             val password = inputPassword.text.toString()
 
             //checks to see if Email and Password Boxes are empty and alerts the user.
-            if (email.isEmpty() == true || password.isEmpty() == true) {
+            if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "Register:Email Or Password is Null")
                 Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
             }  else {
@@ -146,17 +146,17 @@ class LoginActivity : AppCompatActivity() {
         val user = Firebase.auth.currentUser
         user?.let {
             // Name, email address, and profile photo Url
-            val name = it.displayName
+            //val name = it.displayName
             val email = it.email
-            val photoUrl = it.photoUrl
+            //val photoUrl = it.photoUrl
 
             // Check if user's email is verified
-            val emailVerified = it.isEmailVerified
+            //val emailVerified = it.isEmailVerified
 
             // The user's ID, unique to the Firebase project. Do NOT use this value to
             // authenticate with your backend server, if you have one. Use
             // FirebaseUser.getIdToken() instead.
-            val uid = it.uid
+            //val uid = it.uid
             if (email != null) {
                 Log.d(TAG, email)
             }
