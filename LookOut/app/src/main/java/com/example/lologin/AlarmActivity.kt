@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Button
@@ -14,12 +15,22 @@ import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+        val logOutButton = findViewById<Button>(R.id.logout)
+
+        logOutButton.setOnClickListener {
+            Firebase.auth.signOut()
+            Log.d(TAG, "User Signed out")
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
@@ -55,5 +66,9 @@ class AlarmActivity : AppCompatActivity() {
         val popupView = inflater.inflate(R.layout.popup_window, null)
         val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
         popupWindow.showAsDropDown(view)
+    }
+
+    companion object {
+        private const val TAG = "EmailPassword"
     }
 }

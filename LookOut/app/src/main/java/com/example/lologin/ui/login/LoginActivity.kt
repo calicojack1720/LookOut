@@ -1,12 +1,12 @@
 package com.example.lologin.ui.login
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import android.content.Intent
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.example.lologin.AlarmActivity
 import com.example.lologin.R
 import com.google.firebase.auth.FirebaseAuth
@@ -14,96 +14,16 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-
 class LoginActivity : AppCompatActivity() {
 
-//    private lateinit var loginViewModel: LoginViewModel
-//    private lateinit var binding: ActivityLoginBinding
-//
-//
-//    private lateinit var oneTapClient: SignInClient
-//    private lateinit var signInRequest: BeginSignInRequest
     private lateinit var auth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?) {//////////////////////////////////////////////////////////////////////////////////////////////
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         //initialize Firebase
         auth = Firebase.auth
-
-//        binding = ActivityLoginBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-//
-//        val username = binding.username
-//        val password = binding.password
-//        val login = binding.login
-//        val loading = binding.loading
-//
-//        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-//            .get(LoginViewModel::class.java)
-//
-//        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-//            val loginState = it ?: return@Observer
-//
-//            // disable login button unless both username / password is valid
-//            login.isEnabled = loginState.isDataValid
-//
-//            if (loginState.usernameError != null) {
-//                username.error = getString(loginState.usernameError)
-//            }
-//            if (loginState.passwordError != null) {
-//                password.error = getString(loginState.passwordError)
-//            }
-//        })
-////
-////        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-////            val loginResult = it ?: return@Observer
-////
-////            loading.visibility = View.GONE
-////            if (loginResult.error != null) {
-////                showLoginFailed(loginResult.error)
-////            }
-////            if (loginResult.success != null) {
-////                //updateUiWithUser(loginResult.success)
-////            }
-////            setResult(Activity.RESULT_OK)
-////
-////            //Complete and destroy login activity once successful
-////            finish()
-////        })
-////
-//        username.afterTextChanged {
-//            loginViewModel.loginDataChanged(
-//                username.text.toString(),
-//                password.text.toString()
-//            )
-//        }
-//
-//        password.apply {
-//            afterTextChanged {
-//                loginViewModel.loginDataChanged(
-//                    username.text.toString(),
-//                    password.text.toString()
-//                )
-//            }
-//
-//            setOnEditorActionListener { _, actionId, _ ->
-//                when (actionId) {
-//                    EditorInfo.IME_ACTION_DONE ->
-//                        loginViewModel.login(
-//                            username.text.toString(),
-//                            password.text.toString()
-//                        )
-//                }
-//                false
-//            }
-//
-//            login.setOnClickListener {
-//                loading.visibility = View.VISIBLE
-//                loginViewModel.login(username.text.toString(), password.text.toString())
-//            }
-//        }
 
         //Input Password Box
         val inputPassword = findViewById<EditText>(R.id.inputPassword)
@@ -111,14 +31,37 @@ class LoginActivity : AppCompatActivity() {
         val inputEmail = findViewById<EditText>(R.id.inputEmail)
         //Register Button
         val registerButton = findViewById<Button>(R.id.RegisterButton)
+        //Sign in Button
+        val signInButton = findViewById<Button>(R.id.LoginButton)
+
+        //On click of the Sign in Button
+        signInButton.setOnClickListener {
+            //takes input of email and password
+            val email = inputEmail.text.toString()
+            val password = inputPassword.text.toString()
+
+            //checks to see if Email and Password Boxes are empty and alerts the user.
+            if (email.isEmpty() == true || password.isEmpty() == true) {
+                Log.d(TAG, "SignIn:Email Or Password is Null")
+                Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
+            }  else {
+                signIn(email, password)
+            }
+        }
 
         //On click of the Register Button
         registerButton.setOnClickListener {
             //takes input of email and password
             val email = inputEmail.text.toString()
             val password = inputPassword.text.toString()
-            createAccount(email, password)
 
+            //checks to see if Email and Password Boxes are empty and alerts the user.
+            if (email.isEmpty() == true || password.isEmpty() == true) {
+                Log.d(TAG, "Register:Email Or Password is Null")
+                Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
+            }  else {
+                createAccount(email, password)
+            }
         }
 
         //Navigation to AlarmsActivity.kt
@@ -128,13 +71,19 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, AlarmActivity::class.java))
         }
 
-    }/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    }//End of OnCreate Function
+
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if(currentUser != null){
-            //reload()
+            Log.d(TAG, "currentuser:notnull")
+            reload()
+            getUserProfile()
+        } else {
+            Log.d(TAG, "currentuser:null")
+            getUserProfile()
         }
     }
 
@@ -150,12 +99,29 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed, please enter a real email",
-                        Toast.LENGTH_SHORT).show()
-                    //updateUiWithUser(null)
+                    Toast.makeText(baseContext, "Registration failed, please enter valid credentials.", Toast.LENGTH_SHORT).show()
                 }
             }
         // [END create_user_with_email]
+    }
+
+    private fun signIn(email: String, password: String) {
+        // [START sign_in_with_email]
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success")
+                    val user = auth.currentUser
+                    updateUiWithUser(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    Toast.makeText(baseContext, "Sign in failed, please enter correct credentials.", Toast.LENGTH_SHORT).show()
+                    //updateUiWithUser(null)
+                }
+            }
+        // [END sign_in_with_email]
     }
 
     //Precondition: model is an object of the LoggedInUserView class
@@ -167,84 +133,43 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, AlarmActivity::class.java))
         Toast.makeText(
             applicationContext,
-            "$welcome $user",
+            welcome,
             Toast.LENGTH_LONG
         ).show()
 
         startActivity(Intent(this, AlarmActivity::class.java))
     }
 
-//    private fun showLoginFailed(@StringRes errorString: Int) {
-//        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
-//    }
+    //Gets User Profile information, used for debugging purposes
+    private fun getUserProfile() {
+        // [START get_user_profile]
+        val user = Firebase.auth.currentUser
+        user?.let {
+            // Name, email address, and profile photo Url
+            val name = it.displayName
+            val email = it.email
+            val photoUrl = it.photoUrl
+
+            // Check if user's email is verified
+            val emailVerified = it.isEmailVerified
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getIdToken() instead.
+            val uid = it.uid
+            if (email != null) {
+                Log.d(TAG, email)
+            }
+        }
+        // [END get_user_profile]
+    }
+
+    //function called in OnStart if user is signed in
+    private fun reload() {
+        startActivity(Intent(this, AlarmActivity::class.java))
+    }
 
     companion object {
         private const val TAG = "EmailPassword"
     }
 }
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-//fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-//    this.addTextChangedListener(object : TextWatcher {
-//        override fun afterTextChanged(editable: Editable?) {
-//            afterTextChanged.invoke(editable.toString())
-//        }
-//
-//        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-//
-//        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-//    })
-//}
-
-
-
-
-////line 48
-//// TODO: Integrate sign in with entered email and password
-////Integrating Google sign-in with the BeginSignInRequest object calling setGoogleIdTokenRequestOptions
-//oneTapClient = Identity.getSignInClient(this)
-//signInRequest = BeginSignInRequest.builder()
-//.setGoogleIdTokenRequestOptions(
-//BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//.setSupported(true)
-//// Your server's client ID, not your Android client ID.
-//// Using API key 1 from Google Cloud APIs and Services
-//.setServerClientId("486612106496-5j9befb9iphu5lobt16rbkbehqncegjh.apps.googleusercontent.com")
-//// Only show accounts previously used to sign in.
-//.setFilterByAuthorizedAccounts(true)
-//.build()
-//)
-//.build()
-///*paoverride fun onStart() {
-//    super.onStart()
-//    // Check if user is signed in (non-null) and update UI accordingly.
-//    var currentUser = auth.getCurrentUser()
-//    updateUI(currentUser);
-//}*/
-
-
-
-
-//authenticate with Firebase using email and password
-// TODO: App CRASHES here
-/*auth.createUserWithEmailAndPassword(username.text.toString(), password.text.toString())
-    .addOnCompleteListener(this) { task ->
-        if (task.isSuccessful) {
-            // Sign in success, update UI with the signed-in user's information
-            Log.d(TAG, "createUserWithEmail:success")
-            val user = auth.currentUser
-            // TODO: Need to figure out how the UI/Result should be updated
-            //updateUI(user)
-        } else {
-            // If sign in fails, display a message to the user.
-            Log.w(TAG, "createUserWithEmail:failure", task.exception)
-            Toast.makeText(
-                baseContext, "Authentication failed.",
-                Toast.LENGTH_SHORT
-            ).show()
-            // TODO: Need to figure out how the UI/Result should be updated
-            //updateUI(null)
-        }
-    }*/

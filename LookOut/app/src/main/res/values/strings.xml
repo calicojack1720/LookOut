@@ -2,7 +2,7 @@
     <string name="app_name">LookOut!</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
+    <string name="prompt_password">Password (6+ Characters)</string>
     <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
