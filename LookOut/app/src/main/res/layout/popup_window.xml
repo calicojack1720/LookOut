@@ -36,6 +36,20 @@
         android:maxLines="1"
         android:textSize="16sp"/>
 
+    <EditText
+        android:id="@+id/time_entry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_text_box"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="8dp"
+        android:hint="Enter Time:"
+        android:inputType="time"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+
+
     <Button
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"

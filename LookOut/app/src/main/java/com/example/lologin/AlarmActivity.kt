@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.*
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -54,6 +55,7 @@ class AlarmActivity : AppCompatActivity() {
         //new
         val addAlarmButton = findViewById<FloatingActionButton>(R.id.addalarm)
         addAlarmButton.setOnClickListener {showPopup()}
+
     }
     private fun showPopup() {
         val popUpView = layoutInflater.inflate(R.layout.popup_window, null)
@@ -68,7 +70,7 @@ class AlarmActivity : AppCompatActivity() {
         submitButton.setOnClickListener {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
-            //FIXME: Currently does nothing with name
+            //TODO: Currently does nothing with name
             popupWindow.dismiss()
         }
     }
