@@ -136,8 +136,6 @@ class LoginActivity : AppCompatActivity() {
             welcome,
             Toast.LENGTH_LONG
         ).show()
-
-        startActivity(Intent(this, AlarmActivity::class.java))
     }
 
     //Gets User Profile information, used for debugging purposes
