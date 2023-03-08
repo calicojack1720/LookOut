@@ -2,8 +2,6 @@ package com.example.lologin
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +9,6 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
-import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
 import android.widget.Toast

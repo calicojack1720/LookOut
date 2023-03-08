@@ -1,4 +1,4 @@
-package com.example.lologin.ui.login
+package com.example.lologin
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,8 +8,6 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.lologin.AlarmActivity
-import com.example.lologin.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
