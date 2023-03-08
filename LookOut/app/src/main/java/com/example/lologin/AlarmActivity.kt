@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -31,6 +32,13 @@ class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+        //TEST
+        val intent = Intent().apply {
+            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+            putExtra(Settings.EXTRA_APP_PACKAGE, "com.example.lologin")
+        }
+        startActivity(intent)
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
@@ -94,16 +102,4 @@ class AlarmActivity : AppCompatActivity() {
             popupWindow.dismiss()
         }
     }
-
-//    fun onAddAlarmButtonClick(view: View) {
-//        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//        val popupView = inflater.inflate(R.layout.popup_window, null)
-//        val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
-//        popupWindow.showAtLocation(view, Gravity.CENTER, 0, -800)
-//        val editAlarmName = popupView.findViewById<EditText>(R.id.EnterName)
-////        val editAlarmName = popupView.findViewById<EditText>(R.id.EnterName)
-////        editAlarmName.requestFocus()
-//    }
-    //Add new Alarm
-
 }

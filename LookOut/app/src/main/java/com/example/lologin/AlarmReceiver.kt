@@ -11,6 +11,8 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import android.os.Build
+import android.provider.Settings
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -39,7 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val notificationBuilder = NotificationCompat.Builder(context, "my_channel_id")
             .setSmallIcon(R.drawable.baseline_alarm_24)
             .setContentTitle("Alarm Triggered: $message")
-//            .setContentText(message)
+            .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
 
 //        Creating the Notification Channel
