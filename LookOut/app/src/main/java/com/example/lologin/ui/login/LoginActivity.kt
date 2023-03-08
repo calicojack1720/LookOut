@@ -1,16 +1,17 @@
 package com.example.lologin.ui.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lologin.AlarmActivity
 import com.example.lologin.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -18,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    @SuppressLint("WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -27,12 +29,22 @@ class LoginActivity : AppCompatActivity() {
 
         //Input Password Box
         val inputPassword = findViewById<EditText>(R.id.inputPassword)
+
         //Input Email Box
         val inputEmail = findViewById<EditText>(R.id.inputEmail)
+
         //Register Button
         val registerButton = findViewById<Button>(R.id.RegisterButton)
+
         //Sign in Button
         val signInButton = findViewById<Button>(R.id.LoginButton)
+
+        //Forgot Password Button
+        val forgotPasswordButton = findViewById<TextView>(R.id.ForgotPasswordButton)
+
+        //Skip Log in Password
+        val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
+
 
         //On click of the Sign in Button
         signInButton.setOnClickListener {
@@ -64,11 +76,20 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        //Navigation to AlarmsActivity.kt
-        val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
-
+        //On Click of the Skip log in Button
         skipLoginButton.setOnClickListener {
             startActivity(Intent(this, AlarmActivity::class.java))
+        }
+
+        //On Click of the Forgot Password Button
+        forgotPasswordButton.setOnClickListener {
+            val email = inputEmail.text.toString()
+
+            if (email.isEmpty()) {
+                Toast.makeText(baseContext, "Please enter an Email.", Toast.LENGTH_SHORT).show()
+            } else {
+                sendPasswordReset(email)
+            }
         }
 
     }//End of OnCreate Function
@@ -94,8 +115,7 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    updateUiWithUser(user)
+                    updateUiWithUser()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -107,18 +127,17 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signIn(email: String, password: String) {
         // [START sign_in_with_email]
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
-                    val user = auth.currentUser
-                    updateUiWithUser(user)
+                    updateUiWithUser()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
                     Toast.makeText(baseContext, "Sign in failed, please enter correct credentials.", Toast.LENGTH_SHORT).show()
-                    //updateUiWithUser(null)
                 }
             }
         // [END sign_in_with_email]
@@ -127,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
     //Precondition: model is an object of the LoggedInUserView class
     //              user is a String of the username/email
     //Postcondition: Updates the UI after login and displays welcome message
-    private fun updateUiWithUser(user: FirebaseUser?) {
+    private fun updateUiWithUser() {
         val welcome = "Welcome"
 
         startActivity(Intent(this, AlarmActivity::class.java))
@@ -160,6 +179,22 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         // [END get_user_profile]
+    }
+
+    private fun sendPasswordReset(email: String) {
+        // [START send_password_reset]
+
+        Firebase.auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Password reset Email sent.")
+                    Toast.makeText(baseContext, "Password Reset Email sent to $email." , Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.d(TAG, "Password rest Email not sent.")
+                    Toast.makeText(baseContext, "No account detected under $email", Toast.LENGTH_SHORT).show()
+                }
+            }
+        // [END send_password_reset]
     }
 
     //function called in OnStart if user is signed in
