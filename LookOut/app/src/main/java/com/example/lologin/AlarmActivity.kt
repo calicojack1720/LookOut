@@ -1,5 +1,6 @@
 package com.example.lologin
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -18,7 +19,12 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
 import java.util.*
+
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -67,11 +73,24 @@ class AlarmActivity : AppCompatActivity() {
         cancelButton.setOnClickListener {popupWindow.dismiss()}
 
         val submitButton = popUpView.findViewById<Button>(R.id.submitbutton)
+//        new
+        val scheduler = AndroidAlarmScheduler(this)
+        var alarmItem: AlarmItem? = null
+
         submitButton.setOnClickListener {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
             val name = alarmName.text.toString()
             //TODO: Currently does nothing with any data
+            val timeForAlarm = LocalTime.parse(alarmTime.text.toString()) //Will create a time object in the format hh:mm
+            val timeForAlarmInMillis = timeForAlarm.atDate(LocalDate.now()).atZone(ZoneId.systemDefault())
+
+            alarmItem = AlarmItem(
+                time = LocalDateTime.from(timeForAlarmInMillis),
+                message = name
+            )
+            alarmItem?.let (scheduler::schedule)
+
             popupWindow.dismiss()
         }
     }
