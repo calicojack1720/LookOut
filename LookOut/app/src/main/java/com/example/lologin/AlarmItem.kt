@@ -5,5 +5,6 @@ import java.time.LocalTime
 
 data class AlarmItem(
     val time: LocalDateTime,
-    val message: String
+    val message: String,
+//    val isEnabled: Boolean
 )

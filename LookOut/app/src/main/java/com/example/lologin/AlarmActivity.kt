@@ -106,7 +106,6 @@ class AlarmActivity : AppCompatActivity() {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
             val name = alarmName.text.toString()
-            //TODO: Currently does nothing with any data
             val timeForAlarm = LocalTime.parse(alarmTime.text.toString()) //Will create a time object in the format hh:mm
             val timeForAlarmInMillis = timeForAlarm.atDate(LocalDate.now()).atZone(ZoneId.systemDefault())
 
@@ -117,6 +116,7 @@ class AlarmActivity : AppCompatActivity() {
             alarmItem?.let (scheduler::schedule)
 
             popupWindow.dismiss()
+
         }
     }
 }
