@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 
 class LoginActivity : AppCompatActivity() {
 
@@ -19,6 +23,8 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        createLoginSkipCheck()
 
         //initialize Firebase
         auth = Firebase.auth
@@ -74,6 +80,8 @@ class LoginActivity : AppCompatActivity() {
 
         //On Click of the Skip log in Button
         skipLoginButton.setOnClickListener {
+            readLoginSkipCheck()
+            writeLoginSkipCheck()
             startActivity(Intent(this, AlarmActivity::class.java))
         }
 
@@ -97,9 +105,10 @@ class LoginActivity : AppCompatActivity() {
         if(currentUser != null){
             Log.d(TAG, "currentuser:notnull")
             reload()
-            getUserProfile()
-        } else {
+            getUserProfile() }
+        else {
             Log.d(TAG, "currentuser:null")
+            readLoginSkipCheck()
             getUserProfile()
         }
     }
@@ -179,7 +188,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun sendPasswordReset(email: String) {
         // [START send_password_reset]
-
         Firebase.auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -193,12 +201,90 @@ class LoginActivity : AppCompatActivity() {
         // [END send_password_reset]
     }
 
-    //function called in OnStart if user is signed in
+    private fun writeLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(TAG, "writeLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //writes to the file
+            val outputStream: OutputStream = loginSkipCheck.outputStream()
+            if (outputText == "true") {
+                val inputText = "false"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(TAG, "Outputtext was True, now False.")
+            }
+            if (outputText == "false") {
+                val inputText = "true"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(TAG, "Outputtext was False, now True.")
+            } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
+                Log.d(TAG, "writeLoginSkipCheck file doesn't exist")
+            }
+
+        }
+    }
+
+    private fun readLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(TAG, "readLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //checks the value in LoginSkipCheck
+            if (outputText == "true") {
+                reload()
+                Log.d(TAG, "LoginSkipCheck: $outputText")
+            } else {
+                Log.d(TAG, "LoginSkipCheck: $outputText")
+            }
+        } else {
+            Log.w(TAG, "LoginSkipCheck file doesn't exist")
+        }
+    }
+
+    private fun createLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(TAG, "LoginSkipCheck file exists")
+        } else {
+            //creates file if doesn't exists
+            loginSkipCheck.createNewFile()
+
+            //writes to the file
+            val outputStream = FileOutputStream(loginSkipCheck)
+            val inputText = "false"
+            outputStream.write(inputText.toByteArray())
+            outputStream.close()
+
+            Log.w(TAG, "LoginSkipCheck file created")
+        }
+    }
+
+    //Function called in OnStart if user is signed in
     private fun reload() {
         startActivity(Intent(this, AlarmActivity::class.java))
     }
 
     companion object {
-        private const val TAG = "EmailPassword"
+        const val TAG = "EmailPassword"
     }
 }
+
+
+

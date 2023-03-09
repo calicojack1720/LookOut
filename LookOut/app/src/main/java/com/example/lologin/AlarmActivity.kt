@@ -14,6 +14,9 @@ import android.view.View
 import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -22,10 +25,13 @@ class AlarmActivity : AppCompatActivity() {
         setContentView(R.layout.activity_alarms)
 
         val logOutButton = findViewById<Button>(R.id.logout)
-
+        //On Click of the logOutButton
         logOutButton.setOnClickListener {
             Firebase.auth.signOut()
             Log.d(TAG, "User Signed out")
+            //when user signs out, change LoginSkipCheck to false
+            writeLoginSkipCheck()
+            //switch to Login Activity
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
@@ -65,6 +71,37 @@ class AlarmActivity : AppCompatActivity() {
         popupWindow.showAsDropDown(view)
     }
 
+    //Writes to LoginSkipCheck
+    private fun writeLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(LoginActivity.TAG, "writeLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //writes to the file
+            val outputStream: OutputStream = loginSkipCheck.outputStream()
+            if (outputText == "true") {
+                val inputText = "false"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was True, now False.")
+            }
+            if (outputText == "false") {
+                val inputText = "true"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was False, now True.")
+            } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
+                Log.d(LoginActivity.TAG, "writeLoginSkipCheck file doesn't exist")
+            }
+
+        }
+    }
     companion object {
         private const val TAG = "EmailPassword"
     }
