@@ -2,24 +2,38 @@ package com.example.lologin
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
-import com.example.lologin.ui.login.LoginActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.View
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+        val logOutButton = findViewById<Button>(R.id.logout)
+        //On Click of the logOutButton
+        logOutButton.setOnClickListener {
+            Firebase.auth.signOut()
+            Log.d(TAG, "User Signed out")
+            //when user signs out, change LoginSkipCheck to false
+            writeLoginSkipCheck()
+            //switch to Login Activity
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
@@ -55,5 +69,40 @@ class AlarmActivity : AppCompatActivity() {
         val popupView = inflater.inflate(R.layout.popup_window, null)
         val popupWindow = PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
         popupWindow.showAsDropDown(view)
+    }
+
+    //Writes to LoginSkipCheck
+    private fun writeLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(LoginActivity.TAG, "writeLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //writes to the file
+            val outputStream: OutputStream = loginSkipCheck.outputStream()
+            if (outputText == "true") {
+                val inputText = "false"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was True, now False.")
+            }
+            if (outputText == "false") {
+                val inputText = "true"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was False, now True.")
+            } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
+                Log.d(LoginActivity.TAG, "writeLoginSkipCheck file doesn't exist")
+            }
+
+        }
+    }
+    companion object {
+        private const val TAG = "EmailPassword"
     }
 }
