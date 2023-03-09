@@ -1,5 +1,6 @@
 package com.example.lologin
 
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -25,7 +26,11 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
-
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.NotificationManagerCompat
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -33,12 +38,24 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
 
-        //TEST
-        val intent = Intent().apply {
-            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            putExtra(Settings.EXTRA_APP_PACKAGE, "com.example.lologin")
+//        Notifications
+        val notificationManager = NotificationManagerCompat.from(this)
+//
+        if (!notificationManager.areNotificationsEnabled()) {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Enable Push Notifications")
+            builder.setMessage("This app requires push notifications to function properly")
+            builder.setPositiveButton("Ok") { dialog, which ->
+                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, "com.example.lologin")
+                }
+                startActivity(intent)
+            }
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                dialog.dismiss()
+            }
+            builder.show()
         }
-        startActivity(intent)
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)

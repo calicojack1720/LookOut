@@ -38,7 +38,7 @@ class AlarmReceiver : BroadcastReceiver() {
         NotificationManager::class.java
         ) as NotificationManager
 
-        val notificationBuilder = NotificationCompat.Builder(context, "my_channel_id")
+        val notificationBuilder = NotificationCompat.Builder(context, "alarms_channel")
             .setSmallIcon(R.drawable.baseline_alarm_24)
             .setContentTitle("Alarm Triggered: $message")
             .setContentText(message)
@@ -46,14 +46,15 @@ class AlarmReceiver : BroadcastReceiver() {
 
 //        Creating the Notification Channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Alarm Channel"
+            val name = "Alarm Notifications"
             val description = "Channel for Alarms App"
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel("my_channel_id", name, importance)
+            val channel = NotificationChannel("alarms_channel", name, importance)
             channel.description = description
             notificationManager.createNotificationChannel(channel)
 
         }
+
 
 //        Show the notification
         notificationManager.notify(0, notificationBuilder.build())
