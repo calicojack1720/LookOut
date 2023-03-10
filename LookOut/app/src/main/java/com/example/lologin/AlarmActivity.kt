@@ -29,14 +29,23 @@ import java.util.*
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.text.Layout
+import android.widget.LinearLayout
+import android.widget.Switch
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationManagerCompat
+import org.w3c.dom.Text
+import java.sql.SQLInvalidAuthorizationSpecException
 
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+//        Hide the existing alarm
+
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -111,12 +120,42 @@ class AlarmActivity : AppCompatActivity() {
 
             alarmItem = AlarmItem(
                 time = LocalDateTime.from(timeForAlarmInMillis),
-                message = name
+                message = name,
+                isEnabled = true
             )
             alarmItem?.let (scheduler::schedule)
 
-            popupWindow.dismiss()
+            //Inflate the Layout file
+//            val inflater = LayoutInflater.from(this)
+//            val alarmView = inflater.inflate(R.layout.alarm_item, null) as LinearLayout
+//            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//            val alarmItem = inflater.inflate(R.layout.alarm_item, null)
+//            alarmItem.visibility = View.GONE
+//
+//            //find the views and set their values
+//            val timeTextView = alarmItem.findViewById<TextView>(R.id.existing_alarm_time)
+//            timeTextView.text = alarmTime.toString()
+//
+//            val nameTextView = alarmItem.findViewById<TextView>(R.id.existing_alarm_name)
+//            nameTextView.text = alarmName.toString()
+//
+//            val switch = alarmItem.findViewById<Switch>(R.id.toggle_switch)
+//            switch.isChecked = false
+//
+//            val linearLayout = findViewById<LinearLayout>(R.id.alarm_item)
+//            linearLayout.addView(alarmItem)
+            val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms)
 
+            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val alarmItemLayout = inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
+
+
+
+            activityAlarmLayout.addView(alarmItemLayout)
+
+
+
+            popupWindow.dismiss()
         }
     }
 }

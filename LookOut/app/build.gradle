@@ -49,6 +49,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.material:material:1.8.0'
 
     //Including dependency for One-Tap Sign-In and Sign-Up
     implementation 'com.google.android.gms:play-services-auth:20.4.1'

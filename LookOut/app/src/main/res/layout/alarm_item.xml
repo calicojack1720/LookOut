@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_item"
+    android:layout_width="280dp"
+    android:layout_height="66dp"
+    android:layout_marginTop="183dp"
     android:background="#D3888787"
     android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/existing_alarm_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="00:00"
+        android:textSize="40sp" />
 
     <TextView
         android:id="@+id/existing_alarm_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:00"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/toggle_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_weight="1"
         android:text="Alarm Name"
         android:textSize="20sp" />
 
     <Switch
-        android:layout_width="48dp"
-        android:layout_height="32dp"
-        android:layout_gravity="end"
-        android:checked="true" />
-
+        android:id="@+id/toggle_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
