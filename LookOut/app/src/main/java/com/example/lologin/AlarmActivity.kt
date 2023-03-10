@@ -126,30 +126,19 @@ class AlarmActivity : AppCompatActivity() {
             alarmItem?.let (scheduler::schedule)
 
             //Inflate the Layout file
-//            val inflater = LayoutInflater.from(this)
-//            val alarmView = inflater.inflate(R.layout.alarm_item, null) as LinearLayout
-//            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-//            val alarmItem = inflater.inflate(R.layout.alarm_item, null)
-//            alarmItem.visibility = View.GONE
-//
-//            //find the views and set their values
-//            val timeTextView = alarmItem.findViewById<TextView>(R.id.existing_alarm_time)
-//            timeTextView.text = alarmTime.toString()
-//
-//            val nameTextView = alarmItem.findViewById<TextView>(R.id.existing_alarm_name)
-//            nameTextView.text = alarmName.toString()
-//
-//            val switch = alarmItem.findViewById<Switch>(R.id.toggle_switch)
-//            switch.isChecked = false
-//
-//            val linearLayout = findViewById<LinearLayout>(R.id.alarm_item)
-//            linearLayout.addView(alarmItem)
             val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms)
-
             val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val alarmItemLayout = inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
 
+//            UserInput of AlarmTime into Layout
+            val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
+            var textViewString = alarmTime.text.toString()
+            timeTextView.text = textViewString
 
+//            UserInput of AlarmName into Layout
+            val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
+            textViewString = alarmName.text.toString()
+            nameTextView.text = textViewString
 
             activityAlarmLayout.addView(alarmItemLayout)
 
