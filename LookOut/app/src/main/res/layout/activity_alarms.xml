@@ -48,35 +48,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
 
-<!--    <LinearLayout-->
-<!--        android:id="@+id/alarm_item"-->
-<!--        android:layout_width="280dp"-->
-<!--        android:layout_height="66dp"-->
-<!--        android:layout_marginTop="183dp"-->
-<!--        android:background="#D3888787"-->
-<!--        android:orientation="horizontal"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/textView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="00:00"-->
-<!--            android:textSize="40sp" />-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="1"-->
-<!--            android:text="Alarm Name"-->
-<!--            android:textSize="20sp" />-->
-
-<!--        <Switch-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"/>-->
-<!--    </LinearLayout>-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

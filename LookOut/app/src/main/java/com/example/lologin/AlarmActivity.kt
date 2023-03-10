@@ -30,6 +30,7 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.text.Layout
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
@@ -126,7 +127,7 @@ class AlarmActivity : AppCompatActivity() {
             alarmItem?.let (scheduler::schedule)
 
             //Inflate the Layout file
-            val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms)
+            val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms) //Was ViewGroup
             val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val alarmItemLayout = inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
 
@@ -139,6 +140,17 @@ class AlarmActivity : AppCompatActivity() {
             val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
             textViewString = alarmName.text.toString()
             nameTextView.text = textViewString
+
+//            Enable the toggle switch
+            val toggleSwitch = alarmItemLayout.findViewById<Switch>(R.id.toggle_switch)
+            toggleSwitch.isChecked = true
+            toggleSwitch.isEnabled = true
+
+
+//            Set the Parameters for the new Layout
+//            TODO: Need to set parameters for new layout so they appear below each other in layout
+
+
 
             activityAlarmLayout.addView(alarmItemLayout)
 
