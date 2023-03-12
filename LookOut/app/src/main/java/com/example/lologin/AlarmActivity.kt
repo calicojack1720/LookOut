@@ -177,9 +177,8 @@ class AlarmActivity : AppCompatActivity() {
 
 //            UserInput of AlarmTime into Layout
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-//                var textViewString = alarmTime.text.toString()
-//                timeTextView.text = textViewString
-                var textViewString = "${hours.toString()}:${minutes.toString()}"
+                var textViewString = "$hours:$minutes"
+                timeTextView.text = textViewString
 
 //            UserInput of AlarmName into Layout
                 val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
