@@ -198,11 +198,13 @@ class AlarmActivity : AppCompatActivity() {
 
 
                 val params = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT, // set width to wrap content
-                    ConstraintLayout.LayoutParams.WRAP_CONTENT // set height to wrap content
+                    ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
+                    ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
                 )
-                params.leftMargin = 50
-                params.topMargin = 100
+                params.leftMargin = 100
+                params.topMargin = 200
+                params.rightMargin = 500
+                params.bottomMargin = 2200
 
                 alarmItemLayout.layoutParams = params // set the params on the view
 
