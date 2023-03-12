@@ -43,12 +43,15 @@ import org.w3c.dom.Text
 import java.sql.SQLInvalidAuthorizationSpecException
 import java.time.*
 import android.util.Log
+import java.io.File
 
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+        //Creates Alarm Storage File
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -259,6 +262,28 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun createAlarmStorage() {
+        val alarmStorage = File(this.filesDir, "alarmStorage.txt")
+    //        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+//
+//        val loginSkipCheckExists = loginSkipCheck.exists()
+//
+//        if (loginSkipCheckExists) {
+//            Log.w(TAG, "LoginSkipCheck file exists")
+//        } else {
+//            //creates file if doesn't exists
+//            loginSkipCheck.createNewFile()
+//
+//            //writes to the file
+//            val outputStream = FileOutputStream(loginSkipCheck)
+//            val inputText = "false"
+//            outputStream.write(inputText.toByteArray())
+//            outputStream.close()
+//
+//            Log.w(TAG, "LoginSkipCheck file created")
+//        }
     }
     companion object {
         const val TAG = "AlarmActivity"
