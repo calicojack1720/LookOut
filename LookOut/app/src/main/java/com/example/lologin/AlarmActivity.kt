@@ -244,7 +244,7 @@ class AlarmActivity : AppCompatActivity() {
                 toggleSwitch.setOnCheckedChangeListener {buttonView, isChecked ->
                     if (!isChecked) {
                         Log.d(TAG, "Canceling Alarm")
-                        alarmItem?.let { scheduler::cancel }
+                        alarmItem?.let { scheduler.cancel(it) }
                         Log.d(TAG, "Alarm Cancelled")
                     }
                 }
