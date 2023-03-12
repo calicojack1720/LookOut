@@ -169,7 +169,7 @@ class AlarmActivity : AppCompatActivity() {
                     message = name,
                     isEnabled = true
                 )
-                alarmItem?.let(scheduler::schedule)
+
 
                 //Inflate the Layout file
                 val activityAlarmLayout: ViewGroup =
@@ -204,7 +204,7 @@ class AlarmActivity : AppCompatActivity() {
                 )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-                val parentRight = 450
+                val parentRight = 350
                 val parentLeft = 100
                 val parentTop = 200
                 val parentBottom = 2200
@@ -219,8 +219,9 @@ class AlarmActivity : AppCompatActivity() {
                     alarmItemLayout.layoutParams = params // set the params on the view
 
                     activityAlarmLayout.addView(alarmItemLayout)
+                    alarmItem?.let(scheduler::schedule)
                 }
-                else {
+                else if (activityAlarmLayout.childCount <= 6){
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
@@ -229,7 +230,15 @@ class AlarmActivity : AppCompatActivity() {
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
+                    alarmItem?.let(scheduler::schedule)
 
+                }
+                else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Maximum Alarm Number has been reached.",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
                 popupWindow.dismiss()
