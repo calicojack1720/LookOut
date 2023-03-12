@@ -36,6 +36,8 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.NotificationManagerCompat
 import org.w3c.dom.Text
 import java.sql.SQLInvalidAuthorizationSpecException
@@ -195,9 +197,16 @@ class AlarmActivity : AppCompatActivity() {
 //            TODO: Need to set parameters for new layout so they appear below each other in layout
 
 
+                val params = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT, // set width to wrap content
+                    ConstraintLayout.LayoutParams.WRAP_CONTENT // set height to wrap content
+                )
+                params.leftMargin = 50
+                params.topMargin = 100
+
+                alarmItemLayout.layoutParams = params // set the params on the view
+
                 activityAlarmLayout.addView(alarmItemLayout)
-
-
 
                 popupWindow.dismiss()
 
