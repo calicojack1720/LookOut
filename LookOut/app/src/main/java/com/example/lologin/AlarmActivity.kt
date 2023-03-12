@@ -42,6 +42,7 @@ import androidx.core.app.NotificationManagerCompat
 import org.w3c.dom.Text
 import java.sql.SQLInvalidAuthorizationSpecException
 import java.time.*
+import android.util.Log
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -201,7 +202,9 @@ class AlarmActivity : AppCompatActivity() {
                     ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
                     ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
                 )
-                if (activityAlarmLayout.childCount == 0) {
+                Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+                if (activityAlarmLayout.childCount <= 2) {
+                    Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = 100
                     params.topMargin = 200
                     params.rightMargin = 500
@@ -212,6 +215,7 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                 }
                 else {
+                    Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.topMargin = params.topMargin + 20
                     params.bottomMargin = params.bottomMargin - 20
                     alarmItemLayout.layoutParams = params
