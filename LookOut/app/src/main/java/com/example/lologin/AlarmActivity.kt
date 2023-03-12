@@ -35,18 +35,17 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.*
 import androidx.core.app.NotificationManagerCompat
 import org.w3c.dom.Text
 import java.sql.SQLInvalidAuthorizationSpecException
+import java.time.*
 
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
-
-//        Hide the existing alarm
-
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -79,10 +78,15 @@ class AlarmActivity : AppCompatActivity() {
                     //1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
 
                     // Creates a text box telling the user the timer page isn't available.
-                    1 -> Toast.makeText(applicationContext,"Timer Page is under Construction.", Toast.LENGTH_LONG).show()
+                    1 -> Toast.makeText(
+                        applicationContext,
+                        "Timer Page is under Construction.",
+                        Toast.LENGTH_LONG
+                    ).show()
                     // Add more cases for each tab as needed
                 }
             }
+
             //things we want to run when tab is reselected/unselected
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 // Handle tab unselection
@@ -95,68 +99,113 @@ class AlarmActivity : AppCompatActivity() {
 
         //new
         val addAlarmButton = findViewById<FloatingActionButton>(R.id.addalarm)
-        addAlarmButton.setOnClickListener {showPopup()}
+        addAlarmButton.setOnClickListener { showPopup() }
 
     }
+
     private fun showPopup() {
         val popUpView = layoutInflater.inflate(R.layout.popup_window, null)
 
-        val popupWindow = PopupWindow(popUpView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+        val popupWindow = PopupWindow(
+            popUpView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
         popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
 
         val cancelButton = popUpView.findViewById<Button>(R.id.cancel_button)
-        cancelButton.setOnClickListener {popupWindow.dismiss()}
+        cancelButton.setOnClickListener { popupWindow.dismiss() }
 
         val submitButton = popUpView.findViewById<Button>(R.id.submitbutton)
 //        new
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
 
+        val inputHours = popUpView.findViewById<EditText>(R.id.hours)
+        val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
+
+        //checks if ToggleAMPMButton is checked
+        //val isPm = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM).isChecked
+
         submitButton.setOnClickListener {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
-            val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
+            //val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
             val name = alarmName.text.toString()
-            val timeForAlarm = LocalTime.parse(alarmTime.text.toString()) //Will create a time object in the format hh:mm
-            val timeForAlarmInMillis = timeForAlarm.atDate(LocalDate.now()).atZone(ZoneId.systemDefault())
+            var hours = inputHours.text.toString().toIntOrNull()
+            var minutes = inputMinutes.text.toString().toIntOrNull()
 
-            alarmItem = AlarmItem(
-                time = LocalDateTime.from(timeForAlarmInMillis),
-                message = name,
-                isEnabled = true
-            )
-            alarmItem?.let (scheduler::schedule)
+            if (hours != null && minutes != null) {
+//          AMPMCHECK
+//                if (isPm && hours!! < 12) {
+//                    hours = hours!! + 12
+//                } else if (!isPm && hours == 12) {
+//                    hours = 0
+//                }
 
-            //Inflate the Layout file
-            val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms) //Was ViewGroup
-            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val alarmItemLayout = inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
+                val timeForAlarm = LocalTime.of(hours, minutes)
+                val dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
+
+                // Calculate the time difference between the current time and the time for the alarm //
+                val currentTime = LocalDateTime.now()
+                val duration = Duration.between(currentTime, dateTimeForAlarm)
+
+                // If the duration is negative, it means the alarm time has already passed today //
+                // so we need to schedule it for tomorrow instead
+                val delayMillis = if (duration.isNegative) {
+                    duration.plusDays(1).toMillis()
+                } else {
+                    duration.toMillis()
+                }
+
+//                val timeForAlarmInMillis =
+//                    timeForAlarm.atDate(LocalDate.now()).atZone(ZoneId.systemDefault())
+
+                alarmItem = AlarmItem(
+                    time = dateTimeForAlarm,
+                    message = name,
+                    isEnabled = true
+                )
+                alarmItem?.let(scheduler::schedule)
+
+                //Inflate the Layout file
+                val activityAlarmLayout: ViewGroup =
+                    findViewById(R.id.activity_alarms) //Was ViewGroup
+                val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val alarmItemLayout =
+                    inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
 
 //            UserInput of AlarmTime into Layout
-            val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-            var textViewString = alarmTime.text.toString()
-            timeTextView.text = textViewString
+                val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
+                var textViewString = alarmTime.text.toString()
+                timeTextView.text = textViewString
 
 //            UserInput of AlarmName into Layout
-            val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
-            textViewString = alarmName.text.toString()
-            nameTextView.text = textViewString
+                val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
+                textViewString = alarmName.text.toString()
+                nameTextView.text = textViewString
 
 //            Enable the toggle switch
-            val toggleSwitch = alarmItemLayout.findViewById<Switch>(R.id.toggle_switch)
-            toggleSwitch.isChecked = true
-            toggleSwitch.isEnabled = true
+                val toggleSwitch = alarmItemLayout.findViewById<Switch>(R.id.toggle_switch)
+                toggleSwitch.isChecked = true
+                toggleSwitch.isEnabled = true
 
 
 //            Set the Parameters for the new Layout
 //            TODO: Need to set parameters for new layout so they appear below each other in layout
 
 
-
-            activityAlarmLayout.addView(alarmItemLayout)
-
+                activityAlarmLayout.addView(alarmItemLayout)
 
 
-            popupWindow.dismiss()
+
+                popupWindow.dismiss()
+
+            }
         }
+
+    }
+    companion object {
+        const val TAG = "AlarmActivity"
     }
 }
