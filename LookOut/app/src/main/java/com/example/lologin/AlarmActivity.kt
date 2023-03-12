@@ -241,13 +241,18 @@ class AlarmActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener {buttonView, isChecked ->
                     if (!isChecked) {
-                        Log.d(TAG, "Canceling Alarm")
                         alarmItem?.let { scheduler.cancel(it) }
                         Log.d(TAG, "Alarm Cancelled")
                     }
+                    else {
+                        alarmItem?.let(scheduler::schedule)
+                        Log.d(TAG, "Alarm Enable")
+                    }
                 }
+
 
                 popupWindow.dismiss()
 
