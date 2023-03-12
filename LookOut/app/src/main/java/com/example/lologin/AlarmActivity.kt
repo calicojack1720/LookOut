@@ -203,12 +203,18 @@ class AlarmActivity : AppCompatActivity() {
                     ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
                 )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+
+                val parentRight = 500
+                val parentLeft = 100
+                val parentTop = 200
+                val parentBottom = 2200
+
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                    params.leftMargin = 100
-                    params.topMargin = 200
-                    params.rightMargin = 500
-                    params.bottomMargin = 2200
+                    params.leftMargin = parentLeft
+                    params.topMargin = parentTop
+                    params.rightMargin = parentRight
+                    params.bottomMargin = parentBottom
 
                     alarmItemLayout.layoutParams = params // set the params on the view
 
@@ -216,8 +222,9 @@ class AlarmActivity : AppCompatActivity() {
                 }
                 else {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                    params.topMargin = params.topMargin + 20
-                    params.bottomMargin = params.bottomMargin - 20
+                    params.topMargin = params.topMargin + 200
+                    params.bottomMargin = params.bottomMargin + 2000
+
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
 
