@@ -104,6 +104,7 @@ class AlarmActivity : AppCompatActivity() {
         val addAlarmButton = findViewById<FloatingActionButton>(R.id.addalarm)
         addAlarmButton.setOnClickListener { showPopup() }
 
+
     }
 
     private fun showPopup() {
@@ -239,6 +240,13 @@ class AlarmActivity : AppCompatActivity() {
                         "Maximum Alarm Number has been reached.",
                         Toast.LENGTH_LONG
                     ).show()
+                }
+                toggleSwitch.setOnCheckedChangeListener {buttonView, isChecked ->
+                    if (!isChecked) {
+                        Log.d(TAG, "Canceling Alarm")
+                        alarmItem?.let { scheduler::cancel }
+                        Log.d(TAG, "Alarm Cancelled")
+                    }
                 }
 
                 popupWindow.dismiss()
