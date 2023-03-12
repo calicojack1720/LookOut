@@ -44,11 +44,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/deletion_button"
         android:layout_width="16dp"
         android:layout_height="29dp"
         android:layout_marginStart="6dp"
         android:text="X"
+        android:clickable="true"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
