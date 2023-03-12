@@ -222,8 +222,10 @@ class AlarmActivity : AppCompatActivity() {
                 }
                 else {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                    params.topMargin = params.topMargin + 200
-                    params.bottomMargin = params.bottomMargin + 2000
+                    params.leftMargin = parentLeft
+                    params.rightMargin = parentRight
+                    params.topMargin = parentTop - (parentTop * (activityAlarmLayout.childCount - 2))
+                    params.bottomMargin = parentBottom - (parentBottom * (activityAlarmLayout.childCount - 2))
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
