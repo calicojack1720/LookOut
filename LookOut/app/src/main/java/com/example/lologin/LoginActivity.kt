@@ -206,7 +206,7 @@ class LoginActivity : AppCompatActivity() {
         val loginSkipCheckExists = loginSkipCheck.exists()
 
         if (loginSkipCheckExists) {
-            Log.w(TAG, "writeLoginSkipCheck exists")
+            Log.w(TAG, "writeLoginSkipCheck file exists")
             val inputStream: InputStream = loginSkipCheck.inputStream()
             val outputText = inputStream.bufferedReader().use {
                 it.readText()
@@ -237,7 +237,7 @@ class LoginActivity : AppCompatActivity() {
         val loginSkipCheckExists = loginSkipCheck.exists()
 
         if (loginSkipCheckExists) {
-            Log.w(TAG, "readLoginSkipCheck exists")
+            Log.w(TAG, "readLoginSkipCheck file exists")
             val inputStream: InputStream = loginSkipCheck.inputStream()
             val outputText = inputStream.bufferedReader().use {
                 it.readText()

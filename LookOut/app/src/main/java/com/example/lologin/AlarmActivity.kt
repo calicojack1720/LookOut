@@ -90,12 +90,6 @@ class AlarmActivity : AppCompatActivity() {
                 outputStream.write(inputText.toByteArray())
                 outputStream.close()
                 Log.d(LoginActivity.TAG, "Outputtext was True, now False.")
-            }
-            if (outputText == "false") {
-                val inputText = "true"
-                outputStream.write(inputText.toByteArray())
-                outputStream.close()
-                Log.d(LoginActivity.TAG, "Outputtext was False, now True.")
             } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
                 Log.d(LoginActivity.TAG, "writeLoginSkipCheck file doesn't exist")
             }
