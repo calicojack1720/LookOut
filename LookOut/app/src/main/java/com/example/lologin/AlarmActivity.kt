@@ -204,7 +204,7 @@ class AlarmActivity : AppCompatActivity() {
                 )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-                val parentRight = 500
+                val parentRight = 450
                 val parentLeft = 100
                 val parentTop = 200
                 val parentBottom = 2200
@@ -224,8 +224,8 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
-                    params.topMargin = parentTop - ((activityAlarmLayout.childCount - 2) * 50)
-                    params.bottomMargin = parentBottom + ((activityAlarmLayout.childCount - 2) * 50)
+                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * 400)
+                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 2) * 400)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
