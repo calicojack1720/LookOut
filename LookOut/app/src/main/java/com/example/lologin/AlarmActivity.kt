@@ -214,6 +214,7 @@ class AlarmActivity : AppCompatActivity() {
                 else {
                     params.topMargin = params.topMargin + 20
                     params.bottomMargin = params.bottomMargin - 20
+                    alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
 
                 }
