@@ -47,7 +47,7 @@
         android:id="@+id/textView"
         android:layout_width="16dp"
         android:layout_height="29dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="6dp"
         android:text="X"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
