@@ -254,15 +254,17 @@ class AlarmActivity : AppCompatActivity() {
                         alarmItem?.let(scheduler::schedule)
                         Log.d(TAG, "Alarm Enable")
                     }
-                    //                TODO: Create Deletion Button
-                    //                Deletion Button
-                    val deletionButton =
-                        alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
-                    deletionButton.setOnClickListener {
-                        val parentView = alarmItemLayout.parent as ViewGroup
-                        parentView.removeView(alarmItemLayout)
-                        alarmItem?.let { scheduler.cancel(it) }
-                    }
+
+                }
+                //                Deletion Button
+                val deletionButton =
+                    alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+                deletionButton.setOnClickListener {
+                    val parentView = alarmItemLayout.parent as ViewGroup
+                    parentView.removeView(alarmItemLayout)
+                    alarmItem?.let { scheduler.cancel(it) }
+//                        TODO: Need to update layout as items are deleted
+
                 }
 
 
