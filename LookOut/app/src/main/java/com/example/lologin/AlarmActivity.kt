@@ -201,14 +201,22 @@ class AlarmActivity : AppCompatActivity() {
                     ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
                     ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
                 )
-                params.leftMargin = 100
-                params.topMargin = 200
-                params.rightMargin = 500
-                params.bottomMargin = 2200
+                if (activityAlarmLayout.childCount == 0) {
+                    params.leftMargin = 100
+                    params.topMargin = 200
+                    params.rightMargin = 500
+                    params.bottomMargin = 2200
 
-                alarmItemLayout.layoutParams = params // set the params on the view
+                    alarmItemLayout.layoutParams = params // set the params on the view
 
-                activityAlarmLayout.addView(alarmItemLayout)
+                    activityAlarmLayout.addView(alarmItemLayout)
+                }
+                else {
+                    params.topMargin = params.topMargin + 20
+                    params.bottomMargin = params.bottomMargin - 20
+                    activityAlarmLayout.addView(alarmItemLayout)
+
+                }
 
                 popupWindow.dismiss()
 
