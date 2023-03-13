@@ -231,7 +231,7 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
-                    //alarms += alarmItem
+//                    alarms += alarmItem
                     saveAlarms(alarms, this)
 
                 } else if (activityAlarmLayout.childCount <= 6) {
@@ -274,8 +274,8 @@ class AlarmActivity : AppCompatActivity() {
                     alarmItem?.let { scheduler.cancel(it) }
 
                     //TODO: Need to update layout as items are deleted
-                    //Update layout of remaining views
-
+//                    Update layout of remaining views
+                    val childCount = parentView.childCount
                     for (i in 2 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
@@ -284,12 +284,16 @@ class AlarmActivity : AppCompatActivity() {
                             adjustedParams.bottomMargin = parentBottom
                         }
                         else {
+                            val remainingChildCount = childCount - i + 1
 
                             adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
-                            adjustedParams.bottomMargin = parentBottom - ((parentView.childCount - i) * marginIncrement)
+                            adjustedParams.bottomMargin = 2400 - adjustedParams.topMargin
                         }
                         child.layoutParams = adjustedParams
                     }
+
+//                    End of For Layout Adjustment
+
                 }
 
                 popupWindow.dismiss()
