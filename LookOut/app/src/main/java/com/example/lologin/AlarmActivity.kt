@@ -253,6 +253,8 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled)
+
                 } else {
                     Toast.makeText(
                         applicationContext,
@@ -265,9 +267,11 @@ class AlarmActivity : AppCompatActivity() {
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
+                        saveAlarms(hours, minutes, name, false)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
+                        saveAlarms(hours, minutes, name, true)
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -283,7 +287,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
-                    val childCount = parentView.childCount
+
                     for (i in 2 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
@@ -292,8 +296,6 @@ class AlarmActivity : AppCompatActivity() {
                             adjustedParams.bottomMargin = parentBottom
                         }
                         else {
-                            val remainingChildCount = childCount - i + 1
-
                             adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
                             adjustedParams.bottomMargin = 2400 - adjustedParams.topMargin
                         }
@@ -327,8 +329,7 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    //saves created alarms to alarmStorage.txt
-
+    //Saves created alarms to using
     private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -354,6 +355,10 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Saved boolean: $savedBoolean")
         Log.d(TAG, "Saved hours: $savedHours")
         Log.d(TAG, "Saved minutes: $savedMinutes")
+
+        //Everything above here works
+
+
     }
 
     companion object {
