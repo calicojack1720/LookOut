@@ -59,7 +59,8 @@ class AlarmActivity : AppCompatActivity() {
         //Creates Alarm Storage File
         createAlarmStorage()
 
-        //loadData
+        //loadAlarms
+        loadAlarms()
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -349,8 +350,10 @@ class AlarmActivity : AppCompatActivity() {
         val savedHours: Int? = sharedPreferences.getInt("HOURS", 0)
         val savedMinutes: Int? = sharedPreferences.getInt("MINUTES", 0)
 
-        //name = savedName
-
+        Log.d(TAG, "Saved name: $savedName")
+        Log.d(TAG, "Saved boolean: $savedBoolean")
+        Log.d(TAG, "Saved hours: $savedHours")
+        Log.d(TAG, "Saved minutes: $savedMinutes")
     }
 
     companion object {
