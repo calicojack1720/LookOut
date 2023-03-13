@@ -137,16 +137,20 @@ class AlarmActivity : AppCompatActivity() {
         val inputHours = popUpView.findViewById<EditText>(R.id.hours)
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
 
+
         //checks if ToggleAMPMButton is checked
         //val isPm = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM).isChecked
 
+
         submitButton.setOnClickListener {
+
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
             var hours = inputHours.text.toString().toIntOrNull()
             var minutes = inputMinutes.text.toString().toIntOrNull()
 
-            if (hours != null && minutes != null) {
+//            if (hours != null && minutes != null) {
+            if (hours != null && hours in 0..23 && minutes != null && minutes in 0..59) {
 //          AMPMCHECK
 //                if (isPm && hours!! < 12) {
 //                    hours = hours!! + 12
@@ -298,6 +302,9 @@ class AlarmActivity : AppCompatActivity() {
 
                 popupWindow.dismiss()
 
+            }
+            else {
+                Toast.makeText(this, "Invalid time entered", Toast.LENGTH_SHORT).show()
             }
         }
 
