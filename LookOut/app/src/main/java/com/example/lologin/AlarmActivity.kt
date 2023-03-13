@@ -185,9 +185,16 @@ class AlarmActivity : AppCompatActivity() {
                     inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
 
 //            UserInput of AlarmTime into Layout
+                var textViewString = ""
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-                var textViewString = "$hours:$minutes"
-                timeTextView.text = textViewString
+                if ((hours >= 0 && hours <= 9) && (minutes >= 0 && minutes <= 9)) {
+                    textViewString = "0$hours:0$minutes"
+                    timeTextView.text = textViewString
+                }
+                else {
+                    textViewString = "$hours:$minutes"
+                    timeTextView.text = textViewString
+                }
 
 //            UserInput of AlarmName into Layout
                 val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
@@ -212,6 +219,7 @@ class AlarmActivity : AppCompatActivity() {
                 val parentLeft = 100
                 val parentTop = 200
                 val parentBottom = 2200
+                val marginIncrement = 400
 
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -228,9 +236,8 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
-                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * 400)
-                    params.bottomMargin =
-                        parentBottom - ((activityAlarmLayout.childCount - 2) * 400)
+                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -262,37 +269,51 @@ class AlarmActivity : AppCompatActivity() {
                     parentView.removeView(alarmItemLayout)
                     alarmItem?.let { scheduler.cancel(it) }
 //                        TODO: Need to update layout as items are deleted
+//                    Update layout of remaining views
+                    for (i in 2 until parentView.childCount) {
+                        val child = parentView.getChildAt(i)
+                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+                        if (i == 2) {
+                            adjustedParams.topMargin = parentTop
+                            adjustedParams.bottomMargin = parentBottom
+                        }
+                        else {
 
+                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
+                            adjustedParams.bottomMargin = parentBottom - ((parentView.childCount - i) * marginIncrement)
+                        }
+                        child.layoutParams = adjustedParams
+                    }
                 }
 
 
 
-                    popupWindow.dismiss()
+                popupWindow.dismiss()
 
-                }
-            }
-
-        }
-
-        private fun createAlarmStorage() {
-            val alarmStorage = File(this.filesDir, "alarmStorage.txt")
-            val alarmStorageExists = alarmStorage.exists()
-
-            if (alarmStorageExists) {
-                Log.w(TAG, "Alarm Storage file exists")
-            } else {
-                //creates file if doesn't exists
-                alarmStorage.createNewFile()
-                Log.w(TAG, "Alarm Storage file created")
             }
         }
 
-        private fun writeAlarmStorage() {
-            val alarmStorage = File(this.filesDir, "alarmStorage.txt")
-            val alarmStorageExists = alarmStorage.exists()
+    }
 
-            if (alarmStorageExists) {
-                Log.w(TAG, "Can write to file: Exists")
+    private fun createAlarmStorage() {
+        val alarmStorage = File(this.filesDir, "alarmStorage.txt")
+        val alarmStorageExists = alarmStorage.exists()
+
+        if (alarmStorageExists) {
+            Log.w(TAG, "Alarm Storage file exists")
+        } else {
+            //creates file if doesn't exists
+            alarmStorage.createNewFile()
+            Log.w(TAG, "Alarm Storage file created")
+        }
+    }
+
+    private fun writeAlarmStorage() {
+        val alarmStorage = File(this.filesDir, "alarmStorage.txt")
+        val alarmStorageExists = alarmStorage.exists()
+
+        if (alarmStorageExists) {
+            Log.w(TAG, "Can write to file: Exists")
 
 //            storageFile.bufferedWriter().use { writer ->
 //                alarmItem.forEach { alarmItem ->
@@ -322,10 +343,10 @@ class AlarmActivity : AppCompatActivity() {
 //                Log.d(TAG, "Outputtext was False, now True.")
 //
 //            }
-            } else {
-                Log.w(TAG, "Can't write to file: Doesn't exist")
-            }
+        } else {
+            Log.w(TAG, "Can't write to file: Doesn't exist")
         }
+    }
 
     companion object {
         const val TAG = "AlarmActivity"
