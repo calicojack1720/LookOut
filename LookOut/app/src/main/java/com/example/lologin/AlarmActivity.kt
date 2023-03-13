@@ -201,8 +201,6 @@ class AlarmActivity : AppCompatActivity() {
 
 
 //            Set the Parameters for the new Layout
-//            TODO: Need to set parameters for new layout so they appear below each other in layout
-
 
                 val params = ConstraintLayout.LayoutParams(
                     ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
@@ -214,6 +212,7 @@ class AlarmActivity : AppCompatActivity() {
                 val parentLeft = 100
                 val parentTop = 200
                 val parentBottom = 2200
+                val marginIncrement = 400
 
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -230,9 +229,9 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
-                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * 400)
+                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
                     params.bottomMargin =
-                        parentBottom - ((activityAlarmLayout.childCount - 2) * 400)
+                        parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -264,6 +263,20 @@ class AlarmActivity : AppCompatActivity() {
                     parentView.removeView(alarmItemLayout)
                     alarmItem?.let { scheduler.cancel(it) }
 //                        TODO: Need to update layout as items are deleted
+//                    Update layout of remaining views
+                    for (i in 2 until parentView.childCount) {
+                        val child = parentView.getChildAt(i)
+                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+                        if (i == 2) {
+                            adjustedParams.topMargin = parentTop
+                        }
+                        else {
+                            adjustedParams.topMargin = parentTop + (i * marginIncrement)
+                            adjustedParams.bottomMargin = parentBottom - ((parentView.childCount - i) * marginIncrement)
+                        }
+                        child.layoutParams = adjustedParams
+                    }
+
 
                 }
 
