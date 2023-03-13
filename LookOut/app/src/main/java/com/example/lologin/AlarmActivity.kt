@@ -29,6 +29,7 @@ import java.util.*
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.SharedPreferences
 import android.text.Layout
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -57,6 +58,8 @@ class AlarmActivity : AppCompatActivity() {
 
         //Creates Alarm Storage File
         createAlarmStorage()
+
+        //loadData
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -146,8 +149,8 @@ class AlarmActivity : AppCompatActivity() {
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
-            var hours = inputHours.text.toString().toIntOrNull()
-            var minutes = inputMinutes.text.toString().toIntOrNull()
+            val hours = inputHours.text.toString().toIntOrNull()
+            val minutes = inputMinutes.text.toString().toIntOrNull()
 
 //            if (hours != null && minutes != null) {
             if (hours != null && hours in 0..23 && minutes != null && minutes in 0..59) {
@@ -235,8 +238,8 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
-//                    alarms += alarmItem
-                    saveAlarms(alarms, this)
+                    //passes through hours, minutes, name, and enabled state to saveAlarms
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled)
 
                 } else if (activityAlarmLayout.childCount <= 6) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -325,13 +328,29 @@ class AlarmActivity : AppCompatActivity() {
 
     //saves created alarms to alarmStorage.txt
 
-    private fun saveAlarms(alarms: List<AlarmItem>, context: Context) {
-        val fileName = "alarmStorage.txt"
-        val fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-        val objectOutputStream = ObjectOutputStream(fileOutputStream)
-        objectOutputStream.writeObject(alarms)
-        objectOutputStream.close()
-        Log.w(TAG, "saveAlarms called")
+    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.apply() {
+            putString("ALARM_NAME", name)
+            putBoolean("IS_ENABLED", isEnabled)
+            putInt("HOURS", hours ?: 0)
+            putInt("MINUTES", minutes ?: 0)
+        }.apply()
+        Log.d(TAG, "Saved Alarm")
+    }
+
+    private fun loadAlarms() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+
+        //Setting default values
+        val savedName: String? = sharedPreferences.getString("ALARM_NAME", null)
+        val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED", false)
+        val savedHours: Int? = sharedPreferences.getInt("HOURS", 0)
+        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES", 0)
+
+        //name = savedName
+
     }
 
     companion object {
