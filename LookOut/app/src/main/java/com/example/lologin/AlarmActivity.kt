@@ -212,7 +212,6 @@ class AlarmActivity : AppCompatActivity() {
                 val parentLeft = 100
                 val parentTop = 200
                 val parentBottom = 2200
-                val marginIncrement = 400
 
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -229,8 +228,9 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
-                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
-                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * 400)
+                    params.bottomMargin =
+                        parentBottom - ((activityAlarmLayout.childCount - 2) * 400)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -262,22 +262,6 @@ class AlarmActivity : AppCompatActivity() {
                     parentView.removeView(alarmItemLayout)
                     alarmItem?.let { scheduler.cancel(it) }
 //                        TODO: Need to update layout as items are deleted
-//                    Update layout of remaining views
-                    for (i in 2 until parentView.childCount) {
-                        val child = parentView.getChildAt(i)
-                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-                        if (i == 2) {
-                            adjustedParams.topMargin = parentTop
-                            adjustedParams.bottomMargin = parentBottom
-                        }
-                        else {
-
-                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
-                            adjustedParams.bottomMargin = parentBottom - ((parentView.childCount - i) * marginIncrement)
-                        }
-                        child.layoutParams = adjustedParams
-                    }
-
 
                 }
 
