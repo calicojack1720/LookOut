@@ -230,8 +230,7 @@ class AlarmActivity : AppCompatActivity() {
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
                     params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
-                    params.bottomMargin =
-                        parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -269,9 +268,11 @@ class AlarmActivity : AppCompatActivity() {
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
                         if (i == 2) {
                             adjustedParams.topMargin = parentTop
+                            adjustedParams.bottomMargin = parentBottom
                         }
                         else {
-                            adjustedParams.topMargin = parentTop + (i * marginIncrement)
+
+                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
                             adjustedParams.bottomMargin = parentBottom - ((parentView.childCount - i) * marginIncrement)
                         }
                         child.layoutParams = adjustedParams
