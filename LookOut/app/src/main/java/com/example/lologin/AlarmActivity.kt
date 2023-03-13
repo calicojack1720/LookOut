@@ -45,7 +45,10 @@ import java.time.*
 import android.util.Log
 import android.view.ViewParent
 import java.io.File
+import java.io.ObjectOutputStream
 
+//creates a list of AlarmItem
+private var alarms = listOf<AlarmItem>()
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,7 +142,6 @@ class AlarmActivity : AppCompatActivity() {
 
         submitButton.setOnClickListener {
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
-            //val alarmTime = popUpView.findViewById<EditText>(R.id.time_entry)
             val name = alarmName.text.toString()
             var hours = inputHours.text.toString().toIntOrNull()
             var minutes = inputMinutes.text.toString().toIntOrNull()
@@ -167,15 +169,11 @@ class AlarmActivity : AppCompatActivity() {
                     duration.toMillis()
                 }
 
-//                val timeForAlarmInMillis =
-//                    timeForAlarm.atDate(LocalDate.now()).atZone(ZoneId.systemDefault())
-
                 alarmItem = AlarmItem(
                     time = dateTimeForAlarm,
                     message = name,
                     isEnabled = true
                 )
-
 
                 //Inflate the Layout file
                 val activityAlarmLayout: ViewGroup =
@@ -232,6 +230,10 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
+
+                    //alarms += alarmItem
+                    saveAlarms(alarms, this)
+
                 } else if (activityAlarmLayout.childCount <= 6) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
@@ -250,6 +252,7 @@ class AlarmActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (!isChecked) {
@@ -261,15 +264,18 @@ class AlarmActivity : AppCompatActivity() {
                     }
 
                 }
-                //                Deletion Button
-                val deletionButton =
-                    alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+                //Deletion Button
+                val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+                //On Click of Delete Button
                 deletionButton.setOnClickListener {
                     val parentView = alarmItemLayout.parent as ViewGroup
                     parentView.removeView(alarmItemLayout)
+
                     alarmItem?.let { scheduler.cancel(it) }
-//                        TODO: Need to update layout as items are deleted
-//                    Update layout of remaining views
+
+                    //TODO: Need to update layout as items are deleted
+                    //Update layout of remaining views
+
                     for (i in 2 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
@@ -286,14 +292,12 @@ class AlarmActivity : AppCompatActivity() {
                     }
                 }
 
-
-
                 popupWindow.dismiss()
 
             }
         }
 
-    }
+    } // end of showPopup()
 
     private fun createAlarmStorage() {
         val alarmStorage = File(this.filesDir, "alarmStorage.txt")
@@ -308,44 +312,15 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun writeAlarmStorage() {
-        val alarmStorage = File(this.filesDir, "alarmStorage.txt")
-        val alarmStorageExists = alarmStorage.exists()
+    //saves created alarms to alarmStorage.txt
 
-        if (alarmStorageExists) {
-            Log.w(TAG, "Can write to file: Exists")
-
-//            storageFile.bufferedWriter().use { writer ->
-//                alarmItem.forEach { alarmItem ->
-//                    writer.write("${alarmItem.time},${alarmItem.message},${alarmItem.isEnabled}\n")
-//                }
-//            }
-
-//            val inputStream: InputStream = alarmStorage.inputStream()
-//
-//            val outputText = inputStream.bufferedReader().use {
-//                it.readText()
-//            }
-//
-//            //writes to the file
-//            val outputStream: OutputStream = alarmStorage.outputStream()
-
-//            if (outputText == "true") {
-//                val inputText = "false"
-//                outputStream.write(inputText.toByteArray())
-//                outputStream.close()
-//                Log.d(TAG, "Outputtext was True, now False.")
-//            }
-//            if (outputText == "false") {
-//                val inputText = "true"
-//                outputStream.write(inputText.toByteArray())
-//                outputStream.close()
-//                Log.d(TAG, "Outputtext was False, now True.")
-//
-//            }
-        } else {
-            Log.w(TAG, "Can't write to file: Doesn't exist")
-        }
+    private fun saveAlarms(alarms: List<AlarmItem>, context: Context) {
+        val fileName = "alarmStorage.txt"
+        val fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+        val objectOutputStream = ObjectOutputStream(fileOutputStream)
+        objectOutputStream.writeObject(alarms)
+        objectOutputStream.close()
+        Log.w(TAG, "saveAlarms called")
     }
 
     companion object {
