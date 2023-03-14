@@ -217,11 +217,20 @@ class AlarmActivity : AppCompatActivity() {
                 )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-                val parentRight = 350
-                val parentLeft = 100
-                val parentTop = 200
-                val parentBottom = 2200
-                val marginIncrement = 400
+//                val parentRight = 350
+//                val parentLeft = 100
+//                val parentTop = 200
+//                val parentBottom = 2200
+//                val marginIncrement = 400
+//                The following method displays the alarm right
+                val context: Context = this
+                val parentRight = context.dpToPx(120)
+                val parentLeft = context.dpToPx(25)
+                val parentTop = context.dpToPx(100)
+                val parentBottom = context.dpToPx(600)
+                val marginIncrement = context.dpToPx(100)
+
+
 
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -291,7 +300,7 @@ class AlarmActivity : AppCompatActivity() {
                             val remainingChildCount = childCount - i + 1
 
                             adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
-                            adjustedParams.bottomMargin = 2400 - adjustedParams.topMargin
+                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
                         }
                         child.layoutParams = adjustedParams
                     }
@@ -336,5 +345,19 @@ class AlarmActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "AlarmActivity"
+    }
+    fun Context.dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
+    }
+    fun Context.pxToDp(px: Int): Int {
+        val density = resources.displayMetrics.density
+        return (px / density).toInt()
+    }
+    fun View.dpToPx(dp: Int): Int {
+        return context.dpToPx(dp)
+    }
+    fun View.pxToDp(px: Int): Int {
+        return context.pxToDp(px)
     }
 }
