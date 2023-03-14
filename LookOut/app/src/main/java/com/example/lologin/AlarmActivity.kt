@@ -352,7 +352,7 @@ class AlarmActivity : AppCompatActivity() {
 
         //Everything above here works
 
-        if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59) {
+        if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
 //          AMPMCHECK
 //                if (isPm && hours!! < 12) {
 //                    hours = hours!! + 12
