@@ -364,18 +364,14 @@ class AlarmActivity : AppCompatActivity() {
 //                }
 
             val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
-            val dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
+            var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
 
             // Calculate the time difference between the current time and the time for the alarm //
             val currentTime = LocalDateTime.now()
-            val duration = Duration.between(currentTime, dateTimeForAlarm)
 
-            // If the duration is negative, it means the alarm time has already passed today //
-            // so we need to schedule it for tomorrow instead
-            val delayMillis = if (duration.isNegative) {
-                duration.plusDays(1).toMillis()
-            } else {
-                duration.toMillis()
+            if (dateTimeForAlarm.isBefore(currentTime)) {
+                Log.d(TAG, "Duration is negative, adding 1 day for alarm")
+                dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
             }
 
             //Default message to fix issues with AlarmItem
