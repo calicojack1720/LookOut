@@ -517,10 +517,10 @@ class AlarmActivity : AppCompatActivity() {
         val density = resources.displayMetrics.density
         return (px / density).toInt()
     }
-    fun View.dpToPx(dp: Int): Int {
-        return context.dpToPx(dp)
-    }
-    fun View.pxToDp(px: Int): Int {
-        return context.pxToDp(px)
-    }
+//    fun View.dpToPx(dp: Int): Int {
+//        return context.dpToPx(dp)
+//    }
+//    fun View.pxToDp(px: Int): Int {
+//        return context.pxToDp(px)
+//    }
 }
