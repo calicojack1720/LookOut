@@ -174,7 +174,15 @@ class AlarmActivity : AppCompatActivity() {
 //            UserInput of AlarmTime into Layout
                 var textViewString = ""
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-                if ((hours >= 0 && hours <= 9) && (minutes >= 0 && minutes <= 9)) {
+                if ((hours in 0..9) && (minutes > 9)) {
+                    textViewString = "0$hours:$minutes"
+                    timeTextView.text = textViewString
+                }
+                else if (hours > 9 && (minutes in 0..9)) {
+                    textViewString = "$hours:0$minutes"
+                    timeTextView.text = textViewString
+                }
+                else if ((hours in 0..9) && (minutes in 0..9)) {
                     textViewString = "0$hours:0$minutes"
                     timeTextView.text = textViewString
                 }
