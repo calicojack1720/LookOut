@@ -216,7 +216,6 @@ class AlarmActivity : AppCompatActivity() {
                 val marginIncrement = context.dpToPx(100)
 
 
-
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
@@ -421,11 +420,12 @@ class AlarmActivity : AppCompatActivity() {
             )
             Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-            val parentRight = 350
-            val parentLeft = 100
-            val parentTop = 200
-            val parentBottom = 2200
-            val marginIncrement = 400
+            val context: Context = this
+            val parentRight = context.dpToPx(120)
+            val parentLeft = context.dpToPx(25)
+            val parentTop = context.dpToPx(100)
+            val parentBottom = context.dpToPx(600)
+            val marginIncrement = context.dpToPx(100)
 
             if (activityAlarmLayout.childCount <= 2) {
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -481,6 +481,7 @@ class AlarmActivity : AppCompatActivity() {
             deletionButton.setOnClickListener {
                 val parentView = alarmItemLayout.parent as ViewGroup
                 parentView.removeView(alarmItemLayout)
+                deleteAlarms()
 
                 alarmItem?.let { scheduler.cancel(it) }
 
@@ -506,6 +507,16 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteAlarms() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        editor.clear()
+        editor.apply()
+
+        Log.d(TAG, "Deleted all alarms")
+    }
+
     companion object {
         const val TAG = "AlarmActivity"
     }
@@ -517,10 +528,5 @@ class AlarmActivity : AppCompatActivity() {
         val density = resources.displayMetrics.density
         return (px / density).toInt()
     }
-//    fun View.dpToPx(dp: Int): Int {
-//        return context.dpToPx(dp)
-//    }
-//    fun View.pxToDp(px: Int): Int {
-//        return context.pxToDp(px)
-//    }
+
 }
