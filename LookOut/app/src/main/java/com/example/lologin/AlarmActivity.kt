@@ -85,7 +85,13 @@ class AlarmActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
-                    0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
+                    //0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
+                    0 -> Toast.makeText(
+                        applicationContext,
+                        "Timer Page is under Construction.",
+                        Toast.LENGTH_LONG
+                    ).show()
+
 
                     //Here for TimerActivity page
                     //1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
