@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_alarms"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,23 +16,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/alarms"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:color="@color/black"
-            android:text="@string/alarms"
-            tools:layout_editor_absoluteX="-2dp"
-            tools:layout_editor_absoluteY="825dp" />
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/alarms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:color="@color/black"
+                android:text="@string/alarms"
+                tools:layout_editor_absoluteX="-2dp"
+                tools:layout_editor_absoluteY="825dp" />
 
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/timers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/timers"
-            tools:layout_editor_absoluteX="201dp"
-            tools:layout_editor_absoluteY="821dp" />
-    </com.google.android.material.tabs.TabLayout>
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/timers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/timers"
+                tools:layout_editor_absoluteX="201dp"
+                tools:layout_editor_absoluteY="821dp" />
+        </com.google.android.material.tabs.TabLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addalarm"
@@ -41,12 +42,11 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:contentDescription="@string/new_alarm"
+        android:focusable="true"
         app:backgroundTint="@color/button_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:focusable="true"
-        android:onClick="onAddAlarmButtonClick"/>
+        app:srcCompat="@android:drawable/ic_input_add" />
 
     <Button
         android:id="@+id/logout"

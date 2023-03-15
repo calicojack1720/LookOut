@@ -75,6 +75,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
             }  else {
                 createAccount(email, password)
+                writeLoginSkipCheck()
             }
         }
 
@@ -103,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if(currentUser != null){
-            Log.d(TAG, "currentuser:notnull")
+            Log.d(TAG, "currentuser:LoggedIn")
             reload()
             getUserProfile() }
         else {
@@ -139,6 +140,7 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
                     updateUiWithUser()
+                    writeLoginSkipCheck()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
