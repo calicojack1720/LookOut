@@ -14,6 +14,11 @@ import com.google.android.material.tabs.TabLayout
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,13 +29,30 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import android.util.Log
-import java.io.File
+import com.google.firebase.auth.FirebaseAuth
 
 var numAlarm = -1
+
+private lateinit var auth: FirebaseAuth
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alarms)
+
+        //initialize Firebase
+        auth = Firebase.auth
+
+        val logOutButton = findViewById<Button>(R.id.logout)
+        //On Click of the logOutButton
+        logOutButton.setOnClickListener {
+            Firebase.auth.signOut()
+            Log.d(TAG, "User Signed out")
+            //when user signs out, change LoginSkipCheck to false
+            writeLoginSkipCheck()
+
+            //switch to Login Activity
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         //Creates Alarm Storage File
         createAlarmStorage()
@@ -93,6 +115,38 @@ class AlarmActivity : AppCompatActivity() {
         addAlarmButton.setOnClickListener { showPopup() }
 
 
+    }
+
+    //Writes to LoginSkipCheck
+    private fun writeLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(LoginActivity.TAG, "writeLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //writes to the file
+            val outputStream: OutputStream = loginSkipCheck.outputStream()
+            if (outputText == "true") {
+                val inputText = "false"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was True, now False.")
+            }
+            if (outputText == "false") {
+                val inputText = "true"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was False, now True.")
+            } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
+                Log.d(LoginActivity.TAG, "writeLoginSkipCheck file doesn't exist")
+            }
+
+        }
     }
 
     private fun showPopup() {
@@ -216,7 +270,7 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
-                if (activityAlarmLayout.childCount <= 2) {
+                if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.topMargin = parentTop
@@ -244,12 +298,12 @@ class AlarmActivity : AppCompatActivity() {
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
                     numAlarm += 1
 
-                } else if (activityAlarmLayout.childCount <= 6) {
+                } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
-                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
-                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -342,15 +396,15 @@ class AlarmActivity : AppCompatActivity() {
                     //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
 
-                    for (i in 2 until parentView.childCount) {
+                    for (i in 3 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-                        if (i == 2) {
+                        if (i == 3) {
                             adjustedParams.topMargin = parentTop
                             adjustedParams.bottomMargin = parentBottom
                         }
                         else {
-                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
+                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
                             adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
                         }
                         child.layoutParams = adjustedParams
@@ -505,7 +559,7 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
-                if (activityAlarmLayout.childCount <= 2) {
+                if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.topMargin = parentTop
@@ -520,14 +574,14 @@ class AlarmActivity : AppCompatActivity() {
                         //Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     }
 
-                } else if (activityAlarmLayout.childCount <= 6) {
+                } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
                     params.leftMargin = parentLeft
                     params.rightMargin = parentRight
                     params.topMargin =
-                        parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                        parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
                     params.bottomMargin =
-                        parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                        parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
 
                     alarmItemLayout.layoutParams = params
                     activityAlarmLayout.addView(alarmItemLayout)
@@ -605,15 +659,15 @@ class AlarmActivity : AppCompatActivity() {
                     //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
 
-                    for (i in 2 until parentView.childCount) {
+                    for (i in 3 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
                         val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-                        if (i == 2) {
+                        if (i == 3) {
                             adjustedParams.topMargin = parentTop
                             adjustedParams.bottomMargin = parentBottom
                         }
                         else {
-                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
+                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
                             adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
                         }
                         child.layoutParams = adjustedParams

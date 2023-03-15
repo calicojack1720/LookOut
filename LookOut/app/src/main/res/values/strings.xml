@@ -2,8 +2,8 @@
     <string name="app_name">LookOut!</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_password">Password (6+ Characters)</string>
+    <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -13,4 +13,5 @@
     <string name="timers">Timers</string>
     <string name="skip_login">Or, Skip Login Here</string>
     <string name="new_alarm">New Alarm</string>
+    <string name="forgot_password">Forgot Password</string>
 </resources>
