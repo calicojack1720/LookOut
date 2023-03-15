@@ -18,20 +18,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.*
 import android.content.SharedPreferences
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
-import java.time.*
 import android.util.Log
 import java.io.File
 
-//creates a list of AlarmItem
-private var alarms = listOf<AlarmItem>()
-
+var numAlarm = -1
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,6 +214,7 @@ class AlarmActivity : AppCompatActivity() {
                 val parentBottom = context.dpToPx(600)
                 val marginIncrement = context.dpToPx(100)
 
+                var arrayIndex = 0
 
                 if (activityAlarmLayout.childCount <= 2) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -232,8 +228,21 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
+                    when (params.bottomMargin) {
+                        2100 -> arrayIndex = 0
+                        1750 -> arrayIndex = 1
+                        1400 -> arrayIndex = 2
+                        1050 -> arrayIndex = 3
+                        700 -> arrayIndex = 4
+                        else -> { // Note the block
+                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                        }
+                    }
+
+                    Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     //passes through hours, minutes, name, and enabled state to saveAlarms
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled)
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
+                    numAlarm += 1
 
                 } else if (activityAlarmLayout.childCount <= 6) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -246,7 +255,21 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled)
+                    when (params.bottomMargin) {
+                        2100 -> arrayIndex = 0
+                        1750 -> arrayIndex = 1
+                        1400 -> arrayIndex = 2
+                        1050 -> arrayIndex = 3
+                        700 -> arrayIndex = 4
+                        else -> { // Note the block
+                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                        }
+                    }
+
+                    Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
+
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
+                    numAlarm += 1
 
                 } else {
                     Toast.makeText(
@@ -260,11 +283,35 @@ class AlarmActivity : AppCompatActivity() {
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
-                        saveAlarms(hours, minutes, name, false)
+
+                        when (params.bottomMargin) {
+                            2100 -> arrayIndex = 0
+                            1750 -> arrayIndex = 1
+                            1400 -> arrayIndex = 2
+                            1050 -> arrayIndex = 3
+                            700 -> arrayIndex = 4
+                            else -> { // Note the block
+                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                            }
+                        }
+
+                        saveAlarms(hours, minutes, name, false, arrayIndex)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
-                        saveAlarms(hours, minutes, name, true)
+
+                        when (params.bottomMargin) {
+                            2100 -> arrayIndex = 0
+                            1750 -> arrayIndex = 1
+                            1400 -> arrayIndex = 2
+                            1050 -> arrayIndex = 3
+                            700 -> arrayIndex = 4
+                            else -> { // Note the block
+                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                            }
+                        }
+
+                        saveAlarms(hours, minutes, name, true, arrayIndex)
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -273,10 +320,24 @@ class AlarmActivity : AppCompatActivity() {
                 val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
                 //On Click of Delete Button
                 deletionButton.setOnClickListener {
+
+                    when (params.bottomMargin) {
+                        2100 -> arrayIndex = 0
+                        1750 -> arrayIndex = 1
+                        1400 -> arrayIndex = 2
+                        1050 -> arrayIndex = 3
+                        700 -> arrayIndex = 4
+                        else -> { // Note the block
+                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                        }
+                    }
+
                     val parentView = alarmItemLayout.parent as ViewGroup
                     parentView.removeView(alarmItemLayout)
 
                     alarmItem?.let { scheduler.cancel(it) }
+
+                    deleteAlarms(arrayIndex)
 
                     //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
@@ -323,16 +384,18 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     //Saves created alarms to using
-    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean) {
+    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+
         editor.apply() {
-            putString("ALARM_NAME", name)
-            putBoolean("IS_ENABLED", isEnabled)
-            putInt("HOURS", hours ?: 0)
-            putInt("MINUTES", minutes ?: 0)
+            putString("ALARM_NAME_$alarmIndex", name)
+            putBoolean("IS_ENABLED_$alarmIndex", isEnabled)
+            putInt("HOURS_$alarmIndex", hours ?: 0)
+            putInt("MINUTES_$alarmIndex", minutes ?: 0)
         }.apply()
-        Log.d(TAG, "Saved Alarm")
+        Log.d(TAG, "Saved Alarm $alarmIndex")
     }
 
     private fun loadAlarms() {
@@ -342,20 +405,27 @@ class AlarmActivity : AppCompatActivity() {
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
 
-        //Setting default values
-        val savedName: String? = sharedPreferences.getString("ALARM_NAME", null)
-        val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED", false)
-        val savedHours: Int? = sharedPreferences.getInt("HOURS", 0)
-        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES", 0)
+        for (i in 0 until 5) {
 
-        Log.d(TAG, "Saved name: $savedName")
-        Log.d(TAG, "Saved boolean: $savedBoolean")
-        Log.d(TAG, "Saved hours: $savedHours")
-        Log.d(TAG, "Saved minutes: $savedMinutes")
+            //Setting default values
+            val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
+            val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
+            val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
 
-        //Everything above here works
+            Log.d(TAG, "Alarm: $i")
+            Log.d(TAG, "Saved name: $savedName")
+            Log.d(TAG, "Saved boolean: $savedBoolean")
+            Log.d(TAG, "Saved hours: $savedHours")
+            Log.d(TAG, "Saved minutes: $savedMinutes")
 
-        if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
+            if (savedName != null) {
+                numAlarm += 1
+            }
+
+            //Everything above here works
+
+            if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
 //          AMPMCHECK
 //                if (isPm && hours!! < 12) {
 //                    hours = hours!! + 12
@@ -363,167 +433,262 @@ class AlarmActivity : AppCompatActivity() {
 //                    hours = 0
 //                }
 
-            val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
-            var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
+                val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
+                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
 
-            // Calculate the time difference between the current time and the time for the alarm //
-            val currentTime = LocalDateTime.now()
+                // Calculate the time difference between the current time and the time for the alarm //
+                val currentTime = LocalDateTime.now()
 
-            if (dateTimeForAlarm.isBefore(currentTime)) {
-                Log.d(TAG, "Duration is negative, adding 1 day for alarm")
-                dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
-            }
+                if (dateTimeForAlarm.isBefore(currentTime)) {
+                    Log.d(TAG, "Duration is negative, adding 1 day for alarm")
+                    dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
+                }
 
-            //Default message to fix issues with AlarmItem
-            val name = savedName ?: "Default message"
+                //Default message to fix issues with AlarmItem
+                val name = savedName ?: "Default message"
 
-            alarmItem = AlarmItem(
-                time = dateTimeForAlarm,
-                message = name,
-                isEnabled = savedBoolean
-            )
+                alarmItem = AlarmItem(
+                    time = dateTimeForAlarm,
+                    message = name,
+                    isEnabled = savedBoolean
+                )
 
-            //Inflate the Layout file
-            val activityAlarmLayout: ViewGroup =
-                findViewById(R.id.activity_alarms) //Was ViewGroup
-            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val alarmItemLayout =
-                inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
+                //Inflate the Layout file
+                val activityAlarmLayout: ViewGroup =
+                    findViewById(R.id.activity_alarms) //Was ViewGroup
+                val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val alarmItemLayout =
+                    inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
 
 //            UserInput of AlarmTime into Layout
-            var textViewString = ""
-            val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-            if ((savedHours in 0..9) && (savedMinutes > 9)) {
-                textViewString = "0$savedHours:$savedMinutes"
-                timeTextView.text = textViewString
-            }
-            else if ((savedHours > 9) && (savedMinutes in 0..9)) {
-                textViewString = "$savedHours:0$savedMinutes"
-                timeTextView.text = textViewString
-            }
-            else if ((savedHours in 0..9) && (savedMinutes in 0..9)) {
-                textViewString = "0$savedHours:0$savedMinutes"
-                timeTextView.text = textViewString
-            } else {
-                textViewString = "$savedHours:$savedMinutes"
-                timeTextView.text = textViewString
-            }
+                var textViewString = ""
+                val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
+                if ((savedHours in 0..9) && (savedMinutes > 9)) {
+                    textViewString = "0$savedHours:$savedMinutes"
+                    timeTextView.text = textViewString
+                } else if ((savedHours > 9) && (savedMinutes in 0..9)) {
+                    textViewString = "$savedHours:0$savedMinutes"
+                    timeTextView.text = textViewString
+                } else if ((savedHours in 0..9) && (savedMinutes in 0..9)) {
+                    textViewString = "0$savedHours:0$savedMinutes"
+                    timeTextView.text = textViewString
+                } else {
+                    textViewString = "$savedHours:$savedMinutes"
+                    timeTextView.text = textViewString
+                }
 
 //            UserInput of AlarmName into Layout
-            val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
-            textViewString = name
-            nameTextView.text = textViewString
+                val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
+                textViewString = name
+                nameTextView.text = textViewString
 
 //            Enable the toggle switch
-            val toggleSwitch = alarmItemLayout.findViewById<Switch>(R.id.toggle_switch)
-            toggleSwitch.isChecked = savedBoolean
-            toggleSwitch.isEnabled = true
+                val toggleSwitch = alarmItemLayout.findViewById<Switch>(R.id.toggle_switch)
+                toggleSwitch.isChecked = savedBoolean
+                toggleSwitch.isEnabled = true
 
 
 //            Set the Parameters for the new Layout
 
-            val params = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
-                ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
-            )
-            Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+                val params = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
+                    ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
+                )
+                //Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-            val context: Context = this
-            val parentRight = context.dpToPx(120)
-            val parentLeft = context.dpToPx(25)
-            val parentTop = context.dpToPx(100)
-            val parentBottom = context.dpToPx(600)
-            val marginIncrement = context.dpToPx(100)
+                val context: Context = this
+                val parentRight = context.dpToPx(120)
+                val parentLeft = context.dpToPx(25)
+                val parentTop = context.dpToPx(100)
+                val parentBottom = context.dpToPx(600)
+                val marginIncrement = context.dpToPx(100)
 
-            if (activityAlarmLayout.childCount <= 2) {
-                Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                params.leftMargin = parentLeft
-                params.topMargin = parentTop
-                params.rightMargin = parentRight
-                params.bottomMargin = parentBottom
+                var arrayIndex = 0
 
-                alarmItemLayout.layoutParams = params // set the params on the view
+                if (activityAlarmLayout.childCount <= 2) {
+                    Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+                    params.leftMargin = parentLeft
+                    params.topMargin = parentTop
+                    params.rightMargin = parentRight
+                    params.bottomMargin = parentBottom
 
-                activityAlarmLayout.addView(alarmItemLayout)
-                if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
-                    alarmItem?.let(scheduler::schedule)
-                }
-            } else if (activityAlarmLayout.childCount <= 6) {
-                Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                params.leftMargin = parentLeft
-                params.rightMargin = parentRight
-                params.topMargin =
-                    parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
-                params.bottomMargin =
-                    parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    alarmItemLayout.layoutParams = params // set the params on the view
 
-                alarmItemLayout.layoutParams = params
-                activityAlarmLayout.addView(alarmItemLayout)
-                if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
-                    alarmItem?.let(scheduler::schedule)
-                }
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Maximum Alarm Number has been reached.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+                    activityAlarmLayout.addView(alarmItemLayout)
+                    if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
+                        alarmItem?.let(scheduler::schedule)
+                        //Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
+                    }
 
-            //checks to see if Alarm is Enabled/Disabled
-            toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (!isChecked) {
-                    alarmItem?.let { scheduler.cancel(it) }
-                    saveAlarms(savedHours, savedMinutes, name, false)//
-                    Log.d(TAG, "Alarm Cancelled")
+                } else if (activityAlarmLayout.childCount <= 6) {
+                    Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+                    params.leftMargin = parentLeft
+                    params.rightMargin = parentRight
+                    params.topMargin =
+                        parentTop + ((activityAlarmLayout.childCount - 2) * marginIncrement)
+                    params.bottomMargin =
+                        parentBottom - ((activityAlarmLayout.childCount - 2) * marginIncrement)
+
+                    alarmItemLayout.layoutParams = params
+                    activityAlarmLayout.addView(alarmItemLayout)
+                    if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
+                        alarmItem?.let(scheduler::schedule)
+                        //Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
+                    }
                 } else {
-                    alarmItem?.let(scheduler::schedule)
-                    saveAlarms(savedHours, savedMinutes, name, true)//
-                    Log.d(TAG, "Alarm Enable")
+                    Toast.makeText(
+                        applicationContext,
+                        "Maximum Alarm Number has been reached.",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
-            }
-            //Deletion Button
-            val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
-            //On Click of Delete Button
-            deletionButton.setOnClickListener {
-                val parentView = alarmItemLayout.parent as ViewGroup
-                parentView.removeView(alarmItemLayout)
-                deleteAlarms()
+                //checks to see if Alarm is Enabled/Disabled
+                toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (!isChecked) {
+                        alarmItem?.let { scheduler.cancel(it) }
 
-                alarmItem?.let { scheduler.cancel(it) }
+                        when (params.bottomMargin) {
+                            2100 -> arrayIndex = 0
+                            1750 -> arrayIndex = 1
+                            1400 -> arrayIndex = 2
+                            1050 -> arrayIndex = 3
+                            700 -> arrayIndex = 4
+                            else -> { // Note the block
+                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                            }
+                        }
+                        Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
-                //TODO: Need to update layout as items are deleted
+                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex)//
+                        Log.d(TAG, "Alarm Cancelled")
+                    } else {
+                        alarmItem?.let(scheduler::schedule)
+
+                        when (params.bottomMargin) {
+                            2100 -> arrayIndex = 0
+                            1750 -> arrayIndex = 1
+                            1400 -> arrayIndex = 2
+                            1050 -> arrayIndex = 3
+                            700 -> arrayIndex = 4
+                            else -> { // Note the block
+                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                            }
+                        }
+                        Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
+                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex)//
+                        Log.d(TAG, "Alarm Enable")
+                    }
+
+                }
+                //Deletion Button
+                val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+                //On Click of Delete Button
+                deletionButton.setOnClickListener {
+                    when (params.bottomMargin) {
+                        2100 -> arrayIndex = 0
+                        1750 -> arrayIndex = 1
+                        1400 -> arrayIndex = 2
+                        1050 -> arrayIndex = 3
+                        700 -> arrayIndex = 4
+                        else -> { // Note the block
+                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+                        }
+                    }
+                    val parentView = alarmItemLayout.parent as ViewGroup
+                    parentView.removeView(alarmItemLayout)
+
+                    deleteAlarms(arrayIndex)
+
+                    alarmItem?.let { scheduler.cancel(it) }
+
+                    //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
 
-                for (i in 2 until parentView.childCount) {
-                    val child = parentView.getChildAt(i)
-                    val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-                    if (i == 2) {
-                        adjustedParams.topMargin = parentTop
-                        adjustedParams.bottomMargin = parentBottom
-                    } else {
-                        adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
-                        adjustedParams.bottomMargin = 2400 - adjustedParams.topMargin
+                    for (i in 2 until parentView.childCount) {
+                        val child = parentView.getChildAt(i)
+                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+                        if (i == 2) {
+                            adjustedParams.topMargin = parentTop
+                            adjustedParams.bottomMargin = parentBottom
+                        }
+                        else {
+                            adjustedParams.topMargin = parentTop + ((i - 2) * marginIncrement)
+                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
+                        }
+                        child.layoutParams = adjustedParams
                     }
-                    child.layoutParams = adjustedParams
-                }
 
 //                    End of For Layout Adjustment
 
+                }
             }
         }
     }
 
-    private fun deleteAlarms() {
+    private fun deleteAlarms(alarmIndex: Int) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
-        editor.clear()
+        //testing
+        val savedName: String? = sharedPreferences.getString("ALARM_NAME_$alarmIndex", null)
+        val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$alarmIndex", false)
+        val savedHours: Int? = sharedPreferences.getInt("HOURS_$alarmIndex", 0)
+        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$alarmIndex", 0)
+
+        Log.d(TAG, "Removing Alarm: $alarmIndex")
+        Log.d(TAG, "Deleting Saved name: $savedName")
+        Log.d(TAG, "Deleting Saved boolean: $savedBoolean")
+        Log.d(TAG, "Deleting Saved hours: $savedHours")
+        Log.d(TAG, "Deleting Saved minutes: $savedMinutes")
+
+        // Shift the remaining alarms down by one index
+        for (i in (alarmIndex + 1)..4) {
+            Log.d(TAG, "$i")
+
+            //val deletedIndexes = parentView.childAt(i)
+
+            val newIndex = i - 1
+
+            val tempName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
+            val tempBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
+            val tempHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val tempMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+
+            Log.d(TAG, "Moving saved name: $tempName DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved boolean: $tempBoolean DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved hours: $tempHours DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved minutes: $tempMinutes DDDDDDDDDfrom $i to $newIndex")
+
+            if (tempName != null) {
+                saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex)
+            }
+
+//            if (alarmIndex == 0) {
+//                editor.remove("ALARM_NAME_$alarmIndex")
+//                editor.remove("IS_ENABLED_$alarmIndex")
+//                editor.remove("HOURS_$alarmIndex")
+//                editor.remove("MINUTES_$alarmIndex")
+//            }
+
+
+            Log.d(TAG, "Check for Last Index $i")
+        }
+
+        editor.remove("ALARM_NAME_$numAlarm")
+        editor.remove("IS_ENABLED_$numAlarm")
+        editor.remove("HOURS_$numAlarm")
+        editor.remove("MINUTES_$numAlarm")
+
+        numAlarm -= 1
+
+        //editor.clear()
+
         editor.apply()
 
-        Log.d(TAG, "Deleted all alarms")
+        Log.d(TAG, "Deleted Alarm $alarmIndex")
     }
+
 
     companion object {
         const val TAG = "AlarmActivity"
