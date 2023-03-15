@@ -22,14 +22,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class ScheduleAlarms {
+class ScheduleAlarmsNoNotificationsTest {
 
     @Rule
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun scheduleAlarms() {
+    fun scheduleAlarmsNoNotificationsTest() {
         val materialButton = onView(
             allOf(
                 withId(R.id.SkipLoginButton), withText("Or, Skip Login Here"),
@@ -50,13 +50,13 @@ class ScheduleAlarms {
 
         val materialButton2 = onView(
             allOf(
-                withId(android.R.id.button1), withText("Ok"),
+                withId(android.R.id.button2), withText("Cancel"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.ScrollView")),
                         0
                     ),
-                    3
+                    2
                 )
             )
         )
@@ -90,7 +90,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText.perform(replaceText("20"), closeSoftKeyboard())
+        appCompatEditText.perform(replaceText("1"), closeSoftKeyboard())
 
         val appCompatEditText2 = onView(
             allOf(
@@ -102,7 +102,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText2.perform(replaceText("25"), closeSoftKeyboard())
+        appCompatEditText2.perform(replaceText("1"), closeSoftKeyboard())
 
         val appCompatEditText3 = onView(
             allOf(
@@ -114,14 +114,14 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText3.perform(replaceText("fffff"), closeSoftKeyboard())
+        appCompatEditText3.perform(replaceText("Test2"), closeSoftKeyboard())
 
         val materialButton3 = onView(
             allOf(
-                withId(R.id.cancel_button), withText("Cancel"),
+                withId(R.id.submitbutton), withText("Add"),
                 childAtPosition(
                     withClassName(`is`("android.widget.RelativeLayout")),
-                    3
+                    4
                 ),
                 isDisplayed()
             )
@@ -156,7 +156,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText4.perform(replaceText("12"), closeSoftKeyboard())
+        appCompatEditText4.perform(replaceText("11"), closeSoftKeyboard())
 
         val appCompatEditText5 = onView(
             allOf(
@@ -168,31 +168,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText5.perform(replaceText("27"), closeSoftKeyboard())
-
-        val appCompatEditText6 = onView(
-            allOf(
-                withId(R.id.name_text_box),
-                childAtPosition(
-                    withClassName(`is`("android.widget.RelativeLayout")),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText6.perform(replaceText("Test"), closeSoftKeyboard())
-
-        val appCompatEditText7 = onView(
-            allOf(
-                withId(R.id.name_text_box), withText("Test"),
-                childAtPosition(
-                    withClassName(`is`("android.widget.RelativeLayout")),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText7.perform(pressImeActionButton())
+        appCompatEditText5.perform(replaceText("1"), closeSoftKeyboard())
 
         val materialButton4 = onView(
             allOf(
@@ -224,7 +200,7 @@ class ScheduleAlarms {
         )
         floatingActionButton3.perform(click())
 
-        val appCompatEditText8 = onView(
+        val appCompatEditText6 = onView(
             allOf(
                 withId(R.id.hours),
                 childAtPosition(
@@ -234,9 +210,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText8.perform(replaceText("12"), closeSoftKeyboard())
+        appCompatEditText6.perform(replaceText("19"), closeSoftKeyboard())
 
-        val appCompatEditText9 = onView(
+        val appCompatEditText7 = onView(
             allOf(
                 withId(R.id.minutes),
                 childAtPosition(
@@ -246,9 +222,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText9.perform(replaceText("28"), closeSoftKeyboard())
+        appCompatEditText7.perform(replaceText("19"), closeSoftKeyboard())
 
-        val appCompatEditText10 = onView(
+        val appCompatEditText8 = onView(
             allOf(
                 withId(R.id.name_text_box),
                 childAtPosition(
@@ -258,7 +234,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText10.perform(replaceText("Test2"), closeSoftKeyboard())
+        appCompatEditText8.perform(replaceText("fafasf"), closeSoftKeyboard())
 
         val materialButton5 = onView(
             allOf(
@@ -290,7 +266,7 @@ class ScheduleAlarms {
         )
         floatingActionButton4.perform(click())
 
-        val appCompatEditText11 = onView(
+        val appCompatEditText9 = onView(
             allOf(
                 withId(R.id.hours),
                 childAtPosition(
@@ -300,9 +276,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText11.perform(replaceText("9"), closeSoftKeyboard())
+        appCompatEditText9.perform(replaceText("9999"), closeSoftKeyboard())
 
-        val appCompatEditText12 = onView(
+        val appCompatEditText10 = onView(
             allOf(
                 withId(R.id.minutes),
                 childAtPosition(
@@ -312,19 +288,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText12.perform(replaceText("999"), closeSoftKeyboard())
-
-        val appCompatEditText13 = onView(
-            allOf(
-                withId(R.id.name_text_box),
-                childAtPosition(
-                    withClassName(`is`("android.widget.RelativeLayout")),
-                    2
-                ),
-                isDisplayed()
-            )
-        )
-        appCompatEditText13.perform(replaceText("asfasfasfafasfafs"), closeSoftKeyboard())
+        appCompatEditText10.perform(replaceText("999999"), closeSoftKeyboard())
 
         val materialButton6 = onView(
             allOf(
@@ -338,7 +302,223 @@ class ScheduleAlarms {
         )
         materialButton6.perform(click())
 
+        val appCompatEditText11 = onView(
+            allOf(
+                withId(R.id.hours), withText("9999"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText11.perform(replaceText(""))
+
+        val appCompatEditText12 = onView(
+            allOf(
+                withId(R.id.hours),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText12.perform(closeSoftKeyboard())
+
+        val appCompatEditText13 = onView(
+            allOf(
+                withId(R.id.minutes), withText("999999"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText13.perform(replaceText("99"))
+
+        val appCompatEditText14 = onView(
+            allOf(
+                withId(R.id.minutes), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText14.perform(closeSoftKeyboard())
+
+        val appCompatEditText15 = onView(
+            allOf(
+                withId(R.id.minutes), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText15.perform(click())
+
+        val appCompatEditText16 = onView(
+            allOf(
+                withId(R.id.minutes), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText16.perform(replaceText(""))
+
+        val appCompatEditText17 = onView(
+            allOf(
+                withId(R.id.minutes),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText17.perform(closeSoftKeyboard())
+
+        val appCompatEditText18 = onView(
+            allOf(
+                withId(R.id.hours),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText18.perform(replaceText("15"), closeSoftKeyboard())
+
+        val appCompatEditText19 = onView(
+            allOf(
+                withId(R.id.minutes),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText19.perform(replaceText("30"), closeSoftKeyboard())
+
+        val appCompatEditText20 = onView(
+            allOf(
+                withId(R.id.minutes), withText("30"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText20.perform(click())
+
+        val appCompatEditText21 = onView(
+            allOf(
+                withId(R.id.minutes), withText("30"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText21.perform(replaceText("99"))
+
+        val appCompatEditText22 = onView(
+            allOf(
+                withId(R.id.minutes), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText22.perform(closeSoftKeyboard())
+
         val materialButton7 = onView(
+            allOf(
+                withId(R.id.submitbutton), withText("Add"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    4
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton7.perform(click())
+
+        val appCompatEditText23 = onView(
+            allOf(
+                withId(R.id.hours), withText("15"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText23.perform(replaceText("99"))
+
+        val appCompatEditText24 = onView(
+            allOf(
+                withId(R.id.hours), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText24.perform(closeSoftKeyboard())
+
+        val appCompatEditText25 = onView(
+            allOf(
+                withId(R.id.minutes), withText("99"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText25.perform(replaceText("15"))
+
+        val appCompatEditText26 = onView(
+            allOf(
+                withId(R.id.minutes), withText("15"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText26.perform(closeSoftKeyboard())
+
+        val materialButton8 = onView(
+            allOf(
+                withId(R.id.submitbutton), withText("Add"),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    4
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton8.perform(click())
+
+        val materialButton9 = onView(
             allOf(
                 withId(R.id.cancel_button), withText("Cancel"),
                 childAtPosition(
@@ -348,7 +528,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        materialButton7.perform(click())
+        materialButton9.perform(click())
 
         val floatingActionButton5 = onView(
             allOf(
@@ -368,7 +548,7 @@ class ScheduleAlarms {
         )
         floatingActionButton5.perform(click())
 
-        val appCompatEditText14 = onView(
+        val appCompatEditText27 = onView(
             allOf(
                 withId(R.id.hours),
                 childAtPosition(
@@ -378,9 +558,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText14.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText27.perform(replaceText("1"), closeSoftKeyboard())
 
-        val appCompatEditText15 = onView(
+        val appCompatEditText28 = onView(
             allOf(
                 withId(R.id.minutes),
                 childAtPosition(
@@ -390,9 +570,21 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText15.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText28.perform(replaceText("1"), closeSoftKeyboard())
 
-        val materialButton8 = onView(
+        val appCompatEditText29 = onView(
+            allOf(
+                withId(R.id.name_text_box),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText29.perform(replaceText("test2"), closeSoftKeyboard())
+
+        val materialButton10 = onView(
             allOf(
                 withId(R.id.submitbutton), withText("Add"),
                 childAtPosition(
@@ -402,7 +594,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        materialButton8.perform(click())
+        materialButton10.perform(click())
 
         val floatingActionButton6 = onView(
             allOf(
@@ -422,7 +614,7 @@ class ScheduleAlarms {
         )
         floatingActionButton6.perform(click())
 
-        val appCompatEditText16 = onView(
+        val appCompatEditText30 = onView(
             allOf(
                 withId(R.id.hours),
                 childAtPosition(
@@ -432,9 +624,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText16.perform(replaceText("12"), closeSoftKeyboard())
+        appCompatEditText30.perform(replaceText("1"), closeSoftKeyboard())
 
-        val appCompatEditText17 = onView(
+        val appCompatEditText31 = onView(
             allOf(
                 withId(R.id.minutes),
                 childAtPosition(
@@ -444,9 +636,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText17.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText31.perform(replaceText("1"), closeSoftKeyboard())
 
-        val appCompatEditText18 = onView(
+        val appCompatEditText32 = onView(
             allOf(
                 withId(R.id.name_text_box),
                 childAtPosition(
@@ -456,9 +648,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText18.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText32.perform(replaceText("test3"), closeSoftKeyboard())
 
-        val materialButton9 = onView(
+        val materialButton11 = onView(
             allOf(
                 withId(R.id.submitbutton), withText("Add"),
                 childAtPosition(
@@ -468,7 +660,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        materialButton9.perform(click())
+        materialButton11.perform(click())
 
         val floatingActionButton7 = onView(
             allOf(
@@ -488,7 +680,7 @@ class ScheduleAlarms {
         )
         floatingActionButton7.perform(click())
 
-        val appCompatEditText19 = onView(
+        val appCompatEditText33 = onView(
             allOf(
                 withId(R.id.hours),
                 childAtPosition(
@@ -498,9 +690,9 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText19.perform(replaceText("1"), closeSoftKeyboard())
+        appCompatEditText33.perform(replaceText("1"), closeSoftKeyboard())
 
-        val appCompatEditText20 = onView(
+        val appCompatEditText34 = onView(
             allOf(
                 withId(R.id.minutes),
                 childAtPosition(
@@ -510,9 +702,21 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        appCompatEditText20.perform(replaceText("12"), closeSoftKeyboard())
+        appCompatEditText34.perform(replaceText("1"), closeSoftKeyboard())
 
-        val materialButton10 = onView(
+        val appCompatEditText35 = onView(
+            allOf(
+                withId(R.id.name_text_box),
+                childAtPosition(
+                    withClassName(`is`("android.widget.RelativeLayout")),
+                    2
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText35.perform(replaceText("test4"), closeSoftKeyboard())
+
+        val materialButton12 = onView(
             allOf(
                 withId(R.id.submitbutton), withText("Add"),
                 childAtPosition(
@@ -522,7 +726,7 @@ class ScheduleAlarms {
                 isDisplayed()
             )
         )
-        materialButton10.perform(click())
+        materialButton12.perform(click())
     }
 
     private fun childAtPosition(
