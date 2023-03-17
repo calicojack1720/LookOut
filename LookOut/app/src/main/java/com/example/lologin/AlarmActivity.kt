@@ -94,7 +94,7 @@ class AlarmActivity : AppCompatActivity() {
 
 
                     //Here for TimerActivity page
-                    //1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
+                    1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
 
                     // Creates a text box telling the user the timer page isn't available.
                     1 -> Toast.makeText(
