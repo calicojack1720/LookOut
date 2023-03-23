@@ -155,7 +155,7 @@
             android:textSize="40sp" />
 
         <EditText
-            android:id="@+id/minutes2"
+            android:id="@+id/seconds"
             android:layout_width="93dp"
             android:layout_height="84dp"
             android:layout_alignParentTop="true"
