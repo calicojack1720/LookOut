@@ -6,8 +6,8 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="350dp"
-        android:layout_height="400dp"
+        android:layout_width="352dp"
+        android:layout_height="258dp"
         android:background="#62def8">
 
         <!--CODE BELOW COMMENTED OUT HAS NO USE-->
@@ -32,53 +32,6 @@
         <!--        android:textSize="25sp" />-->
 
 
-        <EditText
-            android:id="@+id/hours"
-            android:layout_width="93dp"
-            android:layout_height="84dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="69dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:hint="00"
-            android:inputType="number"
-            android:textSize="48sp" />
-
-        <EditText
-            android:id="@+id/minutes"
-            android:layout_width="93dp"
-            android:layout_height="84dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="66dp"
-            android:layout_marginEnd="126dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:hint="00"
-            android:inputType="number"
-            android:textSize="48sp" />
-
-        <EditText
-            android:id="@+id/name_text_box"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="240dp"
-            android:layout_marginEnd="100dp"
-            android:gravity="center_horizontal"
-            android:hint="Name"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:maxLines="1"
-            android:minHeight="48dp"
-            android:textAlignment="center"
-            android:textSize="16sp" />
-
         <!--    //Legacy Time Entry for debugging in case of bugs with new system-->
         <!--    <EditText-->
         <!--        android:id="@+id/time_entry"-->
@@ -96,15 +49,35 @@
         <!--        android:textAlignment="center"-->
         <!--        android:textSize="15sp" />-->
 
+        <EditText
+            android:id="@+id/name_text_box"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/preset_message"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="104dp"
+            android:gravity="center_horizontal"
+            android:hint="Name"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:minHeight="48dp"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="346dp"
+            android:layout_marginStart="49dp"
+            android:layout_marginTop="174dp"
             android:text="Cancel" />
+
 
         <Button
             android:id="@+id/submitbutton"
@@ -112,23 +85,11 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="346dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginTop="175dp"
+            android:layout_marginEnd="53dp"
             android:layout_marginBottom="12dp"
             android:color="@color/button_background"
             android:text="Add" />
-
-
-        <TextView
-            android:id="@+id/colon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="83dp"
-            android:layout_marginEnd="224dp"
-            android:text=":"
-            android:textSize="40sp" />
 
         <TextView
             android:id="@+id/preset_message"
@@ -142,31 +103,6 @@
             android:layout_marginEnd="43dp"
             android:text="Create a Timer Preset"
             android:textSize="25sp" />
-
-        <TextView
-            android:id="@+id/colon3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="87dp"
-            android:layout_marginEnd="112dp"
-            android:text=":"
-            android:textSize="40sp" />
-
-        <EditText
-            android:id="@+id/seconds"
-            android:layout_width="93dp"
-            android:layout_height="84dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="66dp"
-            android:layout_marginEnd="15dp"
-            android:ems="10"
-            android:gravity="center_horizontal"
-            android:hint="00"
-            android:inputType="number"
-            android:textSize="48sp" />
 
         <!--    <ToggleButton-->
         <!--        android:id="@+id/toggleAMPM"-->
