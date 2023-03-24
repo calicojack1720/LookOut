@@ -7,8 +7,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/timer_item"
-        android:layout_width="300dp"
-        android:layout_height="66dp"
+        android:layout_width="343dp"
+        android:layout_height="68dp"
         android:background="#D3888787"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,21 +20,21 @@
             android:id="@+id/existing_timer_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
+            android:layout_marginStart="56dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:text="00:00"
+            android:text="00:00:00"
             android:textSize="40sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.538" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/existing_timer_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:text="Timer Name"
             android:textSize="20sp"
@@ -45,14 +45,16 @@
 
         <TextView
             android:id="@+id/deletion_button"
-            android:layout_width="16dp"
-            android:layout_height="29dp"
-            android:layout_marginStart="6dp"
+            android:layout_width="37dp"
+            android:layout_height="65dp"
             android:clickable="true"
             android:text="X"
-            android:textSize="24sp"
+            android:textSize="50sp"
+            android:textColor="#F01111"
+            app:layout_constraintEnd_toStartOf="@+id/existing_timer_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

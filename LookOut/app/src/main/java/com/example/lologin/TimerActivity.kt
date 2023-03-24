@@ -1,7 +1,16 @@
+/* TimerActivity.kt
+   Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
+   Created by Michael Astfalk
+   Created: 3/17/2023
+   Updated: 3/24/2023
+ */
+
+
 package com.example.lologin
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.Button
 import android.widget.TextView
@@ -34,44 +43,55 @@ class TimerActivity : AppCompatActivity() {
         val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
         val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
 
+
+        }
+    }
+
+    /*Precondition: tView is the view of the timer page
+                    tHours is an integer value
+                    tMinutes is an integer value
+                    tSeconds is an integer value
+      Postcondition: formats the time in hours, minutes and seconds with a 0 in front of any single
+                     digits.
+     */
+    private fun TimerDisplay(tView: View, tHours: Int, tMinutes: Int, tSeconds: Int) {
         //Checking for valid timer values
-        if (timerHours != null && timerHours in 0..99 && timerMinutes != null && timerMinutes in 0..59 && timerSeconds != null && timerSeconds in 0..59) {
+        if (tHours != null && tHours in 0..99 && tMinutes != null && tMinutes in 0..59 && tSeconds != null && tSeconds in 0..59) {
             //UserInput of Timer Time into Layout
             var textViewString = ""
             //TODO: not sure what existing_alarm_time is supposed to be
-            val timeTextView = timerView.findViewById<TextView>(R.id.existing_alarm_time)
-            if ((timerHours in 0..9) && (timerMinutes > 9) && (timerSeconds > 9)) {
-                textViewString = "0$timerHours:$timerMinutes:$timerSeconds"
+            val timeTextView = tView.findViewById<TextView>(R.id.existing_alarm_time)
+            if ((tHours in 0..9) && (tMinutes > 9) && (tSeconds > 9)) {
+                textViewString = "0$tHours:$tMinutes:$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if((timerHours in 0..9) && (timerMinutes in 0..9) && (timerSeconds > 9)) {
-                textViewString = "0$timerHours:0$timerMinutes:$timerSeconds"
+            else if((tHours in 0..9) && (tMinutes in 0..9) && (tSeconds > 9)) {
+                textViewString = "0$tHours:0$tMinutes:$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if ((timerHours in 0..9) && (timerMinutes > 9) && (timerSeconds in 0..9)) {
-                textViewString = "0$timerHours:$timerMinutes:0$timerSeconds"
+            else if ((tHours in 0..9) && (tMinutes > 9) && (tSeconds in 0..9)) {
+                textViewString = "0$tHours:$tMinutes:0$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if ((timerHours > 9) && (timerMinutes in 0..9) && (timerSeconds > 9)) {
-                textViewString = "$timerHours:0$timerMinutes:$timerSeconds"
+            else if ((tHours > 9) && (tMinutes in 0..9) && (tSeconds > 9)) {
+                textViewString = "$tHours:0$tMinutes:$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if ((timerHours > 9) && (timerMinutes in 0..9) && (timerSeconds in 0..9)) {
-                textViewString = "$timerHours:0$timerMinutes:$timerSeconds"
+            else if ((tHours > 9) && (tMinutes in 0..9) && (tSeconds in 0..9)) {
+                textViewString = "$tHours:0$tMinutes:$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if ((timerHours > 9) && (timerMinutes > 9) && (timerSeconds in 0..9)) {
-                textViewString = "$timerHours:$timerMinutes:0$timerSeconds"
+            else if ((tHours > 9) && (tMinutes > 9) && (tSeconds in 0..9)) {
+                textViewString = "$tHours:$tMinutes:0$tSeconds"
                 timeTextView.text = textViewString
             }
-            else if ((timerHours in 0..9) && (timerMinutes in 0..9) && (timerSeconds in 0..9)) {
-                textViewString = "0$timerHours:0$timerMinutes:0$timerSeconds"
+            else if ((tHours in 0..9) && (tMinutes in 0..9) && (tSeconds in 0..9)) {
+                textViewString = "0$tHours:0$tMinutes:0$tSeconds"
                 timeTextView.text = textViewString
             }
             else {
-                textViewString = "$timerHours:$timerMinutes:$timerSeconds"
+                textViewString = "$tHours:$tMinutes:$tSeconds"
                 timeTextView.text = textViewString
             }
-        }
     }
 }
