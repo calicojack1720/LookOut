@@ -2,22 +2,23 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 3/24/2023
+   Updated: 3/25/2023
  */
 
 
 package com.example.lologin
 
-import androidx.appcompat.app.AppCompatActivity
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -47,10 +48,9 @@ class TimerActivity : AppCompatActivity() {
 
         val startTimerButton = activityTimerLayout.findViewById<Button>(R.id.StartTimer)  //start timer button
 
-        //create values to hold input time
-        val timerHours = inputTimerHours.text.toString().toIntOrNull()
-        val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
-        val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
+        val addTimerButton = activityTimerLayout.findViewById<FloatingActionButton>(R.id.addTimer)
+
+
 
         //call TimerDisplay to format entered time
         //TimerDisplay(timerView, timerHours, timerMinutes, timerSeconds)
@@ -58,9 +58,32 @@ class TimerActivity : AppCompatActivity() {
         //create a value for the start button
         val startTimer = activityTimerLayout.findViewById<Button>(R.id.StartTimer)
 
+
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
+            //if the start button is pressed again, stop the timer
+            startTimer.setOnClickListener {
+                //TODO: may need to move this to countDown so the actual timer can be stopped
+                startTimer.text = "Start"
+            }
+
+            //change timer text
             startTimer.text = "Stop"
+
+            //create values to hold input time
+            val timerHours = inputTimerHours.text.toString().toIntOrNull()
+            val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
+            val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
+
+            //start the timer
+            countDown(timerHours, timerMinutes, timerSeconds, inputTimerHours, inputTimerMinutes, inputTimerSeconds, startTimer)
+
+            //change timer text back to "Start"
+            startTimer.text = "Start"
+        }
+
+        addTimerButton.setOnClickListener {
+            showTimerPopup()
         }
     }
 
@@ -106,6 +129,53 @@ class TimerActivity : AppCompatActivity() {
         }
     }
 
+    /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
+       Postcondition: runs the timer given the hours, minutes, and seconds, playing an
+                      alarm sound once the timer is up
+     */
+    private fun countDown(tHours: Int?, tMinutes: Int?, tSeconds: Int?, iHours: EditText,
+                          iMinutes: EditText, iSeconds: EditText, sTimer: Button) {
+        var s = tSeconds
+        var m = tMinutes
+        var h = tHours
+
+        sTimer.setOnClickListener {
+            sTimer.text = "Start"
+            return@setOnClickListener
+        }
+
+        while(s != 0 && s!= null) {
+            //wait one second and then subtract one second
+            Thread.sleep(1000)
+            s -= 1
+
+            //check if there are any seconds
+            if(s == 0) {
+                //check if there are any minutes left, if there are set s to 60 and subtract one minute
+                if (m != 0 && m != null) {
+                    s = 60
+                    m -= 1
+
+                    //check if there are any minutes left
+                    if(m == 0) {
+                        //check if there are any hours left, if there are set m to 60 and subtract one hour
+                        if(h != 0 && h != null) {
+                            m = 60
+                            h -= 1
+                        }
+                    }
+                }
+            }
+        }
+
+        //play alarm sound
+        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val r = RingtoneManager.getRingtone(applicationContext, notification)
+        r.play()
+
+        Toast.makeText(applicationContext, "ring, ring", Toast.LENGTH_LONG)
+    }
+
     /* Precondition: none
        Postcondition: checks if timer storage already exists and creates a storage file if there is none
      */
@@ -120,5 +190,12 @@ class TimerActivity : AppCompatActivity() {
             timerStorage.createNewFile()
             Log.w(AlarmActivity.TAG, "Alarm Storage file created")
         }
+    }
+
+    /* Preconditon: none
+       Postoconditon: runs the create timer popup window to add a preset timer
+     */
+    private fun showTimerPopup() {
+        val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)
     }
 }
