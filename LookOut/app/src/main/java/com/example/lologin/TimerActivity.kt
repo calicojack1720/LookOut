@@ -47,7 +47,7 @@ class TimerActivity : AppCompatActivity() {
         val inputTimerMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
         val inputTimerSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
 
-        val startTimerButton = activityTimerLayout.findViewById<Button>(R.id.StartTimer)  //start timer button
+        //val startTimerButton = activityTimerLayout.findViewById<Button>(R.id.StartTimer)  //start timer button
 
         val addTimerButton = activityTimerLayout.findViewById<FloatingActionButton>(R.id.addTimer)
 
@@ -64,7 +64,7 @@ class TimerActivity : AppCompatActivity() {
         startTimer.setOnClickListener {
             //change timer text
             startTimer.text = "Stop"
-
+            Log.w(TAG, "Text 'changed'")
             //create values to hold input time
             val timerHours = inputTimerHours.text.toString().toIntOrNull()
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
@@ -82,8 +82,10 @@ class TimerActivity : AppCompatActivity() {
                     val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                     val r = RingtoneManager.getRingtone(applicationContext, notification)
                     r.play()
+                    Log.w(TAG, "onFinish ran")
                 }
             }
+            Log.w(TAG, "Timer.start")
             timer.start()
 
             //TODO: implent stopping timer and changing back to start once finished
@@ -179,5 +181,9 @@ class TimerActivity : AppCompatActivity() {
      */
     private fun showTimerPopup() {
         val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)
+    }
+
+    companion object {
+        const val TAG = "TimerActivity"
     }
 }
