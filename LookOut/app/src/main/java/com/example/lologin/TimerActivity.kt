@@ -11,6 +11,7 @@ package com.example.lologin
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -61,12 +62,6 @@ class TimerActivity : AppCompatActivity() {
 
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
-            //if the start button is pressed again, stop the timer
-            startTimer.setOnClickListener {
-                //TODO: may need to move this to countDown so the actual timer can be stopped
-                startTimer.text = "Start"
-            }
-
             //change timer text
             startTimer.text = "Stop"
 
@@ -75,11 +70,25 @@ class TimerActivity : AppCompatActivity() {
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
             val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
 
-            //start the timer
-            countDown(timerHours, timerMinutes, timerSeconds, inputTimerHours, inputTimerMinutes, inputTimerSeconds, startTimer)
+            val timerMilliSeconds: Long = convertToMilli(timerHours, timerMinutes, timerSeconds)
 
+            //start countdown
+            val timer = object: CountDownTimer(timerMilliSeconds, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+
+                }
+
+                override fun onFinish() {
+                    val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                    val r = RingtoneManager.getRingtone(applicationContext, notification)
+                    r.play()
+                }
+            }
+            timer.start()
+
+            //TODO: implent stopping timer and changing back to start once finished
             //change timer text back to "Start"
-            startTimer.text = "Start"
+            //startTimer.text = "Start"
         }
 
         addTimerButton.setOnClickListener {
@@ -130,50 +139,23 @@ class TimerActivity : AppCompatActivity() {
     }
 
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
-       Postcondition: runs the timer given the hours, minutes, and seconds, playing an
-                      alarm sound once the timer is up
+       Postcondition: converts hours, minutes, and seconds to milliseconds
      */
-    private fun countDown(tHours: Int?, tMinutes: Int?, tSeconds: Int?, iHours: EditText,
-                          iMinutes: EditText, iSeconds: EditText, sTimer: Button) {
-        var s = tSeconds
-        var m = tMinutes
-        var h = tHours
+    private fun convertToMilli(tHours: Int?, tMinutes: Int?, tSeconds: Int?): Long {
+        var toMilliSec: Long = 0      //value for total milliseconds of time
 
-        sTimer.setOnClickListener {
-            sTimer.text = "Start"
-            return@setOnClickListener
-        }
+        //convert seconds to milliseconds
+        if(tSeconds != null && tSeconds !=0)
+            toMilliSec += (tSeconds * 60)
+        //convert minutes to milliseconds
+        if(tMinutes != null && tMinutes != 0)
+            toMilliSec += (tMinutes * 60 * 60)
+        //convert hours to milliseconds
+        if(tHours != null && tHours != 0)
+            toMilliSec += (tHours * 60 * 60)
 
-        while(s != 0 && s!= null) {
-            //wait one second and then subtract one second
-            Thread.sleep(1000)
-            s -= 1
-
-            //check if there are any seconds
-            if(s == 0) {
-                //check if there are any minutes left, if there are set s to 60 and subtract one minute
-                if (m != 0 && m != null) {
-                    s = 60
-                    m -= 1
-
-                    //check if there are any minutes left
-                    if(m == 0) {
-                        //check if there are any hours left, if there are set m to 60 and subtract one hour
-                        if(h != 0 && h != null) {
-                            m = 60
-                            h -= 1
-                        }
-                    }
-                }
-            }
-        }
-
-        //play alarm sound
-        val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val r = RingtoneManager.getRingtone(applicationContext, notification)
-        r.play()
-
-        Toast.makeText(applicationContext, "ring, ring", Toast.LENGTH_LONG)
+        //return time in milliseconds
+        return toMilliSec
     }
 
     /* Precondition: none
