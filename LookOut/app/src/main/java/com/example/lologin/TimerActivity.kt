@@ -174,11 +174,14 @@ class TimerActivity : AppCompatActivity() {
         }
     }
 
-    /* Preconditon: none
+    /* Preconditon: implicit timer_popup_window.xml file
        Postoconditon: runs the create timer popup window to add a preset timer
      */
     private fun showTimerPopup() {
-        val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)
+        //create values for buttons
+        val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)  //the popup
+        val cancelButton = timerPopupView.findViewById<Button>(R.id.cancel_button)      //cancel button
+        val addButton = timerPopupView.findViewById<Button>(R.id.submitbutton)          //add button
 
         val popupWindow = PopupWindow(
             timerPopupView,
@@ -187,9 +190,13 @@ class TimerActivity : AppCompatActivity() {
             true
         )
 
+        //show popup view
         popupWindow.showAtLocation(timerPopupView, Gravity.CENTER, 0, 0)
 
-
+        //if cancel button is pressed, close popup
+        cancelButton.setOnClickListener {
+            popupWindow.dismiss()
+        }
     }
 
     companion object {
