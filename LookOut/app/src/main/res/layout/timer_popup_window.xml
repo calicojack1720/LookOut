@@ -98,9 +98,9 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="62dp"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="43dp"
+            android:layout_marginStart="52dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="53dp"
             android:text="Create a Timer Preset"
             android:textSize="25sp" />
 
