@@ -220,7 +220,7 @@ class AlarmActivity : AppCompatActivity() {
                 val maxChildViewX = screenWidth * 0.9f - alarmItemLayout.width
 
                 val x = screenWidth * 0.05f //5% from left
-                val y = screenHeight * .13f //20% from top
+                val y = screenHeight * .13f //13% from top
 
 //            UserInput of AlarmTime into Layout
                 var textViewString = ""
@@ -276,6 +276,9 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
+//                Vars for changing how alarms are saved!
+                var alarmItemPositionY = alarmItemLayout.y
+
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 //                    params.leftMargin = parentLeft
@@ -285,11 +288,16 @@ class AlarmActivity : AppCompatActivity() {
 //
 //                    alarmItemLayout.layoutParams = params // set the params on the view
 
+
+
+
+
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     alarmItemLayout.y = y
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
+
 
                     when (params.bottomMargin) {
                         2100 -> arrayIndex = 0
