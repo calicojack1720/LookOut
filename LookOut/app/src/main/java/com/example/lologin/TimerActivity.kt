@@ -197,6 +197,12 @@ class TimerActivity : AppCompatActivity() {
         cancelButton.setOnClickListener {
             popupWindow.dismiss()
         }
+
+        //if add button is pressed, close popup and create saved timer
+        addButton.setOnClickListener {
+            val timerName = timerPopupView.findViewById<EditText>(R.id.name_text_box)
+
+        }
     }
 
     companion object {
