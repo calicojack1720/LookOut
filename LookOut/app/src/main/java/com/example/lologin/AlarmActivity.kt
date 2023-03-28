@@ -211,11 +211,16 @@ class AlarmActivity : AppCompatActivity() {
                 )
 
                 //Inflate the Layout file
-                val activityAlarmLayout: ViewGroup =
-                    findViewById(R.id.activity_alarms) //Was ViewGroup
+                val activityAlarmLayout: ViewGroup = findViewById(R.id.activity_alarms) //Was ViewGroup
                 val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val alarmItemLayout =
-                    inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
+                val alarmItemLayout = inflater.inflate(R.layout.alarm_item, activityAlarmLayout, false)
+
+                val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+                val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+                val maxChildViewX = screenWidth * 0.9f - alarmItemLayout.width
+
+                val x = screenWidth * 0.05f //5% from left
+                val y = screenHeight * .13f //20% from top
 
 //            UserInput of AlarmTime into Layout
                 var textViewString = ""
@@ -273,12 +278,15 @@ class AlarmActivity : AppCompatActivity() {
 
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                    params.leftMargin = parentLeft
-                    params.topMargin = parentTop
-                    params.rightMargin = parentRight
-                    params.bottomMargin = parentBottom
+//                    params.leftMargin = parentLeft
+//                    params.topMargin = parentTop
+//                    params.rightMargin = parentRight
+//                    params.bottomMargin = parentBottom
+//
+//                    alarmItemLayout.layoutParams = params // set the params on the view
 
-                    alarmItemLayout.layoutParams = params // set the params on the view
+                    alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                    alarmItemLayout.y = y
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
@@ -301,12 +309,16 @@ class AlarmActivity : AppCompatActivity() {
 
                 } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-                    params.leftMargin = parentLeft
-                    params.rightMargin = parentRight
-                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
-                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
+//                    params.leftMargin = parentLeft
+//                    params.rightMargin = parentRight
+//                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+//                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
+//
+//                    alarmItemLayout.layoutParams = params
 
-                    alarmItemLayout.layoutParams = params
+                    alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
@@ -595,7 +607,7 @@ class AlarmActivity : AppCompatActivity() {
 //
 //                    alarmItemLayout.layoutParams = params
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                    alarmItemLayout.y = y
+                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * marginIncrement)
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
