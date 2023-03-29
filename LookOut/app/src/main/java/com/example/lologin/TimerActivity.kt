@@ -81,6 +81,7 @@ class TimerActivity : AppCompatActivity() {
                     val r = RingtoneManager.getRingtone(applicationContext, notification)
                     r.play()
                     Log.w(TAG, "onFinish ran")
+
                 }
             }
             Log.w(TAG, "Timer.start")
@@ -146,13 +147,13 @@ class TimerActivity : AppCompatActivity() {
 
         //convert seconds to milliseconds
         if(tSeconds != null && tSeconds !=0)
-            toMilliSec += (tSeconds * 60)
+            toMilliSec += (tSeconds * 1000)
         //convert minutes to milliseconds
         if(tMinutes != null && tMinutes != 0)
-            toMilliSec += (tMinutes * 60 * 60)
+            toMilliSec += (tMinutes * 60 * 1000)
         //convert hours to milliseconds
         if(tHours != null && tHours != 0)
-            toMilliSec += (tHours * 60 * 60)
+            toMilliSec += (tHours * 60 * 60 * 1000)
 
         //return time in milliseconds
         return toMilliSec
@@ -201,6 +202,8 @@ class TimerActivity : AppCompatActivity() {
         //if add button is pressed, close popup and create saved timer
         addButton.setOnClickListener {
             val timerName = timerPopupView.findViewById<EditText>(R.id.name_text_box)
+
+            val presetName = timerName.text.toString()
 
         }
     }
