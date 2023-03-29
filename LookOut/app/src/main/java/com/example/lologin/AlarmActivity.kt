@@ -30,6 +30,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import android.util.Log
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 
 var numAlarm = -1
@@ -276,8 +277,6 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
-//                Vars for changing how alarms are saved!
-                var alarmItemPositionY = alarmItemLayout.y
 
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -391,6 +390,11 @@ class AlarmActivity : AppCompatActivity() {
                     }
 
                 }
+                //Creation of Arrays to be passed into loadAlarms
+                populateHeightArray(alarmItemLayout)
+
+
+
                 //Deletion Button
                 val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
                 //On Click of Delete Button
@@ -668,6 +672,9 @@ class AlarmActivity : AppCompatActivity() {
                     }
 
                 }
+
+
+
                 //Deletion Button
                 val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
                 //On Click of Delete Button
@@ -776,6 +783,16 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Deleted Alarm $alarmIndex")
     }
 
+    private fun populateHeightArray(alarmItemLayout: View) {
+        //Creation of Arrays to be passed into loadAlarms
+        var alarmItemYIndexs = arrayOf(1.0, 2.0, 3.0, 4.0, 5.0)
+        val parentView = alarmItemLayout.parent as ViewGroup
+        for (i in 3 until parentView.childCount) {
+            val child = parentView.getChildAt(i)
+            alarmItemYIndexs[i-3] = child.y.toDouble()
+            Log.d(TAG, "Alarm at index ${i - 3} has a height value of ${alarmItemYIndexs[i-3]}")
+        }
+    }
 
     companion object {
         const val TAG = "AlarmActivity"
