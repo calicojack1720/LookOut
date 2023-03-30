@@ -73,12 +73,12 @@ class TimerActivity : AppCompatActivity() {
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
             val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
 
-            val timerMilliSeconds: Long = convertToMilli(timerHours, timerMinutes, timerSeconds)
+            val convertedSeconds: Long = convertToSec(timerHours, timerMinutes, timerSeconds)
 
             if(timerSeconds != null) {
                 timerItem = TimerItem(
                     time = LocalDateTime.now()
-                        .plusSeconds(timerSeconds.toLong()),
+                        .plusSeconds(convertedSeconds.toLong()),
                     message = ""
                 )
             }
@@ -107,6 +107,8 @@ class TimerActivity : AppCompatActivity() {
         //TODO: This isn't doing anything
         //change timer text back to "Start"
         startTimer.text = "Start"
+
+        //When addTimerButton is pressed, open up the timer popup
         addTimerButton.setOnClickListener {
             showTimerPopup()
         }
@@ -155,23 +157,23 @@ class TimerActivity : AppCompatActivity() {
     }
 
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
-       Postcondition: converts hours, minutes, and seconds to milliseconds
+       Postcondition: returns hours:minutes:seconds as seconds
      */
-    private fun convertToMilli(tHours: Int?, tMinutes: Int?, tSeconds: Int?): Long {
-        var toMilliSec: Long = 0      //value for total milliseconds of time
+    private fun convertToSec(tHours: Int?, tMinutes: Int?, tSeconds: Int?): Long {
+        var toSec: Long = 0      //value for total milliseconds of time
 
         //convert seconds to milliseconds
         if(tSeconds != null && tSeconds !=0)
-            toMilliSec += (tSeconds * 1000)
+            toSec += (tSeconds)
         //convert minutes to milliseconds
         if(tMinutes != null && tMinutes != 0)
-            toMilliSec += (tMinutes * 60 * 1000)
+            toSec += (tMinutes * 60)
         //convert hours to milliseconds
         if(tHours != null && tHours != 0)
-            toMilliSec += (tHours * 60 * 60 * 1000)
+            toSec += (tHours * 60 * 60)
 
         //return time in milliseconds
-        return toMilliSec
+        return toSec
     }
 
     /* Precondition: none
