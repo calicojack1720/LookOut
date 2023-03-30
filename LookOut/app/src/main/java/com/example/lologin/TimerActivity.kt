@@ -22,7 +22,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+//import kotlinx.coroutines.NonCancellable.message
 import java.io.File
+import java.time.LocalDateTime
 
 
 private lateinit var auth: FirebaseAuth
@@ -30,6 +32,9 @@ class TimerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timers)
+
+        val scheduler = AndroidTimerScheduler(this)
+        var timerItem: TimerItem? = null
 
         //initializing Firebase
         auth = Firebase.auth
@@ -70,8 +75,18 @@ class TimerActivity : AppCompatActivity() {
 
             val timerMilliSeconds: Long = convertToMilli(timerHours, timerMinutes, timerSeconds)
 
+            if(timerSeconds != null) {
+                timerItem = TimerItem(
+                    time = LocalDateTime.now()
+                        .plusSeconds(timerSeconds.toLong()),
+                    message = ""
+                )
+            }
+
+            timerItem?.let(scheduler::schedule)
+
             //start countdown
-            val timer = object: CountDownTimer(timerMilliSeconds, 1000) {
+            /*val timer = object: CountDownTimer(timerMilliSeconds, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
 
                 }
@@ -86,12 +101,12 @@ class TimerActivity : AppCompatActivity() {
             }
             Log.w(TAG, "Timer.start")
             timer.start()
-
-            //TODO: implent stopping timer and changing back to start once finished
-            //change timer text back to "Start"
-            //startTimer.text = "Start"
+            */
         }
 
+        //TODO: This isn't doing anything
+        //change timer text back to "Start"
+        startTimer.text = "Start"
         addTimerButton.setOnClickListener {
             showTimerPopup()
         }
