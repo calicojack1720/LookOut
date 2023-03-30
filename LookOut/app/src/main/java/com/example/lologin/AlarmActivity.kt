@@ -1,5 +1,6 @@
 package com.example.lologin
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -7,13 +8,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.widget.Button
-import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayout
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Toast
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.io.File
@@ -25,11 +22,10 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import android.content.SharedPreferences
 import android.content.res.Resources
-import android.widget.Switch
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import android.util.Log
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 
 var numAlarm = -1
@@ -150,6 +146,7 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     private fun showPopup() {
         val popUpView = layoutInflater.inflate(R.layout.popup_window, null)
 
@@ -174,24 +171,17 @@ class AlarmActivity : AppCompatActivity() {
 
 
         //checks if ToggleAMPMButton is checked
-        //val isPm = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM).isChecked
-
+        val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
 
         submitButton.setOnClickListener {
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
-            val hours = inputHours.text.toString().toIntOrNull()
+            var hours = inputHours.text.toString().toIntOrNull()
             val minutes = inputMinutes.text.toString().toIntOrNull()
 
-//            if (hours != null && minutes != null) {
             if (hours != null && hours in 0..23 && minutes != null && minutes in 0..59) {
-//          AMPMCHECK
-//                if (isPm && hours!! < 12) {
-//                    hours = hours!! + 12
-//                } else if (!isPm && hours == 12) {
-//                    hours = 0
-//                }
+                //AMPMCHECK
 
                 val timeForAlarm = LocalTime.of(hours, minutes)
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
@@ -501,13 +491,6 @@ class AlarmActivity : AppCompatActivity() {
             //Everything above here works
 
             if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
-//          AMPMCHECK
-//                if (isPm && hours!! < 12) {
-//                    hours = hours!! + 12
-//                } else if (!isPm && hours == 12) {
-//                    hours = 0
-//                }
-
                 val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
 

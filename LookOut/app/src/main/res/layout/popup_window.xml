@@ -4,27 +4,6 @@
     android:layout_height="400dp"
     android:background="#62def8">
 
-    <!--CODE BELOW COMMENTED OUT HAS NO USE-->
-    <!--    <EditText-->
-    <!--        android:id="@+id/EnterName"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_centerInParent="true"-->
-    <!--        android:layout_marginStart="30dp"-->
-    <!--        android:layout_marginTop="30dp"-->
-    <!--        android:layout_marginEnd="30dp"-->
-    <!--        android:layout_marginBottom="30dp"-->
-    <!--        android:hint="Enter Alarm Name"-->
-    <!--        android:inputType="text"-->
-    <!--        android:textSize="22sp"/>-->
-<!--    <TextView-->
-<!--        android:id="@+id/popup_title"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Enter a name"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textSize="25sp" />-->
-
     <EditText
         android:id="@+id/hours"
         android:layout_width="93dp"
@@ -73,23 +52,6 @@
         android:textAlignment="center"
         android:textSize="16sp" />
 
-<!--    //Legacy Time Entry for debugging in case of bugs with new system-->
-<!--    <EditText-->
-<!--        android:id="@+id/time_entry"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentStart="true"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_marginStart="121dp"-->
-<!--        android:layout_marginTop="300dp"-->
-<!--        android:layout_marginEnd="120dp"-->
-<!--        android:hint="Enter Time:"-->
-<!--        android:inputType="time"-->
-<!--        android:minHeight="48dp"-->
-<!--        android:textAlignment="center"-->
-<!--        android:textSize="15sp" />-->
-
     <Button
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"
@@ -103,13 +65,13 @@
     <Button
         android:id="@+id/submitbutton"
         android:layout_width="95dp"
-        android:color="@color/button_background"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="346dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
+        android:color="@color/button_background"
         android:text="Add" />
 
 
@@ -124,20 +86,20 @@
         android:text=":"
         android:textSize="40sp" />
 
-<!--    <ToggleButton-->
-<!--        android:id="@+id/toggleAMPM"-->
-<!--        android:layout_width="80dp"-->
-<!--        android:layout_height="35dp"-->
-<!--        android:layout_below="@+id/minutes"-->
-<!--        android:layout_alignParentStart="true"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_marginStart="136dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginEnd="134dp"-->
-<!--        android:background="@color/button_background"-->
-<!--        android:text="Toggle AM and PM"-->
-<!--        android:textColor="#FFFFFF"-->
-<!--        android:textOff="AM"-->
-<!--        android:textOn="PM" />-->
+    <ToggleButton
+        android:id="@+id/toggleAMPM"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/minutes"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="134dp"
+        android:background="@color/button_background"
+        android:text="Toggle AM and PM"
+        android:textColor="#5E35B1"
+        android:textOff="AM"
+        android:textOn="PM" />
 
 </RelativeLayout>
