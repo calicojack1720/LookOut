@@ -27,6 +27,8 @@ import androidx.core.app.NotificationManagerCompat
 import android.util.Log
 import android.widget.*
 import android.view.View
+import androidx.core.content.ContextCompat.getSystemService
+import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
 
 var numAlarm = -1
@@ -172,6 +174,13 @@ class AlarmActivity : AppCompatActivity() {
 
         //checks if ToggleAMPMButton is checked
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+        toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                Log.w(TAG, "PM")
+            } else {
+                Log.w(TAG, "AM")
+            }
+        }
 
         submitButton.setOnClickListener {
 
