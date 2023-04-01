@@ -8,6 +8,7 @@
 
 package com.example.lologin
 
+import android.content.Context
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -223,6 +225,10 @@ class TimerActivity : AppCompatActivity() {
             val presetName = timerName.text.toString()
 
         }
+    }
+
+    private fun saveTimer(hours: Int?, minutes: Int?, seconds: Int?, name: String, timerIndex: Int) {
+        val timerPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
     }
 
     companion object {
