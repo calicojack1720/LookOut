@@ -32,6 +32,7 @@ import com.google.firebase.ktx.Firebase
 import java.io.File
 import java.time.LocalDateTime
 
+var numTimer = -1
 
 private lateinit var auth: FirebaseAuth
 class TimerActivity : AppCompatActivity() {
@@ -293,7 +294,7 @@ class TimerActivity : AppCompatActivity() {
                 Log.d(TAG, "First ${activityTimerLayout.childCount} ${params.bottomMargin}")
                 //passes through hours, minutes, name, and enabled state to saveAlarms
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
-                numAlarm += 1
+                numTimer += 1
 
             } else if (activityTimerLayout.childCount <= 7) {
                 Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
@@ -324,7 +325,7 @@ class TimerActivity : AppCompatActivity() {
                 Log.d(TAG, "${activityTimerLayout.childCount} ${params.bottomMargin}")
 
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
-                numAlarm += 1
+                numTimer += 1
 
             } else {
                 Toast.makeText(
@@ -370,6 +371,34 @@ class TimerActivity : AppCompatActivity() {
             putInt("SECONDS_$timerIndex", seconds ?: 0)
         }.apply()
         Log.d(TAG, "Saved Timer $timerIndex")
+    }
+
+    private fun loadTimers() {
+        val sharedPreferences: SharedPreferences =
+            getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+
+        val scheduler = AndroidAlarmScheduler(this)
+        var timerItem: TimerItem? = null
+
+        for (i in 0 until 5) {
+
+            //Setting default values
+            val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+            val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
+            val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+
+            Log.d(TAG, "Timer: $i")
+            Log.d(TAG, "Saved name: $savedName")
+            Log.d(TAG, "Saved seconds: $savedSeconds")
+            Log.d(TAG, "Saved hours: $savedHours")
+            Log.d(TAG, "Saved minutes: $savedMinutes")
+
+            if (savedName != null) {
+                numTimer += 1
+            }
+
+        }
     }
 
     companion object {
