@@ -8,6 +8,7 @@
 
 package com.example.lologin
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.media.RingtoneManager
 import android.net.Uri
@@ -19,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -53,8 +55,6 @@ class TimerActivity : AppCompatActivity() {
         val inputTimerHours = activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
         val inputTimerMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
         val inputTimerSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
-
-        //val startTimerButton = activityTimerLayout.findViewById<Button>(R.id.StartTimer)  //start timer button
 
         val addTimerButton = activityTimerLayout.findViewById<FloatingActionButton>(R.id.addTimer)
 
@@ -232,6 +232,13 @@ class TimerActivity : AppCompatActivity() {
             val timerItemLayout =
                 inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
 
+            val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+            val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
+
+            val x = screenWidth * 0.05f //5% from left
+            val y = screenHeight * .13f //13% from top
+
             //Set the Parameters for the new Layout
             val params = ConstraintLayout.LayoutParams(
                 ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
@@ -258,17 +265,19 @@ class TimerActivity : AppCompatActivity() {
 
             var arrayIndex = 0
 
-            if (activityTimerLayout.childCount <= 3) {
-                Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
-                params.leftMargin = parentLeft
-                params.topMargin = parentTop
-                params.rightMargin = parentRight
-                params.bottomMargin = parentBottom
+            //Vars for changing how alarms are saved!
+            var alarmItemPositionY = timerItemLayout.y
 
-                timerItemLayout.layoutParams = params // set the params on the view
+
+            if (activityTimerLayout.childCount <= 3) {
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+
+                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                timerItemLayout.y = y
 
                 activityTimerLayout.addView(timerItemLayout)
                 timerItem?.let(scheduler::schedule)
+
 
                 when (params.bottomMargin) {
                     2100 -> arrayIndex = 0
@@ -277,23 +286,27 @@ class TimerActivity : AppCompatActivity() {
                     1050 -> arrayIndex = 3
                     700 -> arrayIndex = 4
                     else -> { // Note the block
-                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+                        Log.d(TAG, "Brr ${activityTimerLayout.childCount}")
                     }
                 }
 
-                Log.d(AlarmActivity.TAG, "First ${activityTimerLayout.childCount} ${params.bottomMargin}")
+                Log.d(TAG, "First ${activityTimerLayout.childCount} ${params.bottomMargin}")
                 //passes through hours, minutes, name, and enabled state to saveAlarms
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
                 numAlarm += 1
 
             } else if (activityTimerLayout.childCount <= 7) {
-                Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
-                params.leftMargin = parentLeft
-                params.rightMargin = parentRight
-                params.topMargin = parentTop + ((activityTimerLayout.childCount - 3) * marginIncrement)
-                params.bottomMargin = parentBottom - ((activityTimerLayout.childCount - 3) * marginIncrement)
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+//                    params.leftMargin = parentLeft
+//                    params.rightMargin = parentRight
+//                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+//                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
+//
+//                    alarmItemLayout.layoutParams = params
 
-                timerItemLayout.layoutParams = params
+                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                timerItemLayout.y = y + ((activityTimerLayout.childCount - 3) * marginIncrement)
+
                 activityTimerLayout.addView(timerItemLayout)
                 timerItem?.let(scheduler::schedule)
 
@@ -304,11 +317,11 @@ class TimerActivity : AppCompatActivity() {
                     1050 -> arrayIndex = 3
                     700 -> arrayIndex = 4
                     else -> { // Note the block
-                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+                        Log.d(TAG, "Brr ${activityTimerLayout.childCount}")
                     }
                 }
 
-                Log.d(AlarmActivity.TAG, "${activityTimerLayout.childCount} ${params.bottomMargin}")
+                Log.d(TAG, "${activityTimerLayout.childCount} ${params.bottomMargin}")
 
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
                 numAlarm += 1
@@ -316,7 +329,7 @@ class TimerActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(
                     applicationContext,
-                    "Maximum Alarm Number has been reached.",
+                    "Maximum Timer Number has been reached.",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -327,10 +340,10 @@ class TimerActivity : AppCompatActivity() {
     }
 
     /* Precondition: none
-           Postcondition: checks if timer storage already exists and creates a storage file if there is none
+       Postcondition: checks if timer storage already exists and creates a storage file if there is none
          */
     private fun createTimerStorage() {
-        val timerStorage = File(this.filesDir, "alarmStorage.txt")
+        val timerStorage = File(this.filesDir, "timerStorage.txt")
         val timerStorageExists = timerStorage.exists()
 
         if (timerStorageExists) {
