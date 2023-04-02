@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 3/25/2023
+   Updated: 4/1/2023
  */
 
 
@@ -19,7 +19,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.content.SharedPreferences
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -86,6 +88,10 @@ class TimerActivity : AppCompatActivity() {
             }
 
             timerItem?.let(scheduler::schedule)
+
+            startTimer.setOnClickListener {
+
+            }
 
             //start countdown
             /*val timer = object: CountDownTimer(timerMilliSeconds, 1000) {
@@ -178,26 +184,14 @@ class TimerActivity : AppCompatActivity() {
         return toSec
     }
 
-    /* Precondition: none
-       Postcondition: checks if timer storage already exists and creates a storage file if there is none
-     */
-    private fun createTimerStorage() {
-        val timerStorage = File(this.filesDir, "alarmStorage.txt")
-        val timerStorageExists = timerStorage.exists()
 
-        if (timerStorageExists) {
-            Log.w(AlarmActivity.TAG, "Alarm Storage file exists")
-        } else {
-            //creates file if doesn't exists
-            timerStorage.createNewFile()
-            Log.w(AlarmActivity.TAG, "Alarm Storage file created")
-        }
-    }
 
     /* Preconditon: implicit timer_popup_window.xml file
        Postoconditon: runs the create timer popup window to add a preset timer
      */
     private fun showTimerPopup() {
+
+
         //create values for buttons
         val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)  //the popup
         val cancelButton = timerPopupView.findViewById<Button>(R.id.cancel_button)      //cancel button
@@ -220,18 +214,157 @@ class TimerActivity : AppCompatActivity() {
 
         //if add button is pressed, close popup and create saved timer
         addButton.setOnClickListener {
+            //set name box, and hours:minutes:seconds boxes
             val timerName = timerPopupView.findViewById<EditText>(R.id.name_text_box)
+            val popHours = timerPopupView.findViewById<EditText>(R.id.timer_pop_hours)
+            val popMinutes = timerPopupView.findViewById<EditText>(R.id.timer_pop_minutes)
+            val popSeconds = timerPopupView.findViewById<EditText>(R.id.timer_pop_seconds)
 
+            //get values entered into timerName, popHours, popMinutes, popSeconds
             val presetName = timerName.text.toString()
+            val presetHours = popHours.text.toString().toIntOrNull()
+            val presetMinutes = popMinutes.text.toString().toIntOrNull()
+            val presetSeconds = popSeconds.text.toString().toIntOrNull()
 
+
+            val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
+            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val timerItemLayout =
+                inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
+
+            //Set the Parameters for the new Layout
+            val params = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
+                ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
+            )
+            Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
+
+            val context: Context = this
+            val parentRight = context.dpToPx(120)
+            val parentLeft = context.dpToPx(25)
+            val parentTop = context.dpToPx(100)
+            val parentBottom = context.dpToPx(600)
+            val marginIncrement = context.dpToPx(100)
+
+            var timerItem: TimerItem?
+            val convertedSeconds: Long = convertToSec(presetHours, presetMinutes, presetSeconds)
+            val scheduler = AndroidTimerScheduler(this)
+
+            timerItem = TimerItem(
+                time = LocalDateTime.now()
+                    .plusSeconds(convertedSeconds.toLong()),
+                message = ""
+            )
+
+            var arrayIndex = 0
+
+            if (activityTimerLayout.childCount <= 3) {
+                Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
+                params.leftMargin = parentLeft
+                params.topMargin = parentTop
+                params.rightMargin = parentRight
+                params.bottomMargin = parentBottom
+
+                timerItemLayout.layoutParams = params // set the params on the view
+
+                activityTimerLayout.addView(timerItemLayout)
+                timerItem?.let(scheduler::schedule)
+
+                when (params.bottomMargin) {
+                    2100 -> arrayIndex = 0
+                    1750 -> arrayIndex = 1
+                    1400 -> arrayIndex = 2
+                    1050 -> arrayIndex = 3
+                    700 -> arrayIndex = 4
+                    else -> { // Note the block
+                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+                    }
+                }
+
+                Log.d(AlarmActivity.TAG, "First ${activityTimerLayout.childCount} ${params.bottomMargin}")
+                //passes through hours, minutes, name, and enabled state to saveAlarms
+                saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
+                numAlarm += 1
+
+            } else if (activityTimerLayout.childCount <= 7) {
+                Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
+                params.leftMargin = parentLeft
+                params.rightMargin = parentRight
+                params.topMargin = parentTop + ((activityTimerLayout.childCount - 3) * marginIncrement)
+                params.bottomMargin = parentBottom - ((activityTimerLayout.childCount - 3) * marginIncrement)
+
+                timerItemLayout.layoutParams = params
+                activityTimerLayout.addView(timerItemLayout)
+                timerItem?.let(scheduler::schedule)
+
+                when (params.bottomMargin) {
+                    2100 -> arrayIndex = 0
+                    1750 -> arrayIndex = 1
+                    1400 -> arrayIndex = 2
+                    1050 -> arrayIndex = 3
+                    700 -> arrayIndex = 4
+                    else -> { // Note the block
+                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+                    }
+                }
+
+                Log.d(AlarmActivity.TAG, "${activityTimerLayout.childCount} ${params.bottomMargin}")
+
+                saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
+                numAlarm += 1
+
+            } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Maximum Alarm Number has been reached.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            //close out popup window when finished
+            popupWindow.dismiss()
         }
     }
 
+    /* Precondition: none
+           Postcondition: checks if timer storage already exists and creates a storage file if there is none
+         */
+    private fun createTimerStorage() {
+        val timerStorage = File(this.filesDir, "alarmStorage.txt")
+        val timerStorageExists = timerStorage.exists()
+
+        if (timerStorageExists) {
+            Log.w(AlarmActivity.TAG, "Alarm Storage file exists")
+        } else {
+            //creates file if doesn't exists
+            timerStorage.createNewFile()
+            Log.w(AlarmActivity.TAG, "Alarm Storage file created")
+        }
+    }
+
+    /* Precondition: hours is of type Int?, minutes is of type Int?, name is of type String, and
+                     timerIndex is of type Int
+       Postcondition: creates a saved timer using the input using SharedPreferences
+     */
     private fun saveTimer(hours: Int?, minutes: Int?, seconds: Int?, name: String, timerIndex: Int) {
         val timerPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = timerPreferences.edit()
+
+        editor.apply() {
+            putString("TIMER_NAME_$timerIndex", name)
+            putInt("HOURS_$timerIndex", hours ?: 0)
+            putInt("MINUTES_$timerIndex", minutes ?: 0)
+            putInt("SECONDS_$timerIndex", seconds ?: 0)
+        }.apply()
+        Log.d(TAG, "Saved Timer $timerIndex")
     }
 
     companion object {
         const val TAG = "TimerActivity"
+    }
+
+    fun Context.dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density).toInt()
     }
 }

@@ -7,8 +7,9 @@
 
     <RelativeLayout
         android:layout_width="352dp"
-        android:layout_height="258dp"
-        android:background="#62def8">
+        android:layout_height="382dp"
+        android:background="#62def8"
+        tools:ignore="MissingConstraints">
 
         <!--CODE BELOW COMMENTED OUT HAS NO USE-->
         <!--    <EditText-->
@@ -49,6 +50,74 @@
         <!--        android:textAlignment="center"-->
         <!--        android:textSize="15sp" />-->
 
+
+        <TextView
+            android:id="@+id/colon3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="109dp"
+            android:layout_marginEnd="122dp"
+            android:text=":"
+            android:textSize="40sp" />
+
+        <EditText
+            android:id="@+id/timer_pop_seconds"
+            android:layout_width="93dp"
+            android:layout_height="84dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="230dp"
+            android:layout_marginTop="93dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:gravity="center_horizontal"
+            android:hint="00"
+            android:inputType="number"
+            android:textSize="48sp" />
+
+        <EditText
+            android:id="@+id/timer_pop_minutes"
+            android:layout_width="93dp"
+            android:layout_height="84dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="130dp"
+            android:layout_marginTop="92dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:gravity="center_horizontal"
+            android:hint="00"
+            android:inputType="number"
+            android:textSize="48sp" />
+
+        <TextView
+            android:id="@+id/colon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="112dp"
+            android:layout_marginEnd="223dp"
+            android:text=":"
+            android:textSize="40sp" />
+
+        <EditText
+            android:id="@+id/timer_pop_hours"
+            android:layout_width="93dp"
+            android:layout_height="84dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="91dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:gravity="center_horizontal"
+            android:hint="00"
+            android:inputType="number"
+            android:textSize="48sp" />
+
         <EditText
             android:id="@+id/name_text_box"
             android:layout_width="150dp"
@@ -56,9 +125,9 @@
             android:layout_below="@+id/preset_message"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="96dp"
-            android:layout_marginTop="28dp"
-            android:layout_marginEnd="104dp"
+            android:layout_marginStart="103dp"
+            android:layout_marginTop="167dp"
+            android:layout_marginEnd="97dp"
             android:gravity="center_horizontal"
             android:hint="Name"
             android:importantForAutofill="no"
@@ -74,10 +143,9 @@
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="49dp"
-            android:layout_marginTop="174dp"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="310dp"
             android:text="Cancel" />
-
 
         <Button
             android:id="@+id/submitbutton"
@@ -85,8 +153,8 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="175dp"
-            android:layout_marginEnd="53dp"
+            android:layout_marginTop="312dp"
+            android:layout_marginEnd="29dp"
             android:layout_marginBottom="12dp"
             android:color="@color/button_background"
             android:text="Add" />
