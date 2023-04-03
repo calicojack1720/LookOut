@@ -822,7 +822,19 @@ class AlarmActivity : AppCompatActivity() {
         }
         return alarmItemYIndexs
     }
-    private fun getArrayIndexes (alarmItemLayout: View, heightIndexes : Array<Double> ) {
+    private fun getIndex (alarmItemLayout: View, heightIndexes : Array<Double>, heightWanted: Double ): Int {
+
+        val parentView = alarmItemLayout.parent as ViewGroup
+
+        for (arrayIndex in 0 until 5) {
+            val child = parentView.getChildAt(arrayIndex+3)
+
+            if (heightIndexes[arrayIndex] == heightWanted) {
+                return arrayIndex
+            }
+        }
+        Log.d(TAG, "ERR: Height NOT FOUND")
+        return -1 //-1 is returned, height now found
 
     }
 
