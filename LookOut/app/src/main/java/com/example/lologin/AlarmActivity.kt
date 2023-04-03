@@ -325,7 +325,7 @@ class AlarmActivity : AppCompatActivity() {
 //                    }
 
                     //GetIndex for save alarms
-//                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, 2100.0)
+//                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
 
                     Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
