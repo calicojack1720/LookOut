@@ -170,27 +170,32 @@ class AlarmActivity : AppCompatActivity() {
 
         val inputHours = popUpView.findViewById<EditText>(R.id.hours)
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
-
+        var isPM = false
 
         //checks if ToggleAMPMButton is checked
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
         toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
+                isPM = true
                 Log.w(TAG, "PM")
             } else {
+                isPM = false
                 Log.w(TAG, "AM")
             }
         }
+
 
         submitButton.setOnClickListener {
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
-            var hours = inputHours.text.toString().toIntOrNull()
+            var hours = inputHours.text.toString().toInt()
             val minutes = inputMinutes.text.toString().toIntOrNull()
 
-            if (hours != null && hours in 0..23 && minutes != null && minutes in 0..59) {
+            if (hours != null && hours in 1..12 && minutes != null && minutes in 0..59) {
                 //AMPMCHECK
+                hours = amPmCheck(hours, isPM)
+                Log.w(TAG, "Hours: $hours, isPM: $isPM")
 
                 val timeForAlarm = LocalTime.of(hours, minutes)
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
@@ -260,11 +265,6 @@ class AlarmActivity : AppCompatActivity() {
                 )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
-//                val parentRight = 350
-//                val parentLeft = 100
-//                val parentTop = 200
-//                val parentBottom = 2200
-//                val marginIncrement = 400
 //                The following method displays the alarm right
                 val context: Context = this
                 val parentRight = context.dpToPx(120)
@@ -286,10 +286,6 @@ class AlarmActivity : AppCompatActivity() {
 //                    params.bottomMargin = parentBottom
 //
 //                    alarmItemLayout.layoutParams = params // set the params on the view
-
-
-
-
 
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     alarmItemLayout.y = y
@@ -461,7 +457,6 @@ class AlarmActivity : AppCompatActivity() {
     private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
-
 
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
@@ -785,6 +780,17 @@ class AlarmActivity : AppCompatActivity() {
             alarmItemYIndexs[i-3] = child.y.toDouble()
             Log.d(TAG, "Alarm at index ${i - 3} has a height value of ${alarmItemYIndexs[i-3]}")
         }
+    }
+
+    private fun amPmCheck(hours: Int, isPm: Boolean): Int {
+        var newHours = 0
+        if (isPm) {
+            newHours = hours + 12
+        }
+        else {
+            newHours = hours
+        }
+        return newHours
     }
 
     companion object {
