@@ -275,9 +275,6 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
-//                Vars for changing how alarms are saved!
-                var alarmItemPositionY = alarmItemLayout.y
-//                POPULATE HEIGHT ARRAY
 
 
                 if (activityAlarmLayout.childCount <= 3) {
@@ -344,8 +341,8 @@ class AlarmActivity : AppCompatActivity() {
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
                     numAlarm += 1
 
-                    // populate height values for alarmItems
-                    populateHeightArray(alarmItemLayout)
+                    // populate height values for alarmItems, Creation of height indexes
+                    var heightIndexes = populateHeightArray(alarmItemLayout)
 
                 } else {
                     Toast.makeText(
@@ -788,8 +785,9 @@ class AlarmActivity : AppCompatActivity() {
         }
         return alarmItemYIndexs
     }
-    private fun getArrayIndexes(arrayIndex : Int) {
-        //Need to implement for loop to get array index for
+    private fun getArrayIndexes (alarmItemLayout: View, heightIndexes : Array<Double> ) {
+
+
     }
 
     private fun amPmCheck(hours: Int, isPm: Boolean): Int {
