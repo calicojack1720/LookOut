@@ -311,16 +311,22 @@ class AlarmActivity : AppCompatActivity() {
 
 
 
-                    when (params.bottomMargin) {
-                        2100 -> arrayIndex = 0
-                        1750 -> arrayIndex = 1
-                        1400 -> arrayIndex = 2
-                        1050 -> arrayIndex = 3
-                        700 -> arrayIndex = 4
-                        else -> { // Note the block
-                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                        }
-                    }
+
+
+//                    when (params.bottomMargin) {
+//                        2100 -> arrayIndex = 0
+//                        1750 -> arrayIndex = 1
+//                        1400 -> arrayIndex = 2
+//                        1050 -> arrayIndex = 3
+//                        700 -> arrayIndex = 4
+//                        else -> { // Note the block
+//                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                        }
+//                    }
+
+                    //GetIndex for save alarms
+//                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, 2100.0)
+
 
                     Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     //passes through hours, minutes, name, and enabled state to saveAlarms
@@ -342,6 +348,9 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
+                    // populate height values for alarmItems, Creation of height indexes
+                    var heightIndexes = populateHeightArray(alarmItemLayout)
+
                     when (params.bottomMargin) {
                         2100 -> arrayIndex = 0
                         1750 -> arrayIndex = 1
@@ -358,8 +367,7 @@ class AlarmActivity : AppCompatActivity() {
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
 
-                    // populate height values for alarmItems, Creation of height indexes
-                    var heightIndexes = populateHeightArray(alarmItemLayout)
+
 
                 } else {
                     Toast.makeText(
