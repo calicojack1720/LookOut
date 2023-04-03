@@ -277,6 +277,8 @@ class AlarmActivity : AppCompatActivity() {
 
 //                Vars for changing how alarms are saved!
                 var alarmItemPositionY = alarmItemLayout.y
+//                POPULATE HEIGHT ARRAY
+
 
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -292,6 +294,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
+
 
 
                     when (params.bottomMargin) {
@@ -340,6 +343,9 @@ class AlarmActivity : AppCompatActivity() {
 
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
                     numAlarm += 1
+
+                    // populate height values for alarmItems
+                    populateHeightArray(alarmItemLayout)
 
                 } else {
                     Toast.makeText(
