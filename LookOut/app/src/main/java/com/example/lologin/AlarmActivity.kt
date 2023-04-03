@@ -228,22 +228,40 @@ class AlarmActivity : AppCompatActivity() {
 
 //            UserInput of AlarmTime into Layout
                 var textViewString = ""
+                var displayHours = hours
+
+                if (isPM) {
+                    displayHours = hours - 12
+                }
+                else {
+                    displayHours = hours
+                }
+
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
                 if ((hours in 0..9) && (minutes > 9)) {
-                    textViewString = "0$hours:$minutes"
+                    textViewString = "0$displayHours:$minutes"
                     timeTextView.text = textViewString
                 }
                 else if (hours > 9 && (minutes in 0..9)) {
-                    textViewString = "$hours:0$minutes"
+                    textViewString = "$displayHours:0$minutes"
                     timeTextView.text = textViewString
                 }
                 else if ((hours in 0..9) && (minutes in 0..9)) {
-                    textViewString = "0$hours:0$minutes"
+                    textViewString = "0$displayHours:0$minutes"
                     timeTextView.text = textViewString
                 }
                 else {
-                    textViewString = "$hours:$minutes"
+                    textViewString = "$displayHours:$minutes"
                     timeTextView.text = textViewString
+                }
+                //AMPM input
+                val ampmTextView = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+
+                if (isPM) {
+                    ampmTextView.text = "PM"
+                }
+                else {
+                    ampmTextView.text = "AM"
                 }
 
 //            UserInput of AlarmName into Layout
@@ -293,7 +311,6 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
-
                     when (params.bottomMargin) {
                         2100 -> arrayIndex = 0
                         1750 -> arrayIndex = 1
@@ -307,7 +324,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     //passes through hours, minutes, name, and enabled state to saveAlarms
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
 
                 } else if (activityAlarmLayout.childCount <= 7) {
@@ -338,7 +355,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex)
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
 
                 } else {
@@ -365,7 +382,7 @@ class AlarmActivity : AppCompatActivity() {
                             }
                         }
 
-                        saveAlarms(hours, minutes, name, false, arrayIndex)
+                        saveAlarms(hours, minutes, name, false, arrayIndex, isPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
@@ -381,7 +398,7 @@ class AlarmActivity : AppCompatActivity() {
                             }
                         }
 
-                        saveAlarms(hours, minutes, name, true, arrayIndex)
+                        saveAlarms(hours, minutes, name, true, arrayIndex, isPM)
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -454,7 +471,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     //Saves created alarms to using
-    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int) {
+    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
@@ -463,6 +480,7 @@ class AlarmActivity : AppCompatActivity() {
             putBoolean("IS_ENABLED_$alarmIndex", isEnabled)
             putInt("HOURS_$alarmIndex", hours ?: 0)
             putInt("MINUTES_$alarmIndex", minutes ?: 0)
+            putBoolean("IS_PM_$alarmIndex", isPM)
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
     }
@@ -481,12 +499,14 @@ class AlarmActivity : AppCompatActivity() {
             val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
             val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+            val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
 
             Log.d(TAG, "Alarm: $i")
             Log.d(TAG, "Saved name: $savedName")
             Log.d(TAG, "Saved boolean: $savedBoolean")
             Log.d(TAG, "Saved hours: $savedHours")
             Log.d(TAG, "Saved minutes: $savedMinutes")
+            Log.d(TAG, "Saved PM/AM State: $savedPM")
 
             if (savedName != null) {
                 numAlarm += 1
@@ -495,12 +515,6 @@ class AlarmActivity : AppCompatActivity() {
             //Everything above here works
 
             if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
-//          AMPMCHECK
-//                if (isPm && hours!! < 12) {
-//                    hours = hours!! + 12
-//                } else if (!isPm && hours == 12) {
-//                    hours = 0
-//                }
 
                 val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
@@ -537,21 +551,39 @@ class AlarmActivity : AppCompatActivity() {
                 val y = screenHeight * .13f //20% from top
 
 //            UserInput of AlarmTime into Layout
+                var displayHours = 0
+                if (savedPM) {
+                    displayHours = savedHours - 12
+                }
+                else {
+                    displayHours = savedHours
+                }
+
                 var textViewString = ""
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
                 if ((savedHours in 0..9) && (savedMinutes > 9)) {
-                    textViewString = "0$savedHours:$savedMinutes"
+                    textViewString = "0$displayHours:$savedMinutes"
                     timeTextView.text = textViewString
                 } else if ((savedHours > 9) && (savedMinutes in 0..9)) {
-                    textViewString = "$savedHours:0$savedMinutes"
+                    textViewString = "$displayHours:0$savedMinutes"
                     timeTextView.text = textViewString
                 } else if ((savedHours in 0..9) && (savedMinutes in 0..9)) {
-                    textViewString = "0$savedHours:0$savedMinutes"
+                    textViewString = "0$displayHours:0$savedMinutes"
                     timeTextView.text = textViewString
                 } else {
-                    textViewString = "$savedHours:$savedMinutes"
+                    textViewString = "$displayHours:$savedMinutes"
                     timeTextView.text = textViewString
                 }
+                //AMPM input for display
+                val ampmTextView = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+
+                if (savedPM) {
+                    ampmTextView.text = "PM"
+                }
+                else {
+                    ampmTextView.text = "AM"
+                }
+
 
 //            UserInput of AlarmName into Layout
                 val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
@@ -641,7 +673,7 @@ class AlarmActivity : AppCompatActivity() {
                         }
                         Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
-                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex)//
+                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)//
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
@@ -657,7 +689,7 @@ class AlarmActivity : AppCompatActivity() {
                             }
                         }
                         Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
-                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex)//
+                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)//
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -717,12 +749,14 @@ class AlarmActivity : AppCompatActivity() {
         val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$alarmIndex", false)
         val savedHours: Int? = sharedPreferences.getInt("HOURS_$alarmIndex", 0)
         val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$alarmIndex", 0)
+        val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$alarmIndex", false)
 
         Log.d(TAG, "Removing Alarm: $alarmIndex")
         Log.d(TAG, "Deleting Saved name: $savedName")
         Log.d(TAG, "Deleting Saved boolean: $savedBoolean")
         Log.d(TAG, "Deleting Saved hours: $savedHours")
         Log.d(TAG, "Deleting Saved minutes: $savedMinutes")
+        Log.d(TAG, "Deleting Saved AM/PM State: $savedPM")
 
         // Shift the remaining alarms down by one index
         for (i in (alarmIndex + 1)..4) {
@@ -736,14 +770,16 @@ class AlarmActivity : AppCompatActivity() {
             val tempBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
             val tempHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val tempMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+            val tempPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
 
-            Log.d(TAG, "Moving saved name: $tempName DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved boolean: $tempBoolean DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved hours: $tempHours DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved minutes: $tempMinutes DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved name: $tempName from $i to $newIndex")
+            Log.d(TAG, "Moving saved boolean: $tempBoolean from $i to $newIndex")
+            Log.d(TAG, "Moving saved hours: $tempHours from $i to $newIndex")
+            Log.d(TAG, "Moving saved minutes: $tempMinutes from $i to $newIndex")
+            Log.d(TAG, "Moving saved minutes: $tempPM from $i to $newIndex")
 
             if (tempName != null) {
-                saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex)
+                saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex, tempPM)
             }
 
 //            if (alarmIndex == 0) {
@@ -761,6 +797,7 @@ class AlarmActivity : AppCompatActivity() {
         editor.remove("IS_ENABLED_$numAlarm")
         editor.remove("HOURS_$numAlarm")
         editor.remove("MINUTES_$numAlarm")
+        editor.remove("IS_PM_$numAlarm")
 
         numAlarm -= 1
 
@@ -780,6 +817,7 @@ class AlarmActivity : AppCompatActivity() {
             alarmItemYIndexs[i-3] = child.y.toDouble()
             Log.d(TAG, "Alarm at index ${i - 3} has a height value of ${alarmItemYIndexs[i-3]}")
         }
+
     }
 
     private fun amPmCheck(hours: Int, isPm: Boolean): Int {
