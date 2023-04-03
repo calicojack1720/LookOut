@@ -790,6 +790,9 @@ class AlarmActivity : AppCompatActivity() {
         else {
             newHours = hours
         }
+        if (newHours == 24) {
+            newHours = 0
+        }
         return newHours
     }
 
