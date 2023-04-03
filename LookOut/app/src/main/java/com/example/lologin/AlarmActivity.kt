@@ -777,7 +777,7 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Deleted Alarm $alarmIndex")
     }
 
-    private fun populateHeightArray(alarmItemLayout: View) {
+    private fun populateHeightArray(alarmItemLayout: View): Array<Double> {
         //Creation of Arrays to be passed into loadAlarms
         var alarmItemYIndexs = arrayOf(1.0, 2.0, 3.0, 4.0, 5.0)
         val parentView = alarmItemLayout.parent as ViewGroup
@@ -786,6 +786,10 @@ class AlarmActivity : AppCompatActivity() {
             alarmItemYIndexs[i-3] = child.y.toDouble()
             Log.d(TAG, "Alarm at index ${i - 3} has a height value of ${alarmItemYIndexs[i-3]}")
         }
+        return alarmItemYIndexs
+    }
+    private fun getArrayIndexes(arrayIndex : Int) {
+        //Need to implement for loop to get array index for
     }
 
     private fun amPmCheck(hours: Int, isPm: Boolean): Int {
