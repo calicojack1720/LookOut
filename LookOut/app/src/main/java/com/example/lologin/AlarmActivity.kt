@@ -239,7 +239,7 @@ class AlarmActivity : AppCompatActivity() {
 
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
                 if ((hours in 0..9) && (minutes > 9)) {
-                    textViewString = "0$displayHours:$minutes"
+                    textViewString = "$displayHours:$minutes"
                     timeTextView.text = textViewString
                 }
                 else if (hours > 9 && (minutes in 0..9)) {
@@ -247,7 +247,7 @@ class AlarmActivity : AppCompatActivity() {
                     timeTextView.text = textViewString
                 }
                 else if ((hours in 0..9) && (minutes in 0..9)) {
-                    textViewString = "0$displayHours:0$minutes"
+                    textViewString = "$displayHours:0$minutes"
                     timeTextView.text = textViewString
                 }
                 else {
@@ -565,13 +565,13 @@ class AlarmActivity : AppCompatActivity() {
                 var textViewString = ""
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
                 if ((savedHours in 0..9) && (savedMinutes > 9)) {
-                    textViewString = "0$displayHours:$savedMinutes"
+                    textViewString = "$displayHours:$savedMinutes"
                     timeTextView.text = textViewString
                 } else if ((savedHours > 9) && (savedMinutes in 0..9)) {
                     textViewString = "$displayHours:0$savedMinutes"
                     timeTextView.text = textViewString
                 } else if ((savedHours in 0..9) && (savedMinutes in 0..9)) {
-                    textViewString = "0$displayHours:0$savedMinutes"
+                    textViewString = "$displayHours:0$savedMinutes"
                     timeTextView.text = textViewString
                 } else {
                     textViewString = "$displayHours:$savedMinutes"
