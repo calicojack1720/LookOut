@@ -293,8 +293,6 @@ class AlarmActivity : AppCompatActivity() {
 
                 var arrayIndex = 0
 
-//                Vars for changing how alarms are saved!
-                var alarmItemPositionY = alarmItemLayout.y
 
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -310,6 +308,8 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
+
+
 
                     when (params.bottomMargin) {
                         2100 -> arrayIndex = 0
@@ -357,6 +357,9 @@ class AlarmActivity : AppCompatActivity() {
 
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
+
+                    // populate height values for alarmItems, Creation of height indexes
+                    var heightIndexes = populateHeightArray(alarmItemLayout)
 
                 } else {
                     Toast.makeText(
@@ -808,7 +811,7 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Deleted Alarm $alarmIndex")
     }
 
-    private fun populateHeightArray(alarmItemLayout: View) {
+    private fun populateHeightArray(alarmItemLayout: View): Array<Double> {
         //Creation of Arrays to be passed into loadAlarms
         var alarmItemYIndexs = arrayOf(1.0, 2.0, 3.0, 4.0, 5.0)
         val parentView = alarmItemLayout.parent as ViewGroup
@@ -817,6 +820,9 @@ class AlarmActivity : AppCompatActivity() {
             alarmItemYIndexs[i-3] = child.y.toDouble()
             Log.d(TAG, "Alarm at index ${i - 3} has a height value of ${alarmItemYIndexs[i-3]}")
         }
+        return alarmItemYIndexs
+    }
+    private fun getArrayIndexes (alarmItemLayout: View, heightIndexes : Array<Double> ) {
 
     }
 
