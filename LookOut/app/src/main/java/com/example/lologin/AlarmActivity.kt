@@ -292,6 +292,7 @@ class AlarmActivity : AppCompatActivity() {
                 val marginIncrement = context.dpToPx(100)
 
                 var arrayIndex = 0
+                var heightIndexes = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0)
 
 
                 if (activityAlarmLayout.childCount <= 3) {
@@ -309,6 +310,8 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
 
+                    heightIndexes = populateHeightArray(alarmItemLayout)
+
 
 
 
@@ -325,7 +328,7 @@ class AlarmActivity : AppCompatActivity() {
 //                    }
 
                     //GetIndex for save alarms
-//                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
+                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
 
                     Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
@@ -349,18 +352,20 @@ class AlarmActivity : AppCompatActivity() {
                     alarmItem?.let(scheduler::schedule)
 
                     // populate height values for alarmItems, Creation of height indexes
-                    var heightIndexes = populateHeightArray(alarmItemLayout)
+                    heightIndexes = populateHeightArray(alarmItemLayout)
 
-                    when (params.bottomMargin) {
-                        2100 -> arrayIndex = 0
-                        1750 -> arrayIndex = 1
-                        1400 -> arrayIndex = 2
-                        1050 -> arrayIndex = 3
-                        700 -> arrayIndex = 4
-                        else -> { // Note the block
-                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                        }
-                    }
+//                    when (params.bottomMargin) {
+//                        2100 -> arrayIndex = 0
+//                        1750 -> arrayIndex = 1
+//                        1400 -> arrayIndex = 2
+//                        1050 -> arrayIndex = 3
+//                        700 -> arrayIndex = 4
+//                        else -> { // Note the block
+//                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                        }
+//                    }
+                    //GetIndex for save alarms
+                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
                     Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
@@ -382,32 +387,36 @@ class AlarmActivity : AppCompatActivity() {
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
 
-                        when (params.bottomMargin) {
-                            2100 -> arrayIndex = 0
-                            1750 -> arrayIndex = 1
-                            1400 -> arrayIndex = 2
-                            1050 -> arrayIndex = 3
-                            700 -> arrayIndex = 4
-                            else -> { // Note the block
-                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                            }
-                        }
+//                        when (params.bottomMargin) {
+//                            2100 -> arrayIndex = 0
+//                            1750 -> arrayIndex = 1
+//                            1400 -> arrayIndex = 2
+//                            1050 -> arrayIndex = 3
+//                            700 -> arrayIndex = 4
+//                            else -> { // Note the block
+//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                            }
+//                        }
+                        //GetIndex for save alarms
+                        arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
                         saveAlarms(hours, minutes, name, false, arrayIndex, isPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
 
-                        when (params.bottomMargin) {
-                            2100 -> arrayIndex = 0
-                            1750 -> arrayIndex = 1
-                            1400 -> arrayIndex = 2
-                            1050 -> arrayIndex = 3
-                            700 -> arrayIndex = 4
-                            else -> { // Note the block
-                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                            }
-                        }
+//                        when (params.bottomMargin) {
+//                            2100 -> arrayIndex = 0
+//                            1750 -> arrayIndex = 1
+//                            1400 -> arrayIndex = 2
+//                            1050 -> arrayIndex = 3
+//                            700 -> arrayIndex = 4
+//                            else -> { // Note the block
+//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                            }
+//                        }
+                        //GetIndex for save alarms
+                        arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
                         saveAlarms(hours, minutes, name, true, arrayIndex, isPM)
                         Log.d(TAG, "Alarm Enable")
@@ -623,6 +632,9 @@ class AlarmActivity : AppCompatActivity() {
                 val marginIncrement = context.dpToPx(100)
 
                 var arrayIndex = 0
+                var heightIndexes = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0)
+
+
 
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -640,6 +652,7 @@ class AlarmActivity : AppCompatActivity() {
                         alarmItem?.let(scheduler::schedule)
                         //Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     }
+                    heightIndexes = populateHeightArray(alarmItemLayout)
 
                 } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -659,6 +672,7 @@ class AlarmActivity : AppCompatActivity() {
                         alarmItem?.let(scheduler::schedule)
                         //Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     }
+                    heightIndexes = populateHeightArray(alarmItemLayout)
                 } else {
                     Toast.makeText(
                         applicationContext,
@@ -672,16 +686,18 @@ class AlarmActivity : AppCompatActivity() {
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
 
-                        when (params.bottomMargin) {
-                            2100 -> arrayIndex = 0
-                            1750 -> arrayIndex = 1
-                            1400 -> arrayIndex = 2
-                            1050 -> arrayIndex = 3
-                            700 -> arrayIndex = 4
-                            else -> { // Note the block
-                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                            }
-                        }
+//                        when (params.bottomMargin) {
+//                            2100 -> arrayIndex = 0
+//                            1750 -> arrayIndex = 1
+//                            1400 -> arrayIndex = 2
+//                            1050 -> arrayIndex = 3
+//                            700 -> arrayIndex = 4
+//                            else -> { // Note the block
+//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                            }
+//                        }
+                        //GetIndex for save alarms
+                        arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
                         Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
                         saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)//
@@ -689,16 +705,19 @@ class AlarmActivity : AppCompatActivity() {
                     } else {
                         alarmItem?.let(scheduler::schedule)
 
-                        when (params.bottomMargin) {
-                            2100 -> arrayIndex = 0
-                            1750 -> arrayIndex = 1
-                            1400 -> arrayIndex = 2
-                            1050 -> arrayIndex = 3
-                            700 -> arrayIndex = 4
-                            else -> { // Note the block
-                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                            }
-                        }
+//                        when (params.bottomMargin) {
+//                            2100 -> arrayIndex = 0
+//                            1750 -> arrayIndex = 1
+//                            1400 -> arrayIndex = 2
+//                            1050 -> arrayIndex = 3
+//                            700 -> arrayIndex = 4
+//                            else -> { // Note the block
+//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
+//                            }
+//                        }
+                        //GetIndex for save alarms
+                        arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
+
                         Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
                         saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)//
                         Log.d(TAG, "Alarm Enable")
@@ -838,6 +857,7 @@ class AlarmActivity : AppCompatActivity() {
             val child = parentView.getChildAt(arrayIndex+3)
 
             if (heightIndexes[arrayIndex] == heightWanted) {
+                Log.d(TAG, "ArrayIndex saved properly!")
                 return arrayIndex
             }
         }
