@@ -366,10 +366,14 @@ class AlarmActivity : AppCompatActivity() {
                           val child = parentView.getChildAt(i)
                           if (i == 3) {
                               child.y = y
+
                               Log.w(TAG, "i == 3? $i")
                           }
                           else {
-                              child.y = y * (i-3)
+                              child.y = y * (i-2)
+//                              Note for Matt -- All I did was change a 3 to a 2 on line 373
+//                              FIXME: New issue where layout margin is slightly different due to the way this implementation works
+
                               Log.w(TAG, "i == ? $i")
                           }
                       }
