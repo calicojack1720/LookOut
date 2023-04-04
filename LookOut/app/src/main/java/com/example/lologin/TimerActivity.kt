@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 4/1/2023
+   Updated: 4/2/2023
  */
 
 
@@ -21,6 +21,7 @@ import android.view.ViewGroup
 import android.widget.*
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.graphics.Color
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -71,8 +72,8 @@ class TimerActivity : AppCompatActivity() {
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
             //change timer text
-            startTimer.text = "Stop"
-            Log.w(TAG, "Text 'changed'")
+            startTimer.setBackgroundColor(Color.DKGRAY)
+            Log.w(TAG, "Background Color 'changed'")
             //create values to hold input time
             val timerHours = inputTimerHours.text.toString().toIntOrNull()
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
