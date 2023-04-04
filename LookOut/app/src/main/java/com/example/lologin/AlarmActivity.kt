@@ -30,10 +30,12 @@ import android.view.View
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
 
 var numAlarm = -1
 
 private lateinit var auth: FirebaseAuth
+
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +43,9 @@ class AlarmActivity : AppCompatActivity() {
 
         //initialize Firebase
         auth = Firebase.auth
+
+        //initialize Cloud Firestore
+        val db = Firebase.firestore
 
         val logOutButton = findViewById<Button>(R.id.logout)
         //On Click of the logOutButton
