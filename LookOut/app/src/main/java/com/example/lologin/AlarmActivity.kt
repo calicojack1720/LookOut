@@ -274,35 +274,17 @@ class AlarmActivity : AppCompatActivity() {
                 toggleSwitch.isChecked = true
                 toggleSwitch.isEnabled = true
 
-
-//            Set the Parameters for the new Layout
-
-                val params = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
-                    ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
-                )
                 Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
 //                The following method displays the alarm right
                 val context: Context = this
-                val parentRight = context.dpToPx(120)
-                val parentLeft = context.dpToPx(25)
-                val parentTop = context.dpToPx(100)
-                val parentBottom = context.dpToPx(600)
                 val marginIncrement = context.dpToPx(100)
 
                 var arrayIndex = 0
                 var heightIndexes = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0)
 
-
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-//                    params.leftMargin = parentLeft
-//                    params.topMargin = parentTop
-//                    params.rightMargin = parentRight
-//                    params.bottomMargin = parentBottom
-//
-//                    alarmItemLayout.layoutParams = params // set the params on the view
 
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     alarmItemLayout.y = y
@@ -312,38 +294,15 @@ class AlarmActivity : AppCompatActivity() {
 
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
-
-
-
-
-//                    when (params.bottomMargin) {
-//                        2100 -> arrayIndex = 0
-//                        1750 -> arrayIndex = 1
-//                        1400 -> arrayIndex = 2
-//                        1050 -> arrayIndex = 3
-//                        700 -> arrayIndex = 4
-//                        else -> { // Note the block
-//                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                        }
-//                    }
-
                     //GetIndex for save alarms
                     arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-
-                    Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     //passes through hours, minutes, name, and enabled state to saveAlarms
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
 
                 } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-//                    params.leftMargin = parentLeft
-//                    params.rightMargin = parentRight
-//                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//
-//                    alarmItemLayout.layoutParams = params
 
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * marginIncrement)
@@ -354,25 +313,11 @@ class AlarmActivity : AppCompatActivity() {
                     // populate height values for alarmItems, Creation of height indexes
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
-//                    when (params.bottomMargin) {
-//                        2100 -> arrayIndex = 0
-//                        1750 -> arrayIndex = 1
-//                        1400 -> arrayIndex = 2
-//                        1050 -> arrayIndex = 3
-//                        700 -> arrayIndex = 4
-//                        else -> { // Note the block
-//                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                        }
-//                    }
                     //GetIndex for save alarms
                     arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                    Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
-
                     saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
                     numAlarm += 1
-
-
 
                 } else {
                     Toast.makeText(
@@ -387,16 +332,6 @@ class AlarmActivity : AppCompatActivity() {
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
 
-//                        when (params.bottomMargin) {
-//                            2100 -> arrayIndex = 0
-//                            1750 -> arrayIndex = 1
-//                            1400 -> arrayIndex = 2
-//                            1050 -> arrayIndex = 3
-//                            700 -> arrayIndex = 4
-//                            else -> { // Note the block
-//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                            }
-//                        }
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
@@ -404,17 +339,6 @@ class AlarmActivity : AppCompatActivity() {
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
-
-//                        when (params.bottomMargin) {
-//                            2100 -> arrayIndex = 0
-//                            1750 -> arrayIndex = 1
-//                            1400 -> arrayIndex = 2
-//                            1050 -> arrayIndex = 3
-//                            700 -> arrayIndex = 4
-//                            else -> { // Note the block
-//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                            }
-//                        }
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
@@ -428,17 +352,6 @@ class AlarmActivity : AppCompatActivity() {
                 //On Click of Delete Button
                 deletionButton.setOnClickListener {
 
-                    when (params.bottomMargin) {
-                        2100 -> arrayIndex = 0
-                        1750 -> arrayIndex = 1
-                        1400 -> arrayIndex = 2
-                        1050 -> arrayIndex = 3
-                        700 -> arrayIndex = 4
-                        else -> { // Note the block
-                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                        }
-                    }
-
                     val parentView = alarmItemLayout.parent as ViewGroup
                     parentView.removeView(alarmItemLayout)
 
@@ -449,19 +362,30 @@ class AlarmActivity : AppCompatActivity() {
                     //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
 
-                    for (i in 3 until parentView.childCount) {
-                        val child = parentView.getChildAt(i)
-                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-                        if (i == 3) {
-                            adjustedParams.topMargin = parentTop
-                            adjustedParams.bottomMargin = parentBottom
-                        }
-                        else {
-                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
-                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
-                        }
-                        child.layoutParams = adjustedParams
-                    }
+                      for (i in 3 until parentView.childCount) {
+                          val child = parentView.getChildAt(i)
+                          if (i == 3) {
+                              child.y = y
+                              Log.w(TAG, "i == 3? $i")
+                          }
+                          else {
+                              child.y = y * (i-3)  //currently makes it go DOWN 1 instead of up
+                              Log.w(TAG, "i == ? $i")
+                          }
+                      }
+//                    for (i in 3 until parentView.childCount) {
+//                        val child = parentView.getChildAt(i)
+//                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+//                        if (i == 3) {
+//                            adjustedParams.topMargin = parentTop
+//                            adjustedParams.bottomMargin = parentBottom
+//                        }
+//                        else {
+//                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
+//                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
+//                        }
+//                        child.layoutParams = adjustedParams
+//                    }
 
 //                    End of For Layout Adjustment
 
