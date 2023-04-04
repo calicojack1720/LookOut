@@ -184,7 +184,6 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
-
         submitButton.setOnClickListener {
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
@@ -278,7 +277,6 @@ class AlarmActivity : AppCompatActivity() {
 
 //                The following method displays the alarm right
                 val context: Context = this
-                val marginIncrement = context.dpToPx(100)
 
                 var arrayIndex = 0
                 var heightIndexes = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0)
@@ -305,7 +303,7 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
 
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * y)
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     alarmItem?.let(scheduler::schedule)
@@ -351,48 +349,24 @@ class AlarmActivity : AppCompatActivity() {
                 val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
                 //On Click of Delete Button
                 deletionButton.setOnClickListener {
-
+                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
                     val parentView = alarmItemLayout.parent as ViewGroup
                     parentView.removeView(alarmItemLayout)
 
                     alarmItem?.let { scheduler.cancel(it) }
 
                     deleteAlarms(arrayIndex)
-
-                    //TODO: Need to update layout as items are deleted
 //                    Update layout of remaining views
 
-                      for (i in 3 until parentView.childCount) {
-                          val child = parentView.getChildAt(i)
-                          if (i == 3) {
-                              child.y = y
-
-                              Log.w(TAG, "i == 3? $i")
-                          }
-                          else {
-                              child.y = y * (i-2)
-//                              Note for Matt -- All I did was change a 3 to a 2 on line 373
-//                              FIXME: New issue where layout margin is slightly different due to the way this implementation works
-
-                              Log.w(TAG, "i == ? $i")
-                          }
-                      }
-//                    for (i in 3 until parentView.childCount) {
-//                        val child = parentView.getChildAt(i)
-//                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
-//                        if (i == 3) {
-//                            adjustedParams.topMargin = parentTop
-//                            adjustedParams.bottomMargin = parentBottom
-//                        }
-//                        else {
-//                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
-//                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
-//                        }
-//                        child.layoutParams = adjustedParams
-//                    }
-
-//                    End of For Layout Adjustment
-
+                    for (i in 3 until parentView.childCount) {
+                        val child = parentView.getChildAt(i)
+                        if (i == 3) {
+                            child.y = y
+                        }
+                        else {
+                            child.y = y * (i-2)
+                        }
+                    }
                 }
 
                 popupWindow.dismiss()
@@ -543,62 +517,29 @@ class AlarmActivity : AppCompatActivity() {
                 toggleSwitch.isChecked = savedBoolean
                 toggleSwitch.isEnabled = true
 
-
-//            Set the Parameters for the new Layout
-
-                val params = ConstraintLayout.LayoutParams(
-                    ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
-                    ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
-                )
-                //Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-
-                val context: Context = this
-                val parentRight = context.dpToPx(120)
-                val parentLeft = context.dpToPx(25)
-                val parentTop = context.dpToPx(100)
-                val parentBottom = context.dpToPx(600)
-                val marginIncrement = context.dpToPx(100)
-
                 var arrayIndex = 0
                 var heightIndexes = arrayOf(0.0, 0.0, 0.0, 0.0, 0.0)
 
-
-
                 if (activityAlarmLayout.childCount <= 3) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-//                    params.leftMargin = parentLeft
-//                    params.topMargin = parentTop
-//                    params.rightMargin = parentRight
-//                    params.bottomMargin = parentBottom
-//
-//                    alarmItemLayout.layoutParams = params // set the params on the view
+
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     alarmItemLayout.y = y
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
                         alarmItem?.let(scheduler::schedule)
-                        //Log.d(TAG, "First ${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
                 } else if (activityAlarmLayout.childCount <= 7) {
-                    Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
-//                    params.leftMargin = parentLeft
-//                    params.rightMargin = parentRight
-//                    params.topMargin =
-//                        parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//                    params.bottomMargin =
-//                        parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//
-//                    alarmItemLayout.layoutParams = params
+
                     alarmItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+                    alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * y)
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
                         alarmItem?.let(scheduler::schedule)
-                        //Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
                 } else {
@@ -614,40 +555,17 @@ class AlarmActivity : AppCompatActivity() {
                     if (!isChecked) {
                         alarmItem?.let { scheduler.cancel(it) }
 
-//                        when (params.bottomMargin) {
-//                            2100 -> arrayIndex = 0
-//                            1750 -> arrayIndex = 1
-//                            1400 -> arrayIndex = 2
-//                            1050 -> arrayIndex = 3
-//                            700 -> arrayIndex = 4
-//                            else -> { // Note the block
-//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                            }
-//                        }
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
-                        Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
 
-                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)//
+                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
-
-//                        when (params.bottomMargin) {
-//                            2100 -> arrayIndex = 0
-//                            1750 -> arrayIndex = 1
-//                            1400 -> arrayIndex = 2
-//                            1050 -> arrayIndex = 3
-//                            700 -> arrayIndex = 4
-//                            else -> { // Note the block
-//                                Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-//                            }
-//                        }
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        Log.d(TAG, "${activityAlarmLayout.childCount} ${params.bottomMargin}")
-                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)//
+                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -657,16 +575,7 @@ class AlarmActivity : AppCompatActivity() {
                 val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
                 //On Click of Delete Button
                 deletionButton.setOnClickListener {
-                    when (params.bottomMargin) {
-                        2100 -> arrayIndex = 0
-                        1750 -> arrayIndex = 1
-                        1400 -> arrayIndex = 2
-                        1050 -> arrayIndex = 3
-                        700 -> arrayIndex = 4
-                        else -> { // Note the block
-                            Log.d(TAG, "Brr ${activityAlarmLayout.childCount}")
-                        }
-                    }
+                    arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
                     val parentView = alarmItemLayout.parent as ViewGroup
                     parentView.removeView(alarmItemLayout)
 
@@ -674,25 +583,18 @@ class AlarmActivity : AppCompatActivity() {
 
                     alarmItem?.let { scheduler.cancel(it) }
 
-                    //TODO: Need to update layout as items are deleted
-//                    Update layout of remaining views
+                    //Update layout of remaining views
 
                     for (i in 3 until parentView.childCount) {
                         val child = parentView.getChildAt(i)
-                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
                         if (i == 3) {
-                            adjustedParams.topMargin = parentTop
-                            adjustedParams.bottomMargin = parentBottom
+                            child.y = y
                         }
                         else {
-                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
-                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
+                            child.y = y * (i-2)
                         }
-                        child.layoutParams = adjustedParams
                     }
-
 //                    End of For Layout Adjustment
-
                 }
             }
         }
@@ -720,8 +622,6 @@ class AlarmActivity : AppCompatActivity() {
         for (i in (alarmIndex + 1)..4) {
             Log.d(TAG, "$i")
 
-            //val deletedIndexes = parentView.childAt(i)
-
             val newIndex = i - 1
 
             val tempName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
@@ -740,14 +640,6 @@ class AlarmActivity : AppCompatActivity() {
                 saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex, tempPM)
             }
 
-//            if (alarmIndex == 0) {
-//                editor.remove("ALARM_NAME_$alarmIndex")
-//                editor.remove("IS_ENABLED_$alarmIndex")
-//                editor.remove("HOURS_$alarmIndex")
-//                editor.remove("MINUTES_$alarmIndex")
-//            }
-
-
             Log.d(TAG, "Check for Last Index $i")
         }
 
@@ -758,8 +650,6 @@ class AlarmActivity : AppCompatActivity() {
         editor.remove("IS_PM_$numAlarm")
 
         numAlarm -= 1
-
-        //editor.clear()
 
         editor.apply()
 
@@ -811,13 +701,4 @@ class AlarmActivity : AppCompatActivity() {
     companion object {
         const val TAG = "AlarmActivity"
     }
-    fun Context.dpToPx(dp: Int): Int {
-        val density = resources.displayMetrics.density
-        return (dp * density).toInt()
-    }
-    fun Context.pxToDp(px: Int): Int {
-        val density = resources.displayMetrics.density
-        return (px / density).toInt()
-    }
-
 }
