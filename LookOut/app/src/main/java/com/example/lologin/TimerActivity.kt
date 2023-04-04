@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 4/2/2023
+   Updated: 4/4/2023
  */
 
 
@@ -36,6 +36,10 @@ import java.io.File
 import java.time.LocalDateTime
 
 var numTimer = -1
+
+var countSeconds: Int = 0
+var countMinutes: Int = 0
+var countHours: Int = 0
 
 private lateinit var auth: FirebaseAuth
 class TimerActivity : AppCompatActivity() {
@@ -77,6 +81,7 @@ class TimerActivity : AppCompatActivity() {
         stopTimer.setBackgroundColor(Color.DKGRAY)
         resetTimer.setBackgroundColor(Color.DKGRAY)
 
+
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
             //change startTimer background color
@@ -95,6 +100,44 @@ class TimerActivity : AppCompatActivity() {
 
             val convertedSeconds: Long = convertToSec(timerHours, timerMinutes, timerSeconds)
 
+            val milliseconds: Long = convertedSeconds * 1000
+
+            //set countSeconds, countMinutes, and countHours
+            if(timerSeconds != null)
+                countSeconds = timerSeconds
+            else
+                countSeconds = 0
+            if(timerMinutes != null)
+                countMinutes = timerMinutes
+            else
+                countMinutes = 0
+            if(timerHours != null)
+                countHours = timerHours
+            else
+                countHours = 0
+
+            //start timer count down diplay
+            object : CountDownTimer(milliseconds, 1000) {
+
+                override fun onTick(millisUntilFinished: Long) {
+                    //update countHours, countMinutes, and countSeconds
+                    getTimeLeft()
+                    inputTimerHours.setText("$countHours")
+                    inputTimerMinutes.setText("$countMinutes")
+                    inputTimerSeconds.setText("$countSeconds")
+                }
+
+                override fun onFinish() {
+                    startTimer.setBackgroundColor(Color.BLUE)
+
+                    countHours = 0
+                    inputTimerHours.setText("")
+                    inputTimerMinutes.setText("")
+                    inputTimerSeconds.setText("")
+                }
+            }.start()
+
+
             if(timerSeconds != null || timerMinutes != null || timerHours != null) {
                 timerItem = TimerItem(
                     time = LocalDateTime.now()
@@ -107,36 +150,36 @@ class TimerActivity : AppCompatActivity() {
 
             //set listener for timer reset, stop timer when clicked
             resetTimer.setOnClickListener {
+                //cancel timer
                 timerItem?.let{scheduler.cancel(it)}
+
+                //reset button colors
                 resetTimer.setBackgroundColor(Color.DKGRAY)
                 stopTimer.setBackgroundColor(Color.DKGRAY)
                 startTimer.setBackgroundColor(Color.BLUE)
+
+                //reset countSeconds, countMinutes, and countHours
+                countSeconds = 0
+                countMinutes = 0
+                countHours = 0
+
+                //reset timer display
+                inputTimerHours.setText("")
+                inputTimerMinutes.setText("")
+                inputTimerSeconds.setText("")
             }
 
             //set listener for stop button, pause timer when clicked
+            //TODO: finish programming stopping and starting
             stopTimer.setOnClickListener {
+
                 stopTimer.setBackgroundColor(Color.DKGRAY)
                 startTimer.setBackgroundColor(Color.BLUE)
                 resetTimer.setBackgroundColor(Color.BLUE)
             }
 
             //start countdown
-            /*val timer = object: CountDownTimer(timerMilliSeconds, 1000) {
-                override fun onTick(millisUntilFinished: Long) {
 
-                }
-
-                override fun onFinish() {
-                    val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                    val r = RingtoneManager.getRingtone(applicationContext, notification)
-                    r.play()
-                    Log.w(TAG, "onFinish ran")
-
-                }
-            }
-            Log.w(TAG, "Timer.start")
-            timer.start()
-            */
         }
 
         //When addTimerButton is pressed, open up the timer popup
@@ -205,6 +248,28 @@ class TimerActivity : AppCompatActivity() {
 
         //return time in milliseconds
         return toSec
+    }
+
+    /*Precondition: implicit update of countSeconds, countMinutes, and countHours
+      Postcondition: subtracts one second from countSeconds, countMinutes, and countHours
+    */
+    private fun getTimeLeft() {
+        if(countSeconds == 0) {
+            if(countMinutes > 0) {
+                countMinutes -= 1
+                countSeconds = 59
+            }
+            else {
+                if(countHours > 0) {
+                    countHours -= 1
+                    countMinutes = 59
+                    countSeconds = 59
+                }
+            }
+        }
+        else {
+            countSeconds -= 1
+        }
     }
 
 
@@ -395,6 +460,8 @@ class TimerActivity : AppCompatActivity() {
         Log.d(TAG, "Saved Timer $timerIndex")
     }
 
+    //Precondition: none
+    //Postcondition: loads saved timers on timer page
     private fun loadTimers() {
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
