@@ -369,7 +369,7 @@ class AlarmActivity : AppCompatActivity() {
                               Log.w(TAG, "i == 3? $i")
                           }
                           else {
-                              child.y = y * (i-3)  //currently makes it go DOWN 1 instead of up
+                              child.y = y * (i-3)
                               Log.w(TAG, "i == ? $i")
                           }
                       }
