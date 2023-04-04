@@ -22,6 +22,8 @@ import android.widget.*
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -60,20 +62,32 @@ class TimerActivity : AppCompatActivity() {
 
         val addTimerButton = activityTimerLayout.findViewById<FloatingActionButton>(R.id.addTimer)
 
-
-
         //call TimerDisplay to format entered time
         //TimerDisplay(timerView, timerHours, timerMinutes, timerSeconds)
 
-        //create a value for the start button
+        //create a value for the start button, stop button, and reset button
         val startTimer = activityTimerLayout.findViewById<Button>(R.id.StartTimer)
+        val stopTimer = activityTimerLayout.findViewById<Button>(R.id.stopTimer)
+        val resetTimer = activityTimerLayout.findViewById<Button>(R.id.resetTimer)
 
+        //set startTimer to BLUE
+        startTimer.setBackgroundColor(Color.BLUE)
+
+        //set stop and reset to gray background
+        stopTimer.setBackgroundColor(Color.DKGRAY)
+        resetTimer.setBackgroundColor(Color.DKGRAY)
 
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
-            //change timer text
+            //change startTimer background color
             startTimer.setBackgroundColor(Color.DKGRAY)
             Log.w(TAG, "Background Color 'changed'")
+
+            //change stop and reset colors
+            //TODO: cannot find what the original color is
+            stopTimer.setBackgroundColor(Color.BLUE)
+            resetTimer.setBackgroundColor(Color.BLUE)
+
             //create values to hold input time
             val timerHours = inputTimerHours.text.toString().toIntOrNull()
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
@@ -81,7 +95,7 @@ class TimerActivity : AppCompatActivity() {
 
             val convertedSeconds: Long = convertToSec(timerHours, timerMinutes, timerSeconds)
 
-            if(timerSeconds != null) {
+            if(timerSeconds != null || timerMinutes != null || timerHours != null) {
                 timerItem = TimerItem(
                     time = LocalDateTime.now()
                         .plusSeconds(convertedSeconds.toLong()),
@@ -91,8 +105,19 @@ class TimerActivity : AppCompatActivity() {
 
             timerItem?.let(scheduler::schedule)
 
-            startTimer.setOnClickListener {
+            //set listener for timer reset, stop timer when clicked
+            resetTimer.setOnClickListener {
+                timerItem?.let{scheduler.cancel(it)}
+                resetTimer.setBackgroundColor(Color.DKGRAY)
+                stopTimer.setBackgroundColor(Color.DKGRAY)
+                startTimer.setBackgroundColor(Color.BLUE)
+            }
 
+            //set listener for stop button, pause timer when clicked
+            stopTimer.setOnClickListener {
+                stopTimer.setBackgroundColor(Color.DKGRAY)
+                startTimer.setBackgroundColor(Color.BLUE)
+                resetTimer.setBackgroundColor(Color.BLUE)
             }
 
             //start countdown
@@ -113,10 +138,6 @@ class TimerActivity : AppCompatActivity() {
             timer.start()
             */
         }
-
-        //TODO: This isn't doing anything
-        //change timer text back to "Start"
-        startTimer.text = "Start"
 
         //When addTimerButton is pressed, open up the timer popup
         addTimerButton.setOnClickListener {
