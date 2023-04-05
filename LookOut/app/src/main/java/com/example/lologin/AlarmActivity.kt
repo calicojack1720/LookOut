@@ -30,6 +30,7 @@ import android.view.View
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 
 var numAlarm = -1
@@ -402,6 +403,24 @@ class AlarmActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
+        val db = Firebase.firestore
+        val token = getToken()
+
+        if (auth.currentUser != null) {
+            Log.d(TAG, "Save: Current User Not Null")
+            val alarmData = hashMapOf(
+                "name" to "$name",
+                "isPM" to isPM,
+                "isEnabled" to isEnabled,
+                "hours" to hours,
+                "minutes" to minutes,
+            )
+            db.collection("users/$token/alarms").document("alarm$alarmIndex")
+                .set(alarmData)
+                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+        }
+
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
             putBoolean("IS_ENABLED_$alarmIndex", isEnabled)
@@ -410,7 +429,9 @@ class AlarmActivity : AppCompatActivity() {
             putBoolean("IS_PM_$alarmIndex", isPM)
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
+
     }
+
 
     private fun loadAlarms() {
         val sharedPreferences: SharedPreferences =
@@ -480,7 +501,12 @@ class AlarmActivity : AppCompatActivity() {
 //            UserInput of AlarmTime into Layout
                 var displayHours = 0
                 if (savedPM) {
-                    displayHours = savedHours - 12
+                    if (savedHours != 0) {
+                        displayHours = savedHours - 12
+                    }
+                    else {
+                        displayHours = 12
+                    }
                 }
                 else {
                     displayHours = savedHours
@@ -701,6 +727,16 @@ class AlarmActivity : AppCompatActivity() {
             newHours = 0
         }
         return newHours
+    }
+
+    private fun getToken(): String {
+        val user = Firebase.auth.currentUser
+        var uid = ""
+        user?.let {
+            // The user's ID, unique to the Firebase project.
+            uid = it.uid
+        }
+        return uid
     }
 
     companion object {
