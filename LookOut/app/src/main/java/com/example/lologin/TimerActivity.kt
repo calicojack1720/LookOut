@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 4/4/2023
+   Updated: 4/5/2023
  */
 
 
@@ -41,6 +41,7 @@ var countSeconds: Int = 0
 var countMinutes: Int = 0
 var countHours: Int = 0
 
+
 private lateinit var auth: FirebaseAuth
 class TimerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,9 @@ class TimerActivity : AppCompatActivity() {
 
         val scheduler = AndroidTimerScheduler(this)
         var timerItem: TimerItem? = null
+
+        //determines whether count down should be continued
+        var continueCountDown: Boolean = true
 
         //initializing Firebase
         auth = Firebase.auth
@@ -84,12 +88,14 @@ class TimerActivity : AppCompatActivity() {
 
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
+            //set continueCountDown to true
+            continueCountDown = true
+
             //change startTimer background color
             startTimer.setBackgroundColor(Color.DKGRAY)
             Log.w(TAG, "Background Color 'changed'")
 
             //change stop and reset colors
-            //TODO: cannot find what the original color is
             stopTimer.setBackgroundColor(Color.BLUE)
             resetTimer.setBackgroundColor(Color.BLUE)
 
@@ -120,6 +126,10 @@ class TimerActivity : AppCompatActivity() {
             object : CountDownTimer(milliseconds, 1000) {
 
                 override fun onTick(millisUntilFinished: Long) {
+                    //check continueCountDown, finish if false
+                    if(!continueCountDown)
+                        cancel()
+
                     //update countHours, countMinutes, and countSeconds
                     getTimeLeft()
                     inputTimerHours.setText("$countHours")
@@ -130,7 +140,12 @@ class TimerActivity : AppCompatActivity() {
                 override fun onFinish() {
                     startTimer.setBackgroundColor(Color.BLUE)
 
+                    //reset countHours, countMinutes, countSeconds
                     countHours = 0
+                    countMinutes = 0
+                    countSeconds = 0
+
+                    //reset enter tie boxes to empty
                     inputTimerHours.setText("")
                     inputTimerMinutes.setText("")
                     inputTimerSeconds.setText("")
@@ -170,16 +185,20 @@ class TimerActivity : AppCompatActivity() {
             }
 
             //set listener for stop button, pause timer when clicked
-            //TODO: finish programming stopping and starting
             stopTimer.setOnClickListener {
+                //set continueCountDown to false
+                continueCountDown = false
 
+                //cancel timer
+                timerItem?.let{scheduler.cancel(it)}
+
+                //TODO: get countdown to stop
+
+                //set button colors
                 stopTimer.setBackgroundColor(Color.DKGRAY)
                 startTimer.setBackgroundColor(Color.BLUE)
                 resetTimer.setBackgroundColor(Color.BLUE)
             }
-
-            //start countdown
-
         }
 
         //When addTimerButton is pressed, open up the timer popup
