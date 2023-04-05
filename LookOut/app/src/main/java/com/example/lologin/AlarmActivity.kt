@@ -236,7 +236,12 @@ class AlarmActivity : AppCompatActivity() {
                 var displayHours = hours
 
                 if (isPM) {
-                    displayHours = hours - 12
+                    if (hours != 0) {
+                        displayHours = hours - 12
+                    }
+                    else {
+                        displayHours = 12
+                    }
                 }
                 else {
                     displayHours = hours
