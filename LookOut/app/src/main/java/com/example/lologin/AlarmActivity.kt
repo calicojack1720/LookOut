@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 
 var numAlarm = -1
@@ -421,9 +422,9 @@ class AlarmActivity : AppCompatActivity() {
                 "minutes" to minutes,
             )
             db.collection("users/$token/alarms").document("alarm$alarmIndex")
-                .set(alarmData)
-                .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+                .set(alarmData, SetOptions.merge())
+                .addOnSuccessListener { Log.d(TAG, "Successfully written to cloud!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing to cloud", e) }
         }
 
         editor.apply() {
@@ -594,12 +595,16 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
+                        accessHours(arrayIndex)
+
                         saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
+
+                        accessHours(arrayIndex)
 
                         saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Enable")
@@ -690,6 +695,43 @@ class AlarmActivity : AppCompatActivity() {
         editor.apply()
 
         Log.d(TAG, "Deleted Alarm $alarmIndex")
+
+        //Cloud Storage Deletion
+        val db = Firebase.firestore
+        val token = getToken()
+
+        if (auth.currentUser != null) {
+            db.collection("users/$token/alarms").document("alarm$alarmIndex")
+                .delete()
+                .addOnSuccessListener { Log.d(TAG, "Successfully deleted from cloud!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error deleting from cloud", e) }
+
+            for (i in (alarmIndex + 1)..4) {
+                Log.d(TAG, "$i")
+
+                val newIndex = i - 1
+
+                val alarmAccess = db.collection("users/$token/alarms").document("alarm$i")
+                alarmAccess.get()
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                        } else {
+                            Log.d(TAG, "No such document")
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "get failed with ", exception)
+                    }
+
+
+//                if (tempName != null) {
+//                    //actual saving of alarms
+//                }
+
+                Log.d(TAG, "Check for Last Index $i")
+            }
+        }
     }
 
     private fun populateHeightArray(alarmItemLayout: View): Array<Double> {
@@ -742,6 +784,25 @@ class AlarmActivity : AppCompatActivity() {
             uid = it.uid
         }
         return uid
+    }
+
+    private fun accessHours(alarmIndex: Int) {
+        val db = Firebase.firestore
+        val token = getToken()
+
+        val alarmAccess = db.collection("users/$token/alarms").document("alarm$alarmIndex")
+        alarmAccess.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val data = document.data
+                    Log.d(TAG, "DocumentSnapshot data: ${data}")
+                } else {
+                    Log.d(TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
     }
 
     companion object {
