@@ -35,12 +35,14 @@ import com.google.firebase.ktx.Firebase
 import java.io.File
 import java.time.LocalDateTime
 
+//global variables:
 var numTimer = -1
 
-var countSeconds: Int = 0
-var countMinutes: Int = 0
-var countHours: Int = 0
-
+var countSeconds: Int = 0       //holds count down seconds
+var countMinutes: Int = 0       //holds count down minutes
+var countHours: Int = 0         //holds count down hours
+//determines whether count down should be continued
+var continueCountDown: Boolean = true
 
 private lateinit var auth: FirebaseAuth
 class TimerActivity : AppCompatActivity() {
@@ -51,8 +53,7 @@ class TimerActivity : AppCompatActivity() {
         val scheduler = AndroidTimerScheduler(this)
         var timerItem: TimerItem? = null
 
-        //determines whether count down should be continued
-        var continueCountDown: Boolean = true
+
 
         //initializing Firebase
         auth = Firebase.auth
@@ -271,6 +272,10 @@ class TimerActivity : AppCompatActivity() {
       Postcondition: subtracts one second from countSeconds, countMinutes, and countHours
     */
     private fun getTimeLeft() {
+        //check continueCountDown, return if countinueCountDown is false
+        if(!continueCountDown)
+            return
+
         if(countSeconds == 0) {
             if(countMinutes > 0) {
                 countMinutes -= 1
