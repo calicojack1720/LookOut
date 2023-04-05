@@ -186,13 +186,11 @@ class TimerActivity : AppCompatActivity() {
 
             //set listener for stop button, pause timer when clicked
             stopTimer.setOnClickListener {
-                //set continueCountDown to false
-                continueCountDown = false
-
                 //cancel timer
                 timerItem?.let{scheduler.cancel(it)}
 
-                //TODO: get countdown to stop
+                //set continueCountDown to false
+                continueCountDown = false
 
                 //set button colors
                 stopTimer.setBackgroundColor(Color.DKGRAY)
