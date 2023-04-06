@@ -337,6 +337,9 @@ class AlarmActivity : AppCompatActivity() {
                     ).show()
                 }
 
+                //Setting an on click listener to be able to edit alarms
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView)}
+
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (!isChecked) {
@@ -388,6 +391,7 @@ class AlarmActivity : AppCompatActivity() {
                 Toast.makeText(this, "Invalid time entered", Toast.LENGTH_SHORT).show()
             }
         }
+
 
     } // end of showPopup()
 
@@ -639,6 +643,10 @@ class AlarmActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View) {
+        popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
     }
 
     private fun deleteAlarms(alarmIndex: Int) {
