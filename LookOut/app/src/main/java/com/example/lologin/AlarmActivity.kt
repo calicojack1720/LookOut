@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import java.util.concurrent.CompletableFuture
-
+import org.w3c.dom.Text
 
 var numAlarm = -1
 
@@ -351,6 +351,9 @@ class AlarmActivity : AppCompatActivity() {
                     ).show()
                 }
 
+                //Setting an on click listener to be able to edit alarms
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!)}
+
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (!isChecked) {
@@ -402,6 +405,7 @@ class AlarmActivity : AppCompatActivity() {
                 Toast.makeText(this, "Invalid time entered", Toast.LENGTH_SHORT).show()
             }
         }
+
 
     } // end of showPopup()
 
@@ -809,6 +813,121 @@ class AlarmActivity : AppCompatActivity() {
                 saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM)
             }
         }
+    }
+
+    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem) {
+        popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
+
+        //AlarmItemLayout values
+        val parentView = alarmItemLayout.parent as ViewGroup
+        val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
+        val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
+        val toggleSwitch = alarmItemLayout.findViewById<Button>(R.id.toggle_switch)
+        val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+        val amPmButtom = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+
+        //PopupViewValues
+        val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
+        val inputHours = popUpView.findViewById<EditText>(R.id.hours)
+        val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
+
+        val name = inputName.text.toString()
+        var hours = inputHours.text.toString().toInt()
+        var minutes = inputMinutes.text.toString().toIntOrNull()
+
+        var isPM = false
+        val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+        toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                isPM = true
+                Log.w(TAG, "PM")
+            } else {
+                isPM = false
+                Log.w(TAG, "AM")
+            }
+        }
+
+
+        val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
+
+        submitButtom.setOnClickListener {
+            alarmItem?.let { scheduler.cancel(it) }
+
+            var textViewString = ""
+
+            if (hours != null && hours in 1..12 && minutes != null && minutes in 0..59) {
+                hours = amPmCheck(hours, isPM)
+
+                //Data for edited alarm
+                val timeForAlarm = LocalTime.of(hours, minutes)
+                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
+
+                val currentTime = LocalDateTime.now()
+                if (dateTimeForAlarm.isBefore(currentTime)) {
+                    dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
+                }
+
+                var newAlarmItem = AlarmItem(
+                    time = dateTimeForAlarm,
+                    message = name,
+                    isEnabled = true
+                )
+                //Input of alarmName from popup into existing alarm
+                nameTextView.text = inputName.text.toString()
+                var displayHours = hours
+
+                //FIXME: Does not work all the time, sometimes does not get data inputted properly? Takes two clicks to input time. May be related to location of code within submitClickListener
+                //Correcting value to 12 hour time
+                if (isPM) {
+                    if (hours != 0) {
+                        displayHours = hours - 12
+                        Log.w(TAG, "displayHours was edited to be $displayHours")
+                    }
+                    else {
+                        displayHours = 12
+                        Log.w(TAG, "displayHours was edited to be $displayHours")
+                    }
+                }
+                else {
+                    displayHours = hours
+                    Log.w(TAG, "displayHours was edited to be $displayHours")
+                }
+                //Inputting the time into the alarmItem
+                if ((hours in 0..9) && (minutes > 9)) {
+                    textViewString = "$displayHours:$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else if (hours > 9 && (minutes in 0..9)) {
+                    textViewString = "${displayHours}:0$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else if ((hours in 0..9) && (minutes in 0..9)) {
+                    textViewString = "$displayHours:0$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else {
+                    textViewString = "$displayHours:$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                if (isPM) {
+                    amPmButtom.text = "PM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                }
+                else {
+                    amPmButtom.text = "AM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                }
+
+
+            }
+            popupWindow.dismiss()
+
+        }
+
     }
 
     private fun deleteAlarms(alarmIndex: Int) {

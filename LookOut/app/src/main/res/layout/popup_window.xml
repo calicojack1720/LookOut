@@ -51,6 +51,85 @@
         android:minHeight="48dp"
         android:textAlignment="center"
         android:textSize="16sp" />
+    <TextView
+        android:id="@+id/sunday_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_text_box"
+        android:text="Sun"
+        android:layout_marginStart="16dp"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        />
+    <TextView
+        android:id="@+id/monday_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mon"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:layout_toEndOf="@+id/sunday_button"
+        android:layout_marginStart="16dp"
+        android:clickable="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tuesday_button"
+        android:text="Tues"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/monday_button"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/wednesday_button"
+        android:text="Wed"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/tuesday_button"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/thursday_button"
+        android:text="Thurs"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/wednesday_button"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/friday_button"
+        android:text="Fri"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/thursday_button"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/saturday_button"
+        android:text="Sat"
+        android:textSize="16sp"
+        android:layout_toEndOf="@id/friday_button"
+        android:layout_marginStart="16dp"
+        android:layout_below="@id/name_text_box"
+        android:layout_marginTop="10dp"
+        android:clickable="true"/>
+
 
     <Button
         android:id="@+id/cancel_button"
