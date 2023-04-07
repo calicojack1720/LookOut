@@ -846,6 +846,7 @@ class AlarmActivity : AppCompatActivity() {
                 Log.w(TAG, "AM")
             }
         }
+        toggleAMPM.isChecked = isPM
 
 
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
