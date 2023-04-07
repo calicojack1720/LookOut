@@ -663,8 +663,20 @@ class AlarmActivity : AppCompatActivity() {
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
 
         val name = inputName.text.toString()
-        val hours = inputHours.text.toString().toInt()
-        val minutes = inputMinutes.text.toString().toIntOrNull()
+        var hours = inputHours.text.toString().toInt()
+        var minutes = inputMinutes.text.toString().toIntOrNull()
+
+        var isPM = false
+        val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+        toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                isPM = true
+                Log.w(TAG, "PM")
+            } else {
+                isPM = false
+                Log.w(TAG, "AM")
+            }
+        }
 
 
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
@@ -672,36 +684,78 @@ class AlarmActivity : AppCompatActivity() {
         submitButtom.setOnClickListener {
             alarmItem?.let { scheduler.cancel(it) }
 
+            var textViewString = ""
 
-            //Data for edited alarm
-            val timeForAlarm = LocalTime.of(hours, minutes!!)
-            var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
-            val newAlarmItem = AlarmItem(
-                time = dateTimeForAlarm,
-                message = name,
-                isEnabled = true
-            )
-            //Input of alarmName from popup into existing alarm
-            nameTextView.text = inputName.text.toString()
+            if (hours != null && hours in 1..12 && minutes != null && minutes in 0..59) {
+                hours = amPmCheck(hours, isPM)
 
-            //Checks to see if PM is checked
+                //Data for edited alarm
+                val timeForAlarm = LocalTime.of(hours, minutes)
+                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
 
-            var isPM = false
-            val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
-            toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    isPM = true
-                    Log.w(TAG, "PM")
-                } else {
-                    isPM = false
-                    Log.w(TAG, "AM")
+                val currentTime = LocalDateTime.now()
+                if (dateTimeForAlarm.isBefore(currentTime)) {
+                    dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
                 }
+
+                var newAlarmItem = AlarmItem(
+                    time = dateTimeForAlarm,
+                    message = name,
+                    isEnabled = true
+                )
+                //Input of alarmName from popup into existing alarm
+                nameTextView.text = inputName.text.toString()
+                var displayHours = hours
+
+                //FIXME: Does not work all the time, sometimes does not get data inputted properly? Takes two clicks to input time. May be related to location of code within submitClickListener
+                //Correcting value to 12 hour time
+                if (isPM) {
+                    if (hours != 0) {
+                        displayHours = hours - 12
+                        Log.w(TAG, "displayHours was edited to be $displayHours")
+                    }
+                    else {
+                        displayHours = 12
+                        Log.w(TAG, "displayHours was edited to be $displayHours")
+                    }
+                }
+                else {
+                    displayHours = hours
+                    Log.w(TAG, "displayHours was edited to be $displayHours")
+                }
+                //Inputting the time into the alarmItem
+                if ((hours in 0..9) && (minutes > 9)) {
+                    textViewString = "$displayHours:$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else if (hours > 9 && (minutes in 0..9)) {
+                    textViewString = "${displayHours}:0$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else if ((hours in 0..9) && (minutes in 0..9)) {
+                    textViewString = "$displayHours:0$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                else {
+                    textViewString = "$displayHours:$minutes"
+                    timeTextView.text = textViewString
+                    Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
+                }
+                if (isPM) {
+                    amPmButtom.text = "PM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                }
+                else {
+                    amPmButtom.text = "AM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                }
+
+
             }
-
-
-
-
-
+            popupWindow.dismiss()
 
         }
 
