@@ -827,7 +827,7 @@ class AlarmActivity : AppCompatActivity() {
         val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
         val toggleSwitch = alarmItemLayout.findViewById<Button>(R.id.toggle_switch)
         val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
-        val amPmButtom = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+        val amPmTextView = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
 
         //PopupViewValues
         val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
@@ -840,6 +840,7 @@ class AlarmActivity : AppCompatActivity() {
 
         var isPM = false
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+
         toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 isPM = true
@@ -848,6 +849,14 @@ class AlarmActivity : AppCompatActivity() {
                 isPM = false
                 Log.w(TAG, "AM")
             }
+//            toggleAMPM.isChecked = isPM
+        }
+        //Need to check if statement again in case that CheckedChangeListener is not ran
+        if (toggleAMPM.isChecked) {
+            isPM = true
+        }
+        else {
+            isPM = false
         }
         toggleAMPM.isChecked = isPM
 
@@ -918,12 +927,12 @@ class AlarmActivity : AppCompatActivity() {
                     Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
                 }
                 if (isPM) {
-                    amPmButtom.text = "PM"
-                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                    amPmTextView.text = "PM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmTextView.text}")
                 }
                 else {
-                    amPmButtom.text = "AM"
-                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                    amPmTextView.text = "AM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmTextView.text}")
                 }
 
 
