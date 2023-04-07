@@ -33,6 +33,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import java.util.concurrent.CompletableFuture
+
 
 var numAlarm = -1
 
@@ -65,7 +72,14 @@ class AlarmActivity : AppCompatActivity() {
         createAlarmStorage()
 
         //loadAlarms
-        loadAlarms()
+        if (auth.currentUser != null) {
+            syncCloud()
+            Log.d(TAG, "Sync: Difference Sync Begin")
+        }
+        else {
+            loadAlarms()
+            Log.d(TAG, "Sync: Difference Sync Not Happening")
+        }
 
 //        Notifications
         val notificationManager = NotificationManagerCompat.from(this)
@@ -409,24 +423,6 @@ class AlarmActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
-        val db = Firebase.firestore
-        val token = getToken()
-
-        if (auth.currentUser != null) {
-            Log.d(TAG, "Save: Current User Not Null")
-            val alarmData = hashMapOf(
-                "name" to "$name",
-                "isPM" to isPM,
-                "isEnabled" to isEnabled,
-                "hours" to hours,
-                "minutes" to minutes,
-            )
-            db.collection("users/$token/alarms").document("alarm$alarmIndex")
-                .set(alarmData, SetOptions.merge())
-                .addOnSuccessListener { Log.d(TAG, "Successfully written to cloud!") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error writing to cloud", e) }
-        }
-
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
             putBoolean("IS_ENABLED_$alarmIndex", isEnabled)
@@ -436,12 +432,36 @@ class AlarmActivity : AppCompatActivity() {
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
 
+        saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM)
     }
 
+    private fun saveCloud(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
+        if (auth.currentUser != null) {
+            val db = Firebase.firestore
+            val token = getToken()
+
+            Log.d(TAG, "Save: Current User Not Null")
+
+            val alarmData = hashMapOf(
+                "name" to "$name",
+                "isPM" to isPM,
+                "isEnabled" to isEnabled,
+                "hours" to hours,
+                "minutes" to minutes,
+                "index" to alarmIndex,
+            )
+            db.collection("users/$token/alarms").document("alarm$alarmIndex")
+                .set(alarmData, SetOptions.merge())
+                .addOnSuccessListener { Log.d(TAG, "Successfully written to cloud!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing to cloud", e) }
+        }
+        else {
+            Log.w(TAG, "SaveCloud: User is not logged in")
+        }
+    }
 
     private fun loadAlarms() {
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
 
         val scheduler = AndroidAlarmScheduler(this)
         var alarmItem: AlarmItem? = null
@@ -502,7 +522,7 @@ class AlarmActivity : AppCompatActivity() {
                 val maxChildViewX = screenWidth * 0.9f - alarmItemLayout.width
 
                 val x = screenWidth * 0.05f //5% from left
-                val y = screenHeight * .13f //20% from top
+                val y = screenHeight * .13f //13% from top
 
 //            UserInput of AlarmTime into Layout
                 var displayHours = 0
@@ -595,16 +615,13 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        accessHours(arrayIndex)
-
                         saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
                         alarmItem?.let(scheduler::schedule)
+
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
-
-                        accessHours(arrayIndex)
 
                         saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Enable")
@@ -638,14 +655,167 @@ class AlarmActivity : AppCompatActivity() {
 //                    End of For Layout Adjustment
                 }
             }
+
+        }
+    }
+
+    //Checks all values in the cloud, and in the Local Storage, and outputs a TRUE value if they are all
+    @SuppressLint("SuspiciousIndentation")
+    private fun syncCloud() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+
+            GlobalScope.launch(Dispatchers.Main) {
+                Log.d(TAG, "Sync: Try & Catch about to run numAlarm: $numAlarm")
+                try {
+                    var hours = 0
+                    var minutes = 0
+                    var name = ""
+                    var isPM = false
+                    var isEnabled = false
+                    loop@ for (i in 0 until numAlarm + 2) {
+                        // Call the accessData function with a callback and suspend until it completes
+                        hours = suspendCoroutine<Int> { continuation ->
+                            accessData(i, "hours") { cloudHours ->
+                                if (cloudHours == "end") {
+                                    val breakValue = -1
+                                    continuation.resume(breakValue)
+                                }
+                                else {
+                                    continuation.resume(cloudHours.toInt())
+                                }
+                            }
+                        }
+                        if (hours == -1) {
+                            Log.d(TAG, "Sync: Loop Broken")
+
+                            break@loop
+                        }
+                        minutes = suspendCoroutine<Int> { continuation ->
+                            accessData(i, "minutes") { cloudMinutes ->
+                                continuation.resume(cloudMinutes.toInt())
+                            }
+                        }
+                        name = suspendCoroutine<String> { continuation ->
+                            accessData(i, "name") { cloudName ->
+                                continuation.resume(cloudName)
+                            }
+                        }
+                        isPM = suspendCoroutine<Boolean> { continuation ->
+                            accessData(i, "isPM") { cloudisPM ->
+                                continuation.resume(cloudisPM.toBoolean())
+                            }
+                        }
+                        isEnabled = suspendCoroutine<Boolean> { continuation ->
+                            accessData(i, "isEnabled") { cloudisEnabled ->
+                                continuation.resume(cloudisEnabled.toBoolean())
+                            }
+                        }
+
+                        //Grabs values from Local Storage
+                        val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
+                        val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
+                        val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+                        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+                        val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+
+                        //check for differences between local and cloud storage
+                        if (savedName == name && savedBoolean == isEnabled && savedHours == hours && savedMinutes == minutes && savedPM == isPM) {
+                            Log.d(TAG, "Sync: no differences")
+                        }
+                        else {
+                            Log.d(TAG, "Sync: Difference Found alarm$i")
+                            saveAlarms(hours, minutes, name, isEnabled, i, isPM)
+                        }
+
+                    Log.d(TAG, "Sync: $hours:$minutes isPM:$isPM isEnabled:$isEnabled name:$name index:$i")
+
+                    }
+
+                    if (numAlarm <= -1) {
+                        loop@ for (i in 0 until 5) {
+                            hours = suspendCoroutine<Int> { continuation ->
+                                accessData(i, "hours") { cloudHours ->
+                                    if (cloudHours == "end") {
+                                        val breakValue = -1
+                                        continuation.resume(breakValue)
+                                    }
+                                    else {
+                                        continuation.resume(cloudHours.toInt())
+                                    }
+                                }
+                            }
+                            if (hours == -1) {
+                                Log.d(TAG, "Sync: Loop Broken")
+                                break@loop
+                            }
+                            minutes = suspendCoroutine<Int> { continuation ->
+                                accessData(i, "minutes") { cloudMinutes ->
+                                    continuation.resume(cloudMinutes.toInt())
+                                }
+                            }
+                            name = suspendCoroutine<String> { continuation ->
+                                accessData(i, "name") { cloudName ->
+                                    continuation.resume(cloudName)
+                                }
+                            }
+                            isPM = suspendCoroutine<Boolean> { continuation ->
+                                accessData(i, "isPM") { cloudisPM ->
+                                    continuation.resume(cloudisPM.toBoolean())
+                                }
+                            }
+                            isEnabled = suspendCoroutine<Boolean> { continuation ->
+                                accessData(i, "isEnabled") { cloudisEnabled ->
+                                    continuation.resume(cloudisEnabled.toBoolean())
+                                }
+                            }
+                            if (name != null) {
+                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
+                                Log.d(TAG,"Sync: Syncing $i")
+                            }
+
+
+                        }
+                    }
+
+                } catch (e: Exception) {
+                    // Handle any errors that occurred during the async operation
+                    Log.d(TAG, "Sync: Error, $e")
+                }
+            }
+        loadAlarms()
+    }
+
+    private fun shiftCloud() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+        val db = Firebase.firestore
+        val token = getToken()
+
+        for (i in 0 until 5) {
+            //Deletes each alarm
+            db.collection("users/$token/alarms").document("alarm$i")
+                .delete()
+                .addOnSuccessListener { Log.d(TAG, "Successfully shifted alarms") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error shifting alarms", e) }
+
+            //Grabs values from Local Storage
+            val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
+            val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
+            val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+            val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+
+            //Saves new values from Local Storage to Cloud
+            if (savedName != null) {
+                saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM)
+            }
         }
     }
 
     private fun deleteAlarms(alarmIndex: Int) {
+        //Local Storage
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
 
-        //testing
         val savedName: String? = sharedPreferences.getString("ALARM_NAME_$alarmIndex", null)
         val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$alarmIndex", false)
         val savedHours: Int? = sharedPreferences.getInt("HOURS_$alarmIndex", 0)
@@ -675,7 +845,7 @@ class AlarmActivity : AppCompatActivity() {
             Log.d(TAG, "Moving saved boolean: $tempBoolean from $i to $newIndex")
             Log.d(TAG, "Moving saved hours: $tempHours from $i to $newIndex")
             Log.d(TAG, "Moving saved minutes: $tempMinutes from $i to $newIndex")
-            Log.d(TAG, "Moving saved minutes: $tempPM from $i to $newIndex")
+            Log.d(TAG, "Moving saved isPM: $tempPM from $i to $newIndex")
 
             if (tempName != null) {
                 saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex, tempPM)
@@ -696,42 +866,7 @@ class AlarmActivity : AppCompatActivity() {
 
         Log.d(TAG, "Deleted Alarm $alarmIndex")
 
-        //Cloud Storage Deletion
-        val db = Firebase.firestore
-        val token = getToken()
-
-        if (auth.currentUser != null) {
-            db.collection("users/$token/alarms").document("alarm$alarmIndex")
-                .delete()
-                .addOnSuccessListener { Log.d(TAG, "Successfully deleted from cloud!") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error deleting from cloud", e) }
-
-            for (i in (alarmIndex + 1)..4) {
-                Log.d(TAG, "$i")
-
-                val newIndex = i - 1
-
-                val alarmAccess = db.collection("users/$token/alarms").document("alarm$i")
-                alarmAccess.get()
-                    .addOnSuccessListener { document ->
-                        if (document != null) {
-                            Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                        } else {
-                            Log.d(TAG, "No such document")
-                        }
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d(TAG, "get failed with ", exception)
-                    }
-
-
-//                if (tempName != null) {
-//                    //actual saving of alarms
-//                }
-
-                Log.d(TAG, "Check for Last Index $i")
-            }
-        }
+        shiftCloud()
     }
 
     private fun populateHeightArray(alarmItemLayout: View): Array<Double> {
@@ -745,6 +880,7 @@ class AlarmActivity : AppCompatActivity() {
         }
         return alarmItemYIndexs
     }
+
     private fun getIndex (alarmItemLayout: View, heightIndexes : Array<Double>, heightWanted: Double ): Int {
 
         val parentView = alarmItemLayout.parent as ViewGroup
@@ -786,22 +922,25 @@ class AlarmActivity : AppCompatActivity() {
         return uid
     }
 
-    private fun accessHours(alarmIndex: Int) {
+    private fun accessData(alarmIndex: Int, field: String, callback: (String) -> Unit) {
         val db = Firebase.firestore
         val token = getToken()
 
         val alarmAccess = db.collection("users/$token/alarms").document("alarm$alarmIndex")
         alarmAccess.get()
             .addOnSuccessListener { document ->
-                if (document != null) {
-                    val data = document.data
-                    Log.d(TAG, "DocumentSnapshot data: ${data}")
+                if (document != null && document.exists()) {
+                    val fieldValue = document.get(field) // Get the field value based on the field name
+                    Log.d(TAG, "Cloud: Alarm $alarmIndex - $field: $fieldValue")
+                    callback(fieldValue.toString())
                 } else {
-                    Log.d(TAG, "No such document")
+                    Log.d(TAG, "Cloud: Failed to grab Alarm $alarmIndex")
+                    callback("end")
                 }
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
+                callback("end")
             }
     }
 
