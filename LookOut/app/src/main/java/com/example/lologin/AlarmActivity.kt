@@ -833,10 +833,7 @@ class AlarmActivity : AppCompatActivity() {
         val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
         val inputHours = popUpView.findViewById<EditText>(R.id.hours)
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
-
-        val name = inputName.text.toString()
-        var hours = inputHours.text.toString().toInt()
-        var minutes = inputMinutes.text.toString().toIntOrNull()
+//        val name = inputName.text.toString()
 
         var isPM = false
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
@@ -864,6 +861,10 @@ class AlarmActivity : AppCompatActivity() {
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
 
         submitButtom.setOnClickListener {
+            var hours = inputHours.text.toString().toInt()
+            var minutes = inputMinutes.text.toString().toIntOrNull()
+            val name = inputName.text.toString()
+
             alarmItem?.let { scheduler.cancel(it) }
 
             var textViewString = ""
@@ -880,7 +881,7 @@ class AlarmActivity : AppCompatActivity() {
                     dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
                 }
 
-                var newAlarmItem = AlarmItem(
+                var newAlarmItem = AlarmItem( //May cause an issue, using new var instead of alarmItem
                     time = dateTimeForAlarm,
                     message = name,
                     isEnabled = true
@@ -889,7 +890,6 @@ class AlarmActivity : AppCompatActivity() {
                 nameTextView.text = inputName.text.toString()
                 var displayHours = hours
 
-                //FIXME: Does not work all the time, sometimes does not get data inputted properly? Takes two clicks to input time. May be related to location of code within submitClickListener
                 //Correcting value to 12 hour time
                 if (isPM) {
                     if (hours != 0) {
@@ -935,7 +935,8 @@ class AlarmActivity : AppCompatActivity() {
                     Log.w(TAG, "amPmButtonText is now ${amPmTextView.text}")
                 }
 
-
+                //Schedule the alarmItem
+                newAlarmItem.let { scheduler::schedule }
             }
             popupWindow.dismiss()
 
