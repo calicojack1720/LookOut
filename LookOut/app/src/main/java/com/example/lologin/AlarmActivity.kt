@@ -352,7 +352,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
                 //Setting an on click listener to be able to edit alarms
-                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!)}
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -612,6 +612,8 @@ class AlarmActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                //Setting an on click listener to be able to edit alarms
+//                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -818,7 +820,7 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem) {
+    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem, heightIndexes: Array<Double>) {
         popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
 
         //AlarmItemLayout values
@@ -939,6 +941,10 @@ class AlarmActivity : AppCompatActivity() {
                 newAlarmItem.let { scheduler::schedule }
             }
             popupWindow.dismiss()
+
+            //save the alarm
+            var arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
+            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
 
         }
 
