@@ -436,7 +436,9 @@ class AlarmActivity : AppCompatActivity() {
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
 
-        saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM)
+        if (auth.currentUser != null) {
+            saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM)
+        }
     }
 
     private fun saveCloud(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
@@ -691,7 +693,7 @@ class AlarmActivity : AppCompatActivity() {
                         }
                         if (hours == -1) {
                             Log.d(TAG, "Sync: Loop Broken")
-
+                            deleteAlarms(i)
                             break@loop
                         }
                         minutes = suspendCoroutine<Int> { continuation ->
@@ -731,7 +733,7 @@ class AlarmActivity : AppCompatActivity() {
                             saveAlarms(hours, minutes, name, isEnabled, i, isPM)
                         }
 
-                    Log.d(TAG, "Sync: $hours:$minutes isPM:$isPM isEnabled:$isEnabled name:$name index:$i")
+                        Log.d(TAG, "Sync: $hours:$minutes isPM:$isPM isEnabled:$isEnabled name:$name index:$i")
 
                     }
 
@@ -750,6 +752,7 @@ class AlarmActivity : AppCompatActivity() {
                             }
                             if (hours == -1) {
                                 Log.d(TAG, "Sync: Loop Broken")
+                                deleteAlarms(i)
                                 break@loop
                             }
                             minutes = suspendCoroutine<Int> { continuation ->
@@ -777,7 +780,7 @@ class AlarmActivity : AppCompatActivity() {
                                 Log.d(TAG,"Sync: Syncing $i")
                             }
 
-
+                            loadAlarms()
                         }
                     }
 
@@ -786,7 +789,7 @@ class AlarmActivity : AppCompatActivity() {
                     Log.d(TAG, "Sync: Error, $e")
                 }
             }
-        loadAlarms()
+
     }
 
     private fun shiftCloud() {
