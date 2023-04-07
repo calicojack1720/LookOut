@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import org.w3c.dom.Text
 
 var numAlarm = -1
 
@@ -338,7 +339,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
                 //Setting an on click listener to be able to edit alarms
-                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView)}
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -645,8 +646,65 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View) {
+    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem) {
         popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
+
+        //AlarmItemLayout values
+        val parentView = alarmItemLayout.parent as ViewGroup
+        val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
+        val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
+        val toggleSwitch = alarmItemLayout.findViewById<Button>(R.id.toggle_switch)
+        val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
+        val amPmButtom = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+
+        //PopupViewValues
+        val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
+        val inputHours = popUpView.findViewById<EditText>(R.id.hours)
+        val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
+
+        val name = inputName.text.toString()
+        val hours = inputHours.text.toString().toInt()
+        val minutes = inputMinutes.text.toString().toIntOrNull()
+
+
+        val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
+
+        submitButtom.setOnClickListener {
+            alarmItem?.let { scheduler.cancel(it) }
+
+
+            //Data for edited alarm
+            val timeForAlarm = LocalTime.of(hours, minutes!!)
+            var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
+            val newAlarmItem = AlarmItem(
+                time = dateTimeForAlarm,
+                message = name,
+                isEnabled = true
+            )
+            //Input of alarmName from popup into existing alarm
+            nameTextView.text = inputName.text.toString()
+
+            //Checks to see if PM is checked
+
+            var isPM = false
+            val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+            toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    isPM = true
+                    Log.w(TAG, "PM")
+                } else {
+                    isPM = false
+                    Log.w(TAG, "AM")
+                }
+            }
+
+
+
+
+
+
+        }
+
     }
 
     private fun deleteAlarms(alarmIndex: Int) {
