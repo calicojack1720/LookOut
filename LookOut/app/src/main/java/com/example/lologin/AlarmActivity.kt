@@ -989,7 +989,10 @@ class AlarmActivity : AppCompatActivity() {
 
         Log.d(TAG, "Deleted Alarm $alarmIndex")
 
-        shiftCloud()
+        if (auth.currentUser != null) {
+            Log.d(TAG, "Shift Cloud Called")
+            shiftCloud()
+        }
     }
 
     private fun populateHeightArray(alarmItemLayout: View): Array<Double> {
