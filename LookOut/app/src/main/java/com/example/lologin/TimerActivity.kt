@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 4/5/2023
+   Updated: 4/7/2023
  */
 
 
@@ -33,7 +33,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 //import kotlinx.coroutines.NonCancellable.message
 import java.io.File
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 //global variables:
 var numTimer = -1
@@ -61,6 +63,9 @@ class TimerActivity : AppCompatActivity() {
         //create timer storage
         createTimerStorage()
 
+        //load timers
+        loadTimers()
+
 
         //Create val for timer_item.xml
         val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
@@ -70,9 +75,6 @@ class TimerActivity : AppCompatActivity() {
         val inputTimerSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
 
         val addTimerButton = activityTimerLayout.findViewById<FloatingActionButton>(R.id.addTimer)
-
-        //call TimerDisplay to format entered time
-        //TimerDisplay(timerView, timerHours, timerMinutes, timerSeconds)
 
         //create a value for the start button, stop button, and reset button
         val startTimer = activityTimerLayout.findViewById<Button>(R.id.StartTimer)
@@ -206,48 +208,6 @@ class TimerActivity : AppCompatActivity() {
         }
     }
 
-    /*Precondition: tView is the view of the timer page
-                    tHours is an integer value
-                    tMinutes is an integer value
-                    tSeconds is an integer value
-      Postcondition: formats the time in hours, minutes and seconds with a 0 in front of any single
-                     digits.
-     */
-    private fun TimerDisplay(tView: View, tHours: Int?, tMinutes: Int?, tSeconds: Int?) {
-        //Checking for valid timer values
-        if (tHours != null && tHours in 0..99 && tMinutes != null && tMinutes in 0..59 && tSeconds != null && tSeconds in 0..59) {
-            //UserInput of Timer Time into Layout
-            var textViewString = ""
-            //TODO: not sure what existing_alarm_time is supposed to be
-            val timeTextView = tView.findViewById<TextView>(R.id.existing_alarm_time)
-            if ((tHours in 0..9) && (tMinutes > 9) && (tSeconds > 9)) {
-                textViewString = "0$tHours:$tMinutes:$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours in 0..9) && (tMinutes in 0..9) && (tSeconds > 9)) {
-                textViewString = "0$tHours:0$tMinutes:$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours in 0..9) && (tMinutes > 9) && (tSeconds in 0..9)) {
-                textViewString = "0$tHours:$tMinutes:0$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours > 9) && (tMinutes in 0..9) && (tSeconds > 9)) {
-                textViewString = "$tHours:0$tMinutes:$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours > 9) && (tMinutes in 0..9) && (tSeconds in 0..9)) {
-                textViewString = "$tHours:0$tMinutes:$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours > 9) && (tMinutes > 9) && (tSeconds in 0..9)) {
-                textViewString = "$tHours:$tMinutes:0$tSeconds"
-                timeTextView.text = textViewString
-            } else if ((tHours in 0..9) && (tMinutes in 0..9) && (tSeconds in 0..9)) {
-                textViewString = "0$tHours:0$tMinutes:0$tSeconds"
-                timeTextView.text = textViewString
-            } else {
-                textViewString = "$tHours:$tMinutes:$tSeconds"
-                timeTextView.text = textViewString
-            }
-        }
-    }
-
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
        Postcondition: returns hours:minutes:seconds as seconds
      */
@@ -300,12 +260,10 @@ class TimerActivity : AppCompatActivity() {
        Postoconditon: runs the create timer popup window to add a preset timer
      */
     private fun showTimerPopup() {
-
-
         //create values for buttons
         val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)  //the popup
         val cancelButton = timerPopupView.findViewById<Button>(R.id.cancel_button)      //cancel button
-        val addButton = timerPopupView.findViewById<Button>(R.id.submitbutton)          //add button
+        val submitButton = timerPopupView.findViewById<Button>(R.id.submitbutton)          //add button
 
         val popupWindow = PopupWindow(
             timerPopupView,
@@ -323,7 +281,7 @@ class TimerActivity : AppCompatActivity() {
         }
 
         //if add button is pressed, close popup and create saved timer
-        addButton.setOnClickListener {
+        submitButton.setOnClickListener {
             //set name box, and hours:minutes:seconds boxes
             val timerName = timerPopupView.findViewById<EditText>(R.id.name_text_box)
             val popHours = timerPopupView.findViewById<EditText>(R.id.timer_pop_hours)
@@ -332,22 +290,43 @@ class TimerActivity : AppCompatActivity() {
 
             //get values entered into timerName, popHours, popMinutes, popSeconds
             val presetName = timerName.text.toString()
-            val presetHours = popHours.text.toString().toIntOrNull()
-            val presetMinutes = popMinutes.text.toString().toIntOrNull()
-            val presetSeconds = popSeconds.text.toString().toIntOrNull()
+            var presetHours = popHours.text.toString().toIntOrNull()
+            var presetMinutes = popMinutes.text.toString().toIntOrNull()
+            var presetSeconds = popSeconds.text.toString().toIntOrNull()
 
+            //if time is null, set to 0
+            if(presetHours == null)
+                presetHours = 0
+            if(presetMinutes == null)
+                presetMinutes = 0
+            if(presetSeconds == null)
+                presetSeconds = 0
 
+            //inflate the layout file
             val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
             val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val timerItemLayout =
                 inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
 
+            //User input of timer into layout
+            val timeTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+
+            //set timeTextView text
+            timeTextView.text = "$presetHours:$presetMinutes:$presetSeconds"
+
+            //User input of name into layout
+            val nameTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_name)
+
+            //set nameTextView text
+            nameTextView.text = "$presetName"
+
+            //set values for screen width, height, and the max child view
             val screenWidth = Resources.getSystem().displayMetrics.widthPixels
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
             val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
 
             val x = screenWidth * 0.05f //5% from left
-            val y = screenHeight * .13f //13% from top
+            val y = screenHeight * .45f //45% from top
 
             //Set the Parameters for the new Layout
             val params = ConstraintLayout.LayoutParams(
@@ -365,28 +344,20 @@ class TimerActivity : AppCompatActivity() {
 
             var timerItem: TimerItem?
             val convertedSeconds: Long = convertToSec(presetHours, presetMinutes, presetSeconds)
-            val scheduler = AndroidTimerScheduler(this)
-
-            timerItem = TimerItem(
-                time = LocalDateTime.now()
-                    .plusSeconds(convertedSeconds.toLong()),
-                message = ""
-            )
 
             var arrayIndex = 0
 
             //Vars for changing how alarms are saved!
-            var alarmItemPositionY = timerItemLayout.y
+            var timerItemPositionY = timerItemLayout.y
 
 
-            if (activityTimerLayout.childCount <= 3) {
+            if (activityTimerLayout.childCount <= 10) {
                 Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                 timerItemLayout.y = y
 
                 activityTimerLayout.addView(timerItemLayout)
-                timerItem?.let(scheduler::schedule)
 
 
                 when (params.bottomMargin) {
@@ -407,18 +378,17 @@ class TimerActivity : AppCompatActivity() {
 
             } else if (activityTimerLayout.childCount <= 7) {
                 Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
-//                    params.leftMargin = parentLeft
-//                    params.rightMargin = parentRight
-//                    params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//                    params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
-//
-//                    alarmItemLayout.layoutParams = params
+                    //params.leftMargin = parentLeft
+                    //params.rightMargin = parentRight
+                    //params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
+                    //params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
+
+                    //alarmItemLayout.layoutParams = params
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                 timerItemLayout.y = y + ((activityTimerLayout.childCount - 3) * marginIncrement)
 
                 activityTimerLayout.addView(timerItemLayout)
-                timerItem?.let(scheduler::schedule)
 
                 when (params.bottomMargin) {
                     2100 -> arrayIndex = 0
@@ -446,6 +416,11 @@ class TimerActivity : AppCompatActivity() {
 
             //close out popup window when finished
             popupWindow.dismiss()
+
+            //set deletion button
+            val deletionButton = timerItemLayout.findViewById<Button>(R.id.deletion_button)
+
+            //TODO: set listener for deletion button
         }
     }
 
@@ -457,11 +432,11 @@ class TimerActivity : AppCompatActivity() {
         val timerStorageExists = timerStorage.exists()
 
         if (timerStorageExists) {
-            Log.w(AlarmActivity.TAG, "Alarm Storage file exists")
+            Log.w(AlarmActivity.TAG, "Timer Storage file exists")
         } else {
             //creates file if doesn't exists
             timerStorage.createNewFile()
-            Log.w(AlarmActivity.TAG, "Alarm Storage file created")
+            Log.w(AlarmActivity.TAG, "Timer Storage file created")
         }
     }
 
@@ -486,9 +461,8 @@ class TimerActivity : AppCompatActivity() {
     //Postcondition: loads saved timers on timer page
     private fun loadTimers() {
         val sharedPreferences: SharedPreferences =
-            getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
+            getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
 
-        val scheduler = AndroidAlarmScheduler(this)
         var timerItem: TimerItem? = null
 
         for (i in 0 until 5) {
@@ -509,7 +483,204 @@ class TimerActivity : AppCompatActivity() {
                 numTimer += 1
             }
 
+            //Everything above here works
+
+            if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
+                val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
+                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
+
+                // Calculate the time difference between the current time and the time for the alarm //
+                val currentTime = LocalDateTime.now()
+
+                if (dateTimeForAlarm.isBefore(currentTime)) {
+                    Log.d(TAG, "Duration is negative, adding 1 day for alarm")
+                    dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
+                }
+
+                //Default message to fix issues with AlarmItem
+                val name = savedName ?: "Default message"
+
+                //Inflate the Layout file
+                val activityTimerLayout: ViewGroup =
+                    findViewById(R.id.activity_timers) //Was ViewGroup
+                val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val timerItemLayout =
+                    inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
+
+                //UserInput of Timer into Layout
+                var textViewString = ""
+                val timeTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+                timeTextView.text = "$savedHours:$savedMinutes:$savedSeconds"
+                /*if ((savedHours in 0..9) && (savedMinutes > 9)) {
+                    textViewString = "0$savedHours:$savedMinutes"
+                    timeTextView.text = textViewString
+                } else if ((savedHours > 9) && (savedMinutes in 0..9)) {
+                    textViewString = "$savedHours:0$savedMinutes"
+                    timeTextView.text = textViewString
+                } else if ((savedHours in 0..9) && (savedMinutes in 0..9)) {
+                    textViewString = "0$savedHours:0$savedMinutes"
+                    timeTextView.text = textViewString
+                } else {
+                    textViewString = "$savedHours:$savedMinutes"
+                    timeTextView.text = textViewString
+                }*/
+
+                //UserInput of AlarmName into Layout
+                val nameTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_name)
+                textViewString = name
+                nameTextView.text = textViewString
+
+                //Set the Parameters for the new Layout
+
+                val params = ConstraintLayout.LayoutParams(
+                    ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
+                    ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
+                )
+                //Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
+
+                val context: Context = this
+                val parentRight = context.dpToPx(120)
+                val parentLeft = context.dpToPx(25)
+                val parentTop = context.dpToPx(100)
+                val parentBottom = context.dpToPx(600)
+                val marginIncrement = context.dpToPx(100)
+
+                var arrayIndex = 0
+
+                if (activityTimerLayout.childCount <= 3) {
+                    Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+                    params.leftMargin = parentLeft
+                    params.topMargin = parentTop
+                    params.rightMargin = parentRight
+                    params.bottomMargin = parentBottom
+
+                    timerItemLayout.layoutParams = params // set the params on the view
+
+                    activityTimerLayout.addView(timerItemLayout)
+                } else if (activityTimerLayout.childCount <= 7) {
+                    Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+                    params.leftMargin = parentLeft
+                    params.rightMargin = parentRight
+                    params.topMargin =
+                        parentTop + ((activityTimerLayout.childCount - 3) * marginIncrement)
+                    params.bottomMargin =
+                        parentBottom - ((activityTimerLayout.childCount - 3) * marginIncrement)
+
+                    timerItemLayout.layoutParams = params
+                    activityTimerLayout.addView(timerItemLayout)
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Maximum Timer Number has been reached.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                //Deletion Button
+                val deletionButton = timerItemLayout.findViewById<TextView>(R.id.deletion_button)
+
+                //On Click of Delete Button
+                deletionButton.setOnClickListener {
+                    when (params.bottomMargin) {
+                        2100 -> arrayIndex = 0
+                        1750 -> arrayIndex = 1
+                        1400 -> arrayIndex = 2
+                        1050 -> arrayIndex = 3
+                        700 -> arrayIndex = 4
+                        else -> { // Note the block
+                            Log.d(TAG, "Brr ${activityTimerLayout.childCount}")
+                        }
+                    }
+                    val parentView = timerItemLayout.parent as ViewGroup
+                    parentView.removeView(timerItemLayout)
+
+                    deleteTimer(arrayIndex)
+
+                    //TODO: Need to update layout as items are deleted
+                    //Update layout of remaining views
+
+                    for (i in 3 until parentView.childCount) {
+                        val child = parentView.getChildAt(i)
+                        val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+                        if (i == 3) {
+                            adjustedParams.topMargin = parentTop
+                            adjustedParams.bottomMargin = parentBottom
+                        }
+                        else {
+                            adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
+                            adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
+                        }
+                        child.layoutParams = adjustedParams
+                    }
+
+//                    End of For Layout Adjustment
+
+                }
+            }
         }
+    }
+
+    private fun deleteTimer(timerIndex: Int) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+
+        //testing
+        val savedName: String? = sharedPreferences.getString("TIMER_NAME_$timerIndex", null)
+        val savedHours: Int? = sharedPreferences.getInt("HOURS_$timerIndex", 0)
+        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$timerIndex", 0)
+        val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$timerIndex", 0)
+
+        Log.d(TAG, "Removing Timer: $timerIndex")
+        Log.d(TAG, "Deleting Saved name: $savedName")
+        Log.d(TAG, "Deleting Saved hours: $savedHours")
+        Log.d(TAG, "Deleting Saved minutes: $savedMinutes")
+        Log.d(TAG, "Deleting Saved seconds: $savedSeconds")
+
+        // Shift the remaining alarms down by one index
+        for (i in (timerIndex + 1)..4) {
+            Log.d(TAG, "$i")
+
+            //val deletedIndexes = parentView.childAt(i)
+
+            val newIndex = i - 1
+
+            val tempName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+            val tempHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val tempMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+            val tempSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
+
+            Log.d(TAG, "Moving saved name: $tempName DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved hours: $tempHours DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved minutes: $tempMinutes DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved seconds: $tempSeconds DDDDDDDDDfrom $i to $newIndex")
+
+            if (tempName != null) {
+                saveTimer(tempHours, tempMinutes, tempSeconds, tempName, newIndex)
+            }
+
+//            if (alarmIndex == 0) {
+//                editor.remove("ALARM_NAME_$alarmIndex")
+//                editor.remove("IS_ENABLED_$alarmIndex")
+//                editor.remove("HOURS_$alarmIndex")
+//                editor.remove("MINUTES_$alarmIndex")
+//            }
+
+
+            Log.d(TAG, "Check for Last Index $i")
+        }
+
+        editor.remove("TIMER_NAME_$numTimer")
+        editor.remove("IS_ENABLED_$numTimer")
+        editor.remove("HOURS_$numTimer")
+        editor.remove("MINUTES_$numTimer")
+
+        numTimer -= 1
+
+        //editor.clear()
+
+        editor.apply()
+
+        Log.d(TAG, "Deleted Timer $timerIndex")
     }
 
     companion object {

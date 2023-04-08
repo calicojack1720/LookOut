@@ -2,19 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/timer_item"
+    android:layout_width="350dp"
+    android:layout_height="66dp"
+    android:background="#D3888787"
+    android:orientation="horizontal">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/timer_item"
-        android:layout_width="343dp"
-        android:layout_height="68dp"
-        android:background="#D3888787"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="-2dp">
+
 
         <TextView
             android:id="@+id/existing_timer_time"
@@ -43,18 +37,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.512" />
 
-        <TextView
-            android:id="@+id/deletion_button"
-            android:layout_width="37dp"
-            android:layout_height="65dp"
-            android:clickable="true"
-            android:text="X"
-            android:textSize="50sp"
-            android:textColor="#F01111"
-            app:layout_constraintEnd_toStartOf="@+id/existing_timer_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/deletion_button"
+        android:layout_width="37dp"
+        android:layout_height="65dp"
+        android:clickable="true"
+        android:text="X"
+        android:textColor="#F01111"
+        android:textSize="50sp"
+        app:layout_constraintEnd_toStartOf="@+id/existing_timer_time"
+        app:layout_constraintHorizontal_bias="0.842"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
