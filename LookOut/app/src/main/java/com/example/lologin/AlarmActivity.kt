@@ -351,7 +351,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
                 //Setting an on click listener to be able to edit alarms
-                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -611,8 +611,8 @@ class AlarmActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
-                //Setting an on click listener to be able to edit alarms
-//                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
+//                Setting an on click listener to be able to edit alarms
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -963,25 +963,34 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem, heightIndexes: Array<Double>) {
+    private fun editAlarms(alarmItemLayout : View, scheduler: AlarmScheduler, alarmItem: AlarmItem, heightIndexes: Array<Double>) {
+        val popUpView = layoutInflater.inflate(R.layout.popup_window, null)
+
+        val popupWindow = PopupWindow(
+            popUpView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
         popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
 
         //AlarmItemLayout values
-        val parentView = alarmItemLayout.parent as ViewGroup
         val nameTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_name)
         val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
-        val toggleSwitch = alarmItemLayout.findViewById<Button>(R.id.toggle_switch)
-        val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
         val amPmTextView = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
 
         //PopupViewValues
         val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
         val inputHours = popUpView.findViewById<EditText>(R.id.hours)
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
-//        val name = inputName.text.toString()
+        val cancelButton = popUpView.findViewById<Button>(R.id.cancel_button)
 
         var isPM = false
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+
+        cancelButton.setOnClickListener {
+            popupWindow.dismiss()
+        }
 
         toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
