@@ -10,6 +10,7 @@ package com.example.lologin
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
@@ -28,11 +29,14 @@ import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 //import kotlinx.coroutines.NonCancellable.message
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -55,10 +59,20 @@ class TimerActivity : AppCompatActivity() {
         val scheduler = AndroidTimerScheduler(this)
         var timerItem: TimerItem? = null
 
-
-
         //initializing Firebase
         auth = Firebase.auth
+
+        val logOutButton = findViewById<Button>(R.id.logout)
+        //On Click of the logOutButton
+        logOutButton.setOnClickListener {
+            Firebase.auth.signOut()
+            Log.d(AlarmActivity.TAG, "User Signed out")
+            //when user signs out, change LoginSkipCheck to false
+            writeLoginSkipCheck()
+
+            //switch to Login Activity
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
 
         //create timer storage
         createTimerStorage()
@@ -206,6 +220,33 @@ class TimerActivity : AppCompatActivity() {
         addTimerButton.setOnClickListener {
             showTimerPopup()
         }
+
+        //Navigation bar
+        val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
+        navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
+                    //0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
+                    0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
+
+
+                    //Here for TimerActivity page
+                    1 -> startActivity(Intent(this@TimerActivity, TimerActivity::class.java))
+
+                    // Add more cases for each tab as needed
+                }
+            }
+
+            //things we want to run when tab is reselected/unselected
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                // Handle tab unselection
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Handle tab reselection
+            }
+        })
     }
 
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
@@ -731,6 +772,33 @@ class TimerActivity : AppCompatActivity() {
         editor.apply()
 
         Log.d(TAG, "Deleted Timer $timerIndex")
+    }
+
+    //Precondition: None
+    //Postcondition: Writes to LoginSkipCheck
+    private fun writeLoginSkipCheck() {
+        val loginSkipCheck = File(this.filesDir, "loginSkipCheck.txt")
+        val loginSkipCheckExists = loginSkipCheck.exists()
+
+        if (loginSkipCheckExists) {
+            Log.w(LoginActivity.TAG, "writeLoginSkipCheck exists")
+            val inputStream: InputStream = loginSkipCheck.inputStream()
+            val outputText = inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            //writes to the file
+            val outputStream: OutputStream = loginSkipCheck.outputStream()
+            if (outputText == "true") {
+                val inputText = "false"
+                outputStream.write(inputText.toByteArray())
+                outputStream.close()
+                Log.d(LoginActivity.TAG, "Outputtext was True, now False.")
+            } else if (!loginSkipCheckExists) { //For Redundancy and Debugging
+                Log.d(LoginActivity.TAG, "writeLoginSkipCheck file doesn't exist")
+            }
+
+        }
     }
 
     companion object {
