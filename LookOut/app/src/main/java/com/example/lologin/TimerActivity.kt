@@ -418,9 +418,27 @@ class TimerActivity : AppCompatActivity() {
             popupWindow.dismiss()
 
             //set deletion button
-            val deletionButton = timerItemLayout.findViewById<Button>(R.id.deletion_button)
+            val deletionButton = timerItemLayout.findViewById<TextView>(R.id.deletion_button)
 
-            //TODO: set listener for deletion button
+            //TODO: timer item is not being removed from UI
+            //set listener for deletion button, delete preset on click
+            deletionButton.setOnClickListener {
+                deleteTimer(arrayIndex)
+            }
+
+            //set time button
+            val timeButton = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+
+            //set listener for time button, update time on click
+            timeButton.setOnClickListener {
+                val inputPresetHours = activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
+                val inputPresetMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
+                val inputPresetSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
+
+                inputPresetHours.setText("$presetHours")
+                inputPresetMinutes.setText("$presetMinutes")
+                inputPresetSeconds.setText("$presetSeconds")
+            }
         }
     }
 
