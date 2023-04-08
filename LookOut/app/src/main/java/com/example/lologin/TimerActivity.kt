@@ -420,10 +420,42 @@ class TimerActivity : AppCompatActivity() {
             //set deletion button
             val deletionButton = timerItemLayout.findViewById<TextView>(R.id.deletion_button)
 
-            //TODO: timer item is not being removed from UI
+            //TODO: timer item is removed from UI but messes up the UI
             //set listener for deletion button, delete preset on click
             deletionButton.setOnClickListener {
+                when (params.bottomMargin) {
+                    2100 -> arrayIndex = 0
+                    1750 -> arrayIndex = 1
+                    1400 -> arrayIndex = 2
+                    1050 -> arrayIndex = 3
+                    700 -> arrayIndex = 4
+                    else -> { // Note the block
+                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+                    }
+                }
+                val parentView = timerItemLayout.parent as ViewGroup
+                parentView.removeView(timerItemLayout)
+
+                //call deleteTimer function to delete timer storage/preferences
                 deleteTimer(arrayIndex)
+
+                //TODO: Need to update layout as items are deleted
+                //Update layout of remaining views
+
+                for (i in 3 until parentView.childCount) {
+                    val child = parentView.getChildAt(i)
+                    val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
+                    if (i == 3) {
+                        adjustedParams.topMargin = parentTop
+                        adjustedParams.bottomMargin = parentBottom
+                    }
+                    else {
+                        adjustedParams.topMargin = parentTop + ((i - 3) * marginIncrement)
+                        adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
+                    }
+                    child.layoutParams = adjustedParams
+                }
+                //End of For Layout Adjustment
             }
 
             //set time button
