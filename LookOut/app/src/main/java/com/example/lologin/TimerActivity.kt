@@ -480,10 +480,10 @@ class TimerActivity : AppCompatActivity() {
                 //call deleteTimer function to delete timer storage/preferences
                 deleteTimer(arrayIndex)
 
-                //TODO: Need to update layout as items are deleted
+                //TODO: Commented out, is this needed?
                 //Update layout of remaining views
 
-                for (i in 3 until parentView.childCount) {
+                /*for (i in 3 until parentView.childCount) {
                     val child = parentView.getChildAt(i)
                     val adjustedParams = child.layoutParams as ConstraintLayout.LayoutParams
                     if (i == 3) {
@@ -495,7 +495,7 @@ class TimerActivity : AppCompatActivity() {
                         adjustedParams.bottomMargin = context.dpToPx(700) - adjustedParams.topMargin
                     }
                     child.layoutParams = adjustedParams
-                }
+                }*/
                 //End of For Layout Adjustment
             }
 
