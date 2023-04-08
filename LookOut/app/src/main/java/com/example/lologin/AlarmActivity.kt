@@ -351,7 +351,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
                 //Setting an on click listener to be able to edit alarms
-                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!)}
+                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -611,6 +611,8 @@ class AlarmActivity : AppCompatActivity() {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+                //Setting an on click listener to be able to edit alarms
+//                alarmItemLayout.setOnClickListener{editAlarms(alarmItemLayout, popupWindow, popUpView, scheduler, alarmItem!!, heightIndexes)}
 
                 //checks to see if Alarm is Enabled/Disabled
                 toggleSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -823,7 +825,7 @@ class AlarmActivity : AppCompatActivity() {
         }
     }
 
-    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem) {
+    private fun editAlarms(alarmItemLayout : View, popupWindow: PopupWindow, popUpView: View, scheduler: AlarmScheduler, alarmItem: AlarmItem, heightIndexes: Array<Double>) {
         popupWindow.showAtLocation(popUpView, Gravity.CENTER, 0, 0)
 
         //AlarmItemLayout values
@@ -832,19 +834,17 @@ class AlarmActivity : AppCompatActivity() {
         val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
         val toggleSwitch = alarmItemLayout.findViewById<Button>(R.id.toggle_switch)
         val deletionButton = alarmItemLayout.findViewById<TextView>(R.id.deletion_button)
-        val amPmButtom = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
+        val amPmTextView = alarmItemLayout.findViewById<TextView>(R.id.AMPM)
 
         //PopupViewValues
         val inputName = popUpView.findViewById<EditText>(R.id.name_text_box)
         val inputHours = popUpView.findViewById<EditText>(R.id.hours)
         val inputMinutes = popUpView.findViewById<EditText>(R.id.minutes)
-
-        val name = inputName.text.toString()
-        var hours = inputHours.text.toString().toInt()
-        var minutes = inputMinutes.text.toString().toIntOrNull()
+//        val name = inputName.text.toString()
 
         var isPM = false
         val toggleAMPM = popUpView.findViewById<ToggleButton>(R.id.toggleAMPM)
+
         toggleAMPM.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 isPM = true
@@ -853,6 +853,14 @@ class AlarmActivity : AppCompatActivity() {
                 isPM = false
                 Log.w(TAG, "AM")
             }
+//            toggleAMPM.isChecked = isPM
+        }
+        //Need to check if statement again in case that CheckedChangeListener is not ran
+        if (toggleAMPM.isChecked) {
+            isPM = true
+        }
+        else {
+            isPM = false
         }
         toggleAMPM.isChecked = isPM
 
@@ -860,6 +868,10 @@ class AlarmActivity : AppCompatActivity() {
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
 
         submitButtom.setOnClickListener {
+            var hours = inputHours.text.toString().toInt()
+            var minutes = inputMinutes.text.toString().toIntOrNull()
+            val name = inputName.text.toString()
+
             alarmItem?.let { scheduler.cancel(it) }
 
             var textViewString = ""
@@ -876,7 +888,7 @@ class AlarmActivity : AppCompatActivity() {
                     dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
                 }
 
-                var newAlarmItem = AlarmItem(
+                var newAlarmItem = AlarmItem( //May cause an issue, using new var instead of alarmItem
                     time = dateTimeForAlarm,
                     message = name,
                     isEnabled = true
@@ -885,7 +897,6 @@ class AlarmActivity : AppCompatActivity() {
                 nameTextView.text = inputName.text.toString()
                 var displayHours = hours
 
-                //FIXME: Does not work all the time, sometimes does not get data inputted properly? Takes two clicks to input time. May be related to location of code within submitClickListener
                 //Correcting value to 12 hour time
                 if (isPM) {
                     if (hours != 0) {
@@ -923,17 +934,22 @@ class AlarmActivity : AppCompatActivity() {
                     Log.w(TAG, "Alarm time has been changed to ${timeTextView.text}")
                 }
                 if (isPM) {
-                    amPmButtom.text = "PM"
-                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                    amPmTextView.text = "PM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmTextView.text}")
                 }
                 else {
-                    amPmButtom.text = "AM"
-                    Log.w(TAG, "amPmButtonText is now ${amPmButtom.text}")
+                    amPmTextView.text = "AM"
+                    Log.w(TAG, "amPmButtonText is now ${amPmTextView.text}")
                 }
 
-
+                //Schedule the alarmItem
+                newAlarmItem.let { scheduler::schedule }
             }
             popupWindow.dismiss()
+
+            //save the alarm
+            var arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
+            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
 
         }
 
