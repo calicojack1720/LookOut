@@ -44,6 +44,7 @@ import org.w3c.dom.Text
 var numAlarm = -1
 
 private lateinit var auth: FirebaseAuth
+//TODO Create check for choosing between keep local or cloud database when out of sync
 
 class AlarmActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,9 +53,6 @@ class AlarmActivity : AppCompatActivity() {
 
         //initialize Firebase
         auth = Firebase.auth
-
-        //initialize Cloud Firestore
-        val db = Firebase.firestore
 
         val logOutButton = findViewById<Button>(R.id.logout)
         //On Click of the logOutButton
@@ -65,6 +63,7 @@ class AlarmActivity : AppCompatActivity() {
             writeLoginSkipCheck()
 
             //switch to Login Activity
+            numAlarm = -1
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
@@ -74,11 +73,11 @@ class AlarmActivity : AppCompatActivity() {
         //loadAlarms
         if (auth.currentUser != null) {
             syncCloud()
-            Log.d(TAG, "Sync: Difference Sync Begin")
+            Log.d(TAG, "Sync: Difference Sync - Begin")
         }
         else {
             loadAlarms()
-            Log.d(TAG, "Sync: Difference Sync Not Happening")
+            Log.d(TAG, "Sync: Difference Sync - Not Logged in")
         }
 
 //        Notifications
@@ -454,7 +453,6 @@ class AlarmActivity : AppCompatActivity() {
                 "isEnabled" to isEnabled,
                 "hours" to hours,
                 "minutes" to minutes,
-                "index" to alarmIndex,
             )
             db.collection("users/$token/alarms").document("alarm$alarmIndex")
                 .set(alarmData, SetOptions.merge())
@@ -490,6 +488,7 @@ class AlarmActivity : AppCompatActivity() {
 
             if (savedName != null) {
                 numAlarm += 1
+                Log.d(TAG, "loadAlarms numAlarm:$numAlarm")
             }
 
             //Everything above here works
@@ -695,7 +694,10 @@ class AlarmActivity : AppCompatActivity() {
                         }
                         if (hours == -1) {
                             Log.d(TAG, "Sync: Loop Broken")
-                            deleteAlarms(i)
+                            for (j in i until numAlarm + 1) {
+                                Log.d(TAG, "Sync: deleting local alarm ${j+i} j:$j i:$i numAlarm:$numAlarm")
+                                deleteAlarms(j)
+                            }
                             break@loop
                         }
                         minutes = suspendCoroutine<Int> { continuation ->
@@ -754,7 +756,10 @@ class AlarmActivity : AppCompatActivity() {
                             }
                             if (hours == -1) {
                                 Log.d(TAG, "Sync: Loop Broken")
-                                deleteAlarms(i)
+                                for (j in i until numAlarm + 1) {
+                                    Log.d(TAG, "Sync: deleting local alarm ${j+i} j:$j i:$i numAlarm:$numAlarm")
+                                    deleteAlarms(j)
+                                }
                                 break@loop
                             }
                             minutes = suspendCoroutine<Int> { continuation ->
@@ -782,16 +787,16 @@ class AlarmActivity : AppCompatActivity() {
                                 Log.d(TAG,"Sync: Syncing $i")
                             }
 
-                            loadAlarms()
+
                         }
                     }
-
+                    //Loads alarms only after syncing with firebase
+                    loadAlarms()
                 } catch (e: Exception) {
                     // Handle any errors that occurred during the async operation
                     Log.d(TAG, "Sync: Error, $e")
                 }
             }
-
     }
 
     private fun shiftCloud() {
@@ -1012,7 +1017,7 @@ class AlarmActivity : AppCompatActivity() {
 
         editor.apply()
 
-        Log.d(TAG, "Deleted Alarm $alarmIndex")
+        Log.d(TAG, "Deleted Alarm $alarmIndex - numAlarm:$numAlarm")
 
         if (auth.currentUser != null) {
             Log.d(TAG, "Shift Cloud Called")
