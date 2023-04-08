@@ -2,7 +2,7 @@
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
    Created: 3/17/2023
-   Updated: 4/7/2023
+   Updated: 4/8/2023
  */
 
 
@@ -351,7 +351,7 @@ class TimerActivity : AppCompatActivity() {
             var timerItemPositionY = timerItemLayout.y
 
 
-            if (activityTimerLayout.childCount <= 10) {
+            if (activityTimerLayout.childCount <= 14) {
                 Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
