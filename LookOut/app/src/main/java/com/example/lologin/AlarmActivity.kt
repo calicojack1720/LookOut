@@ -28,11 +28,13 @@ import android.util.Log
 import android.widget.*
 import android.view.View
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.os.HandlerCompat
 import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -683,6 +685,14 @@ class AlarmActivity : AppCompatActivity() {
                     var name = ""
                     var isPM = false
                     var isEnabled = false
+
+                    //Creates a message that indicates Cloud Sync that lasts for 2.8s
+                    val handler = HandlerCompat.createAsync(mainLooper)
+                    val durationInMillis = 2800L // Custom duration in milliseconds
+                    val toast = Toast.makeText(applicationContext, "Syncing...", Toast.LENGTH_LONG)
+                    toast.show()
+                    handler.postDelayed({ toast.cancel() }, durationInMillis)
+
                     loop@ for (i in 0 until 5) {
                         //Grabs data per index from the cloud
                         hours = suspendCoroutine<Int> { continuation ->
@@ -750,57 +760,103 @@ class AlarmActivity : AppCompatActivity() {
                     }
 
                     if (differenceFound == true) {
-                        //clears the local storage and rewrites it with cloud data
+                        //Asks the user whether they want to use Local or Cloud Storage
+                        val builder = AlertDialog.Builder(this@AlarmActivity)
+                        builder.setTitle("Alarms Out of Sync")
+                        builder.setMessage("Choose to keep either Cloud or Locally saved Alarms")
 
-                        editor.clear()
-                        editor.apply()
-                        numAlarm = -1
+                        val completableDeferred = CompletableDeferred<Boolean>()
 
-                        diff@ for (i in 0 until 5) {
-                            Log.d(TAG, "Sync: differenceFound - numAlarm$numAlarm - $i")
-                            //Grabs data per index from the cloud
-                            hours = suspendCoroutine<Int> { continuation ->
-                                accessData(i, "hours") { cloudHours ->
-                                    if (cloudHours == "end") {
-                                        val breakValue = -1
-                                        continuation.resume(breakValue)
+                        builder.setPositiveButton("Cloud") { dialog, which ->
+                            completableDeferred.complete(true)
+                            dialog.dismiss()
+                        }
+                        builder.setNegativeButton("Local") { dialog, which ->
+                            completableDeferred.complete(false)
+                            dialog.dismiss()
+                            //return@setNegativeButton
+                        }
+                        builder.show()
+
+                        //Suspend the code here and wait for the user's response
+                        val useCloudStorage = completableDeferred.await()
+
+                        //If keeping cloud data
+                        if (useCloudStorage) {
+                            val handler = HandlerCompat.createAsync(mainLooper)
+                            val durationInMillis = 1500L // Custom duration in milliseconds
+                            val toast = Toast.makeText(applicationContext, "Syncing from Cloud", Toast.LENGTH_LONG)
+                            toast.show()
+                            handler.postDelayed({ toast.cancel() }, durationInMillis)
+                            //clears the local storage and rewrites it with cloud data
+                            editor.clear()
+                            editor.apply()
+                            numAlarm = -1
+
+                            diff@ for (i in 0 until 5) {
+                                Log.d(TAG, "Sync: differenceFound - numAlarm$numAlarm - $i")
+                                //Grabs data per index from the cloud
+                                hours = suspendCoroutine<Int> { continuation ->
+                                    accessData(i, "hours") { cloudHours ->
+                                        if (cloudHours == "end") {
+                                            val breakValue = -1
+                                            continuation.resume(breakValue)
+                                        } else {
+                                            continuation.resume(cloudHours.toInt())
+                                        }
                                     }
-                                    else {
-                                        continuation.resume(cloudHours.toInt())
+                                }
+                                //If no alarm is found, break the loop
+                                if (hours == -1) {
+                                    Log.d(TAG, "Sync: No Alarm Found, Loop Broken $numAlarm")
+                                    break@diff
+                                }
+                                minutes = suspendCoroutine<Int> { continuation ->
+                                    accessData(i, "minutes") { cloudMinutes ->
+                                        continuation.resume(cloudMinutes.toInt())
                                     }
                                 }
+                                name = suspendCoroutine<String> { continuation ->
+                                    accessData(i, "name") { cloudName ->
+                                        continuation.resume(cloudName)
+                                    }
+                                }
+                                isPM = suspendCoroutine<Boolean> { continuation ->
+                                    accessData(i, "isPM") { cloudisPM ->
+                                        continuation.resume(cloudisPM.toBoolean())
+                                    }
+                                }
+                                isEnabled = suspendCoroutine<Boolean> { continuation ->
+                                    accessData(i, "isEnabled") { cloudisEnabled ->
+                                        continuation.resume(cloudisEnabled.toBoolean())
+                                    }
+                                }
+                                Log.d(
+                                    TAG,
+                                    "Sync: About to save: $hours $minutes $name $isEnabled $i $isPM"
+                                )
+                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
                             }
-                            //If no alarm is found, break the loop
-                            if (hours == -1) {
-                                Log.d(TAG, "Sync: No Alarm Found, Loop Broken $numAlarm")
-                                break@diff
-                            }
-                            minutes = suspendCoroutine<Int> { continuation ->
-                                accessData(i, "minutes") { cloudMinutes ->
-                                    continuation.resume(cloudMinutes.toInt())
+                        }
+                        else { //If keeping local data update cloud data
+                            for (i in 0 until 5) {
+                                //Grabs Local Storage per index
+                                val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
+                                val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
+                                val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+                                val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+                                val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+
+                                if (savedName != null) {
+                                    saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM)
                                 }
                             }
-                            name = suspendCoroutine<String> { continuation ->
-                                accessData(i, "name") { cloudName ->
-                                    continuation.resume(cloudName)
-                                }
-                            }
-                            isPM = suspendCoroutine<Boolean> { continuation ->
-                                accessData(i, "isPM") { cloudisPM ->
-                                    continuation.resume(cloudisPM.toBoolean())
-                                }
-                            }
-                            isEnabled = suspendCoroutine<Boolean> { continuation ->
-                                accessData(i, "isEnabled") { cloudisEnabled ->
-                                    continuation.resume(cloudisEnabled.toBoolean())
-                                }
-                            }
-                            Log.d(TAG, "Sync: About to save: $hours $minutes $name $isEnabled $i $isPM")
-                            saveAlarms(hours, minutes, name, isEnabled, i, isPM)
                         }
 
                     }
+
                     loadAlarms()
+
                 }
                 catch (e: Exception) {
                 // Handle any errors that occurred during the async operation
