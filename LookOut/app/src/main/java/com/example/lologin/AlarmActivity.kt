@@ -219,11 +219,13 @@ class AlarmActivity : AppCompatActivity() {
         val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
         val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
         val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+        var daysList = mutableListOf<Int>()
 
         //Calculating value for days selector
         for (day in daysArray) {
             Log.w(TAG, "Currently on day ${day.text}")
-            day.setOnClickListener { daysCheck(day) }
+            day.setOnClickListener {
+                daysList = daysCheck(day) }
         }
 
 
@@ -338,7 +340,8 @@ class AlarmActivity : AppCompatActivity() {
                     alarmItemLayout.y = y
 
                     activityAlarmLayout.addView(alarmItemLayout)
-                    alarmItem?.let(scheduler::schedule)
+//                    alarmItem?.let(scheduler::schedule)
+                    alarmItem.let { scheduler.schedule(alarmItem!!, daysList) }
 
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
@@ -356,7 +359,8 @@ class AlarmActivity : AppCompatActivity() {
                     alarmItemLayout.y = y + ((activityAlarmLayout.childCount - 3) * y)
 
                     activityAlarmLayout.addView(alarmItemLayout)
-                    alarmItem?.let(scheduler::schedule)
+//                    alarmItem?.let(scheduler::schedule)
+                    alarmItem.let { scheduler.schedule(alarmItem!!, daysList) }
 
                     // populate height values for alarmItems, Creation of height indexes
                     heightIndexes = populateHeightArray(alarmItemLayout)
@@ -389,7 +393,8 @@ class AlarmActivity : AppCompatActivity() {
                         saveAlarms(hours, minutes, name, false, arrayIndex, isPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
-                        alarmItem?.let(scheduler::schedule)
+//                        alarmItem?.let(scheduler::schedule)
+                        alarmItem.let { scheduler.schedule(alarmItem!!, daysList) }
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
@@ -615,7 +620,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
-                        alarmItem?.let(scheduler::schedule)
+//                        alarmItem?.let(scheduler::schedule)
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
@@ -626,7 +631,7 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
-                        alarmItem?.let(scheduler::schedule)
+//                        alarmItem?.let(scheduler::schedule)
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
                 } else {
@@ -650,7 +655,7 @@ class AlarmActivity : AppCompatActivity() {
                         saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
-                        alarmItem?.let(scheduler::schedule)
+//                        alarmItem?.let(scheduler::schedule)
 
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
@@ -1275,18 +1280,37 @@ class AlarmActivity : AppCompatActivity() {
 
     }
 
-    private fun daysCheck(day : TextView) {
+    private val selectedDays = mutableListOf<Int>()
+    private fun daysCheck(day : TextView): MutableList<Int> {
         day.isSelected = !day.isSelected
         Log.w(TAG, "${day.text} is selected? ${day.isSelected}")
         if (day.isSelected) {
             day.setTextColor(resources.getColor(R.color.black))
+            val dayOfWeek = getDayOfWeek(day.text.toString())
+            if (!selectedDays.contains(dayOfWeek)) {
+                selectedDays.add(dayOfWeek)
+            }
+
         }
         else {
             day.setTextColor(resources.getColor(R.color.grey))
+            selectedDays.remove(getDayOfWeek(day.text.toString()))
         }
+        Log.d(TAG, "Selected Days: $selectedDays")
+        return selectedDays
 
-
-
+    }
+    private fun getDayOfWeek(day: String): Int {
+        return when(day.toLowerCase()) {
+            "sun" -> Calendar.SUNDAY
+            "mon" -> Calendar.MONDAY
+            "tues" -> Calendar.TUESDAY
+            "wed" -> Calendar.WEDNESDAY
+            "thurs" -> Calendar.THURSDAY
+            "fri" -> Calendar.FRIDAY
+            "sat" -> Calendar.SATURDAY
+            else -> throw java.lang.IllegalArgumentException("Invalid day: $day")
+        }
     }
 
     private fun amPmCheck(hours: Int, isPm: Boolean): Int {
