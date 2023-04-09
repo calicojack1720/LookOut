@@ -154,14 +154,7 @@ class LoginActivity : AppCompatActivity() {
     //              user is a String of the username/email
     //Postcondition: Updates the UI after login and displays welcome message
     private fun updateUiWithUser() {
-        val welcome = "Welcome"
-
         startActivity(Intent(this, AlarmActivity::class.java))
-        Toast.makeText(
-            applicationContext,
-            welcome,
-            Toast.LENGTH_LONG
-        ).show()
     }
 
     //Gets User Profile information, used for debugging purposes
