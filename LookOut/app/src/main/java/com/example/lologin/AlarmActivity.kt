@@ -224,7 +224,6 @@ class AlarmActivity : AppCompatActivity() {
         for (day in daysArray) {
             Log.w(TAG, "Currently on day ${day.text}")
             day.setOnClickListener { daysCheck(day) }
-            Log.w(TAG, "${day.text} isEnabled After listener? ${day.isEnabled}")
         }
 
 
@@ -1278,7 +1277,15 @@ class AlarmActivity : AppCompatActivity() {
 
     private fun daysCheck(day : TextView) {
         day.isSelected = !day.isSelected
-//        day.setTextColor(resources.getColor(R.color.black))
+        Log.w(TAG, "${day.text} is selected? ${day.isSelected}")
+        if (day.isSelected) {
+            day.setTextColor(resources.getColor(R.color.black))
+        }
+        else {
+            day.setTextColor(resources.getColor(R.color.grey))
+        }
+
+
 
     }
 
