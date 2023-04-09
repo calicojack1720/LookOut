@@ -31,6 +31,7 @@ import android.widget.*
 import android.view.View
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.os.HandlerCompat
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import com.example.lologin.LoginActivity.Companion.TAG
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -209,26 +210,25 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
+        //Test Idea for Days Selector
+        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
+        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
+        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
+        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
+        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
+        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
+        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
+        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+
+        //Calculating value for days selector
+        for (day in daysArray) {
+            Log.w(TAG, "Currently on day ${day.text}")
+            day.setOnClickListener { daysCheck(day) }
+            Log.w(TAG, "${day.text} isEnabled After listener? ${day.isEnabled}")
+        }
+
 
         submitButton.setOnClickListener {
-            //Test Idea for Days Selector
-            val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
-            val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
-            val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
-            val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
-            val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
-            val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
-            val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
-            val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
-
-            for (day in daysArray) {
-                day.setOnClickListener {
-
-
-
-                }
-            }
-
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
@@ -240,8 +240,10 @@ class AlarmActivity : AppCompatActivity() {
                 hours = amPmCheck(hours, isPM)
                 Log.w(TAG, "Hours: $hours, isPM: $isPM")
 
+
                 val timeForAlarm = LocalTime.of(hours, minutes)
-                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
+                var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
+
 
                 // Calculate the time difference between the current time and the time for the alarm //
                 val currentTime = LocalDateTime.now()
@@ -1271,6 +1273,12 @@ class AlarmActivity : AppCompatActivity() {
         }
         Log.d(TAG, "ERR: Height NOT FOUND")
         return -1 //-1 is returned, height now found
+
+    }
+
+    private fun daysCheck(day : TextView) {
+        day.isSelected = !day.isSelected
+//        day.setTextColor(resources.getColor(R.color.black))
 
     }
 

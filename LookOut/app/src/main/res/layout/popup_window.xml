@@ -62,7 +62,8 @@
         android:layout_marginStart="16dp"
         android:textSize="16sp"
         android:layout_marginTop="10dp"
-        android:clickable="true"
+        android:clickable="false"
+        android:textColor="@color/grey"
         />
 
 
@@ -76,7 +77,8 @@
         android:textSize="16sp"
         android:layout_toEndOf="@+id/sunday_button"
         android:layout_marginStart="16dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,7 +89,8 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/name_text_box"
         android:layout_marginTop="10dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,7 +101,8 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/name_text_box"
         android:layout_marginTop="10dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -109,7 +113,8 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/name_text_box"
         android:layout_marginTop="10dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -120,7 +125,8 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/name_text_box"
         android:layout_marginTop="10dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -132,7 +138,9 @@
         android:layout_marginStart="16dp"
         android:layout_below="@id/name_text_box"
         android:layout_marginTop="10dp"
-        android:clickable="true"/>
+        android:clickable="true"
+        android:textColor="@color/grey"
+       />
 
 
     <Button
