@@ -83,7 +83,7 @@ class TimerActivity : AppCompatActivity() {
 
         //Create val for timer_item.xml
         val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
-
+        Log.d(TAG, "Child count is ${activityTimerLayout.childCount} Start")
         val inputTimerHours = activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
         val inputTimerMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
         val inputTimerSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
@@ -367,7 +367,10 @@ class TimerActivity : AppCompatActivity() {
             val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
 
             val x = screenWidth * 0.05f //5% from left
-            val y = screenHeight * .45f //45% from top
+            val y = screenHeight * .45f //40% from top
+            val yIncrement = screenHeight * .13f //13% down the screen
+
+            val xRight = screenWidth * 0.95f //95% from left
 
             //Set the Parameters for the new Layout
             val params = ConstraintLayout.LayoutParams(
@@ -377,72 +380,53 @@ class TimerActivity : AppCompatActivity() {
             Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
 
             val context: Context = this
-            val parentRight = context.dpToPx(120)
-            val parentLeft = context.dpToPx(25)
-            val parentTop = context.dpToPx(100)
-            val parentBottom = context.dpToPx(600)
-            val marginIncrement = context.dpToPx(100)
+//            val parentRight = context.dpToPx(120)
+//            val parentLeft = context.dpToPx(25)
+//            val parentTop = context.dpToPx(100)
+//            val parentBottom = context.dpToPx(600)
+//            val marginIncrement = context.dpToPx(100)
 
             var timerItem: TimerItem?
             val convertedSeconds: Long = convertToSec(presetHours, presetMinutes, presetSeconds)
 
             var arrayIndex = 0
+            var heightIndexes = arrayOf(0.0, 0.0, 0.0)
 
             //Vars for changing how alarms are saved!
             var timerItemPositionY = timerItemLayout.y
 
 
-            if (activityTimerLayout.childCount <= 14) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+            if (activityTimerLayout.childCount <= 11) {
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 10")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                 timerItemLayout.y = y
 
                 activityTimerLayout.addView(timerItemLayout)
 
+                heightIndexes = populateHeightArray(timerItemLayout)
+                Log.d(TAG, "Index: $arrayIndex")
 
-                when (params.bottomMargin) {
-                    2100 -> arrayIndex = 0
-                    1750 -> arrayIndex = 1
-                    1400 -> arrayIndex = 2
-                    1050 -> arrayIndex = 3
-                    700 -> arrayIndex = 4
-                    else -> { // Note the block
-                        Log.d(TAG, "Brr ${activityTimerLayout.childCount}")
-                    }
-                }
+                //GetIndex for save timers
+                arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
 
-                Log.d(TAG, "First ${activityTimerLayout.childCount} ${params.bottomMargin}")
                 //passes through hours, minutes, name, and enabled state to saveAlarms
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
                 numTimer += 1
 
-            } else if (activityTimerLayout.childCount <= 7) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
-                    //params.leftMargin = parentLeft
-                    //params.rightMargin = parentRight
-                    //params.topMargin = parentTop + ((activityAlarmLayout.childCount - 3) * marginIncrement)
-                    //params.bottomMargin = parentBottom - ((activityAlarmLayout.childCount - 3) * marginIncrement)
-
-                    //alarmItemLayout.layoutParams = params
+            } else if (activityTimerLayout.childCount <= 13) {
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} HAHAHAHAH")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                timerItemLayout.y = y + ((activityTimerLayout.childCount - 3) * marginIncrement)
+                timerItemLayout.y = y + ((activityTimerLayout.childCount - 11) * yIncrement)
 
                 activityTimerLayout.addView(timerItemLayout)
 
-                when (params.bottomMargin) {
-                    2100 -> arrayIndex = 0
-                    1750 -> arrayIndex = 1
-                    1400 -> arrayIndex = 2
-                    1050 -> arrayIndex = 3
-                    700 -> arrayIndex = 4
-                    else -> { // Note the block
-                        Log.d(TAG, "Brr ${activityTimerLayout.childCount}")
-                    }
-                }
+                heightIndexes = populateHeightArray(timerItemLayout)
 
-                Log.d(TAG, "${activityTimerLayout.childCount} ${params.bottomMargin}")
+                //GetIndex for save timers
+                arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
+                Log.d(TAG, "Index: $arrayIndex")
 
                 saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
                 numTimer += 1
@@ -464,16 +448,16 @@ class TimerActivity : AppCompatActivity() {
             //TODO: timer item is removed from UI but messes up the UI
             //set listener for deletion button, delete preset on click
             deletionButton.setOnClickListener {
-                when (params.bottomMargin) {
-                    2100 -> arrayIndex = 0
-                    1750 -> arrayIndex = 1
-                    1400 -> arrayIndex = 2
-                    1050 -> arrayIndex = 3
-                    700 -> arrayIndex = 4
-                    else -> { // Note the block
-                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
-                    }
-                }
+//                when (params.bottomMargin) {
+//                    2100 -> arrayIndex = 0
+//                    1750 -> arrayIndex = 1
+//                    1400 -> arrayIndex = 2
+//                    1050 -> arrayIndex = 3
+//                    700 -> arrayIndex = 4
+//                    else -> { // Note the block
+//                        Log.d(AlarmActivity.TAG, "Brr ${activityTimerLayout.childCount}")
+//                    }
+//                }
                 val parentView = timerItemLayout.parent as ViewGroup
                 parentView.removeView(timerItemLayout)
 
@@ -545,6 +529,9 @@ class TimerActivity : AppCompatActivity() {
             putInt("MINUTES_$timerIndex", minutes ?: 0)
             putInt("SECONDS_$timerIndex", seconds ?: 0)
         }.apply()
+
+        editor.clear()
+        editor.apply()
         Log.d(TAG, "Saved Timer $timerIndex")
     }
 
@@ -553,6 +540,7 @@ class TimerActivity : AppCompatActivity() {
     private fun loadTimers() {
         val sharedPreferences: SharedPreferences =
             getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+
 
         var timerItem: TimerItem? = null
 
@@ -740,21 +728,15 @@ class TimerActivity : AppCompatActivity() {
             val tempMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
             val tempSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
 
-            Log.d(TAG, "Moving saved name: $tempName DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved hours: $tempHours DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved minutes: $tempMinutes DDDDDDDDDfrom $i to $newIndex")
-            Log.d(TAG, "Moving saved seconds: $tempSeconds DDDDDDDDDfrom $i to $newIndex")
+            Log.d(TAG, "Moving saved name: $tempName from $i to $newIndex")
+            Log.d(TAG, "Moving saved hours: $tempHours from $i to $newIndex")
+            Log.d(TAG, "Moving saved minutes: $tempMinutes from $i to $newIndex")
+            Log.d(TAG, "Moving saved seconds: $tempSeconds from $i to $newIndex")
 
             if (tempName != null) {
                 saveTimer(tempHours, tempMinutes, tempSeconds, tempName, newIndex)
             }
 
-//            if (alarmIndex == 0) {
-//                editor.remove("ALARM_NAME_$alarmIndex")
-//                editor.remove("IS_ENABLED_$alarmIndex")
-//                editor.remove("HOURS_$alarmIndex")
-//                editor.remove("MINUTES_$alarmIndex")
-//            }
 
 
             Log.d(TAG, "Check for Last Index $i")
@@ -799,6 +781,35 @@ class TimerActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    private fun populateHeightArray(timerItemLayout: View): Array<Double> {
+        //Creation of Arrays to be passed into loadAlarms
+        var timerItemYIndexs = arrayOf(1.0, 2.0, 3.0)
+        val parentView = timerItemLayout.parent as ViewGroup
+        for (i in 11 until parentView.childCount) {
+            val child = parentView.getChildAt(i)
+            timerItemYIndexs[i-11] = child.y.toDouble()
+            Log.d(TAG, "Timer at index ${i - 11} has a height value of ${timerItemYIndexs[i-11]}")
+        }
+        return timerItemYIndexs
+    }
+
+    private fun getIndex (timerItemLayout: View, heightIndexes : Array<Double>, heightWanted: Double ): Int {
+
+        val parentView = timerItemLayout.parent as ViewGroup
+
+        for (arrayIndex in 0 until 3) {
+            val child = parentView.getChildAt(arrayIndex+11)
+
+            if (heightIndexes[arrayIndex] == heightWanted) {
+                Log.d(TAG, "ArrayIndex saved properly!")
+                return arrayIndex
+            }
+        }
+        Log.d(TAG, "ERR: Height NOT FOUND")
+        return -1 //-1 is returned, height now found
+
     }
 
     companion object {
