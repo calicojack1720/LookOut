@@ -51,6 +51,8 @@
         android:minHeight="48dp"
         android:textAlignment="center"
         android:textSize="16sp" />
+
+
     <TextView
         android:id="@+id/sunday_button"
         android:layout_width="wrap_content"
@@ -62,6 +64,8 @@
         android:layout_marginTop="10dp"
         android:clickable="true"
         />
+
+
     <TextView
         android:id="@+id/monday_button"
         android:layout_width="wrap_content"

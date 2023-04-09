@@ -1,7 +1,9 @@
 package com.example.lologin
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -42,6 +44,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import java.util.concurrent.CompletableFuture
 import org.w3c.dom.Text
+import java.util.*
 
 var numAlarm = -1
 
@@ -206,7 +209,26 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
+
         submitButton.setOnClickListener {
+            //Test Idea for Days Selector
+            val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
+            val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
+            val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
+            val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
+            val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
+            val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
+            val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
+            val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+
+            for (day in daysArray) {
+                day.setOnClickListener {
+
+
+
+                }
+            }
+
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
