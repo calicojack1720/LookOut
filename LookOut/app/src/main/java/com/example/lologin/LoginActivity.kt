@@ -1,6 +1,10 @@
 package com.example.lologin
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -29,6 +33,11 @@ class LoginActivity : AppCompatActivity() {
         //initialize Firebase
         auth = Firebase.auth
 
+        //Creates a value to check if connected to the internet
+        val connected = isInternetConnected(this)
+
+        Log.d(TAG, "Connectivity Status - $connected")
+
         //Input Password Box
         val inputPassword = findViewById<EditText>(R.id.inputPassword)
 
@@ -47,7 +56,6 @@ class LoginActivity : AppCompatActivity() {
         //Skip Log in Password
         val skipLoginButton = findViewById<Button>(R.id.SkipLoginButton)
 
-
         //On click of the Sign in Button
         signInButton.setOnClickListener {
             //takes input of email and password
@@ -58,8 +66,11 @@ class LoginActivity : AppCompatActivity() {
             if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "SignIn:Email Or Password is Null")
                 Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
-            }  else {
+            }  else if (connected) {
                 signIn(email, password)
+            }
+            if (!connected) {
+                Toast.makeText(baseContext, "Not Connected to Internet.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -73,9 +84,12 @@ class LoginActivity : AppCompatActivity() {
             if (email.isEmpty() || password.isEmpty()) {
                 Log.d(TAG, "Register:Email Or Password is Null")
                 Toast.makeText(baseContext, "Email Or Password is Empty.", Toast.LENGTH_SHORT).show()
-            }  else {
+            }  else if (connected) {
                 createAccount(email, password)
                 writeLoginSkipCheck()
+            }
+            if (!connected) {
+                Toast.makeText(baseContext, "Not Connected to Internet.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -92,8 +106,11 @@ class LoginActivity : AppCompatActivity() {
 
             if (email.isEmpty()) {
                 Toast.makeText(baseContext, "Please enter an Email.", Toast.LENGTH_SHORT).show()
-            } else {
+            } else if (connected) {
                 sendPasswordReset(email)
+            }
+            if (!connected) {
+                Toast.makeText(baseContext, "Not Connected to Internet.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -274,6 +291,17 @@ class LoginActivity : AppCompatActivity() {
     //Function called in OnStart if user is signed in
     private fun reload() {
         startActivity(Intent(this, AlarmActivity::class.java))
+    }
+
+    private fun isInternetConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
+        }
     }
 
     companion object {
