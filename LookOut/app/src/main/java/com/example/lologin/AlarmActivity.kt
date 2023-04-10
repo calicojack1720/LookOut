@@ -1120,6 +1120,23 @@ class AlarmActivity : AppCompatActivity() {
 
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
 
+        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
+        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
+        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
+        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
+        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
+        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
+        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
+        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+        var daysList = mutableListOf<Int>()
+
+
+        for (day in daysArray) {
+            Log.w(TAG, "Currently on day ${day.text}")
+            day.setOnClickListener {
+                daysList = daysCheck(day) }
+        }
+
         submitButtom.setOnClickListener {
             var hours = inputHours.text.toString().toInt()
             var minutes = inputMinutes.text.toString().toIntOrNull()
@@ -1146,6 +1163,7 @@ class AlarmActivity : AppCompatActivity() {
                     message = name,
                     isEnabled = true
                 )
+                
                 //Input of alarmName from popup into existing alarm
                 nameTextView.text = inputName.text.toString()
                 var displayHours = hours
@@ -1202,7 +1220,7 @@ class AlarmActivity : AppCompatActivity() {
 
             //save the alarm
             var arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
-//            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
+            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM, daysList)
 
         }
 
