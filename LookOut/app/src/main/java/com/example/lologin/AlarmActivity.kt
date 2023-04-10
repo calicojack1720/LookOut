@@ -92,9 +92,9 @@ class AlarmActivity : AppCompatActivity() {
             Log.d(TAG, "Sync: Difference Sync - Not Logged in")
         }
 
-//        Notifications
+        //Notifications
         val notificationManager = NotificationManagerCompat.from(this)
-//
+
         if (!notificationManager.areNotificationsEnabled()) {
             val builder = AlertDialog.Builder(this)
             builder.setTitle("Enable Push Notifications")
@@ -464,7 +464,10 @@ class AlarmActivity : AppCompatActivity() {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         val connected = isInternetConnected(this)
-        val daysListString = daysList.map { it.toString() }.toMutableList()
+
+        val daysListSort: MutableList<Int> = daysList.sorted().toMutableList() // Create a mutable sorted copy of the list
+        val daysListString = daysListSort.map { it.toString() }.toMutableList()
+
 
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
@@ -478,11 +481,11 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Saved Alarm $alarmIndex")
 
         if (auth.currentUser != null && connected) {
-            saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM)
+            saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM, daysListSort)
         }
     }
 
-    private fun saveCloud(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
+    private fun saveCloud(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean, daysList: MutableList<Int>) {
         val connected = isInternetConnected(this)
         if (auth.currentUser != null && connected) {
             val db = Firebase.firestore
@@ -496,6 +499,7 @@ class AlarmActivity : AppCompatActivity() {
                 "isEnabled" to isEnabled,
                 "hours" to hours,
                 "minutes" to minutes,
+                "daysList" to daysList,
             )
             db.collection("users/$token/alarms").document("alarm$alarmIndex")
                 .set(alarmData, SetOptions.merge())
@@ -533,7 +537,7 @@ class AlarmActivity : AppCompatActivity() {
             Log.d(TAG, "Saved hours: $savedHours")
             Log.d(TAG, "Saved minutes: $savedMinutes")
             Log.d(TAG, "Saved PM/AM State: $savedPM")
-            Log.d(TAG, "Saved daysList: $savedDaysList")
+            Log.d(TAG, "Saved daysList: $daysList")
 
             if (savedName != null) {
                 numAlarm += 1
@@ -735,6 +739,7 @@ class AlarmActivity : AppCompatActivity() {
                     var name = ""
                     var isPM = false
                     var isEnabled = false
+                    var accessDaysList: List<Int> = mutableListOf()
 
                     //Creates a message that indicates Cloud Sync that lasts for 2.8s
                     val handler = HandlerCompat.createAsync(mainLooper)
@@ -789,6 +794,11 @@ class AlarmActivity : AppCompatActivity() {
                                 continuation.resume(cloudisEnabled.toBoolean())
                             }
                         }
+                        accessDaysList = accessDaysList(i)
+                        var daysList = accessDaysList.toMutableList()
+
+                        Log.d(TAG, "Sync: daysList $daysList")
+
 
                         //Grabs Local Storage per index
                         val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
@@ -796,9 +806,15 @@ class AlarmActivity : AppCompatActivity() {
                         val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
                         val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
                         val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+                        val savedList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$i", null)
+                        val savedDaysList : List<Int> = if (savedList != null) {
+                            savedList.map { it.toInt() }
+                        } else {
+                            emptyList()
+                        }
 
                         //check for differences between local and cloud storage
-                        if (savedName == name && savedBoolean == isEnabled && savedHours == hours && savedMinutes == minutes && savedPM == isPM) {
+                        if (savedName == name && savedBoolean == isEnabled && savedHours == hours && savedMinutes == minutes && savedPM == isPM && savedDaysList.toMutableList() == daysList) {
                             Log.d(TAG, "Sync: no differences")
                         }
                         else {
@@ -824,7 +840,6 @@ class AlarmActivity : AppCompatActivity() {
                         builder.setNegativeButton("Local") { dialog, which ->
                             completableDeferred.complete(false)
                             dialog.dismiss()
-                            //return@setNegativeButton
                         }
                         builder.show()
 
@@ -881,11 +896,12 @@ class AlarmActivity : AppCompatActivity() {
                                         continuation.resume(cloudisEnabled.toBoolean())
                                     }
                                 }
-                                Log.d(
-                                    TAG,
-                                    "Sync: About to save: $hours $minutes $name $isEnabled $i $isPM"
-                                )
-//                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
+                                accessDaysList = accessDaysList(i)
+                                var daysList = accessDaysList.toMutableList()
+
+                                Log.d(TAG, "Sync: About to save: $hours $minutes $name $isEnabled $i $isPM $daysList")
+
+                                saveAlarms(hours, minutes, name, isEnabled, i, isPM, daysList)
                             }
                         }
                         else { //If keeping local data update cloud data
@@ -896,9 +912,15 @@ class AlarmActivity : AppCompatActivity() {
                                 val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
                                 val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
                                 val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+                                val savedList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$i", null)
+                                val savedDaysList : List<Int> = if (savedList != null) {
+                                    savedList.map { it.toInt() }
+                                } else {
+                                    emptyList()
+                                }
 
                                 if (savedName != null) {
-                                    saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM)
+                                    saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM, savedDaysList.toMutableList())
                                 }
                             }
                         }
@@ -914,133 +936,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
             }
-//            GlobalScope.launch(Dispatchers.Main) {
-//                Log.d(TAG, "Sync: Try & Catch about to run numAlarm: $numAlarm")
-//                try {
-//                    var hours = 0
-//                    var minutes = 0
-//                    var name = ""
-//                    var isPM = false
-//                    var isEnabled = false
-//                    //access at each index, when NULL break
-//                    loop@ for (i in 0 until numAlarm + 2) {
-//                        // Call the accessData function with a callback and suspend until it completes
-//                        hours = suspendCoroutine<Int> { continuation ->
-//                            accessData(i, "hours") { cloudHours ->
-//                                if (cloudHours == "end") {
-//                                    val breakValue = -1
-//                                    continuation.resume(breakValue)
-//                                }
-//                                else {
-//                                    continuation.resume(cloudHours.toInt())
-//                                }
-//                            }
-//                        }
-//                        if (hours == -1) {
-//                            Log.d(TAG, "Sync: Loop Broken")
-//                            break@loop
-//                        }
-//                        minutes = suspendCoroutine<Int> { continuation ->
-//                            accessData(i, "minutes") { cloudMinutes ->
-//                                continuation.resume(cloudMinutes.toInt())
-//                            }
-//                        }
-//                        name = suspendCoroutine<String> { continuation ->
-//                            accessData(i, "name") { cloudName ->
-//                                continuation.resume(cloudName)
-//                            }
-//                        }
-//                        isPM = suspendCoroutine<Boolean> { continuation ->
-//                            accessData(i, "isPM") { cloudisPM ->
-//                                continuation.resume(cloudisPM.toBoolean())
-//                            }
-//                        }
-//                        isEnabled = suspendCoroutine<Boolean> { continuation ->
-//                            accessData(i, "isEnabled") { cloudisEnabled ->
-//                                continuation.resume(cloudisEnabled.toBoolean())
-//                            }
-//                        }
-//
-//                        //Grabs values from Local Storage
-//                        val savedName: String? = sharedPreferences.getString("ALARM_NAME_$i", null)
-//                        val savedBoolean: Boolean = sharedPreferences.getBoolean("IS_ENABLED_$i", false)
-//                        val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
-//                        val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
-//                        val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
-//
-//                        //check for differences between local and cloud storage
-//                        if (savedName == name && savedBoolean == isEnabled && savedHours == hours && savedMinutes == minutes && savedPM == isPM) {
-//                            Log.d(TAG, "Sync: no differences")
-//                        }
-//                        else {
-//                            Log.d(TAG, "Sync: Difference Found alarm$i")
-//                            editor.clear()
-//                            for (j in 0 until i) {
-//                                saveAlarms(hours, minutes, name, isEnabled, j, isPM)
-//                            }
-//
-//                        }
-//
-//                        Log.d(TAG, "Sync: $hours:$minutes isPM:$isPM isEnabled:$isEnabled name:$name index:$i")
-//
-//                    }
-
-//                    if (numAlarm <= -1) {
-//                        loop@ for (i in 0 until 5) {
-//                            hours = suspendCoroutine<Int> { continuation ->
-//                                accessData(i, "hours") { cloudHours ->
-//                                    if (cloudHours == "end") {
-//                                        val breakValue = -1
-//                                        continuation.resume(breakValue)
-//                                    }
-//                                    else {
-//                                        continuation.resume(cloudHours.toInt())
-//                                    }
-//                                }
-//                            }
-//                            if (hours == -1) {
-//                                Log.d(TAG, "Sync: Loop Broken")
-//                                for (j in i until i + 1) {
-//                                    Log.d(TAG, "Sync: deleting local alarm ${j} j:$j i:$i numAlarm:$numAlarm")
-//                                    deleteAlarms(j, false)
-//                                }
-//                                break@loop
-//                            }
-//                            minutes = suspendCoroutine<Int> { continuation ->
-//                                accessData(i, "minutes") { cloudMinutes ->
-//                                    continuation.resume(cloudMinutes.toInt())
-//                                }
-//                            }
-//                            name = suspendCoroutine<String> { continuation ->
-//                                accessData(i, "name") { cloudName ->
-//                                    continuation.resume(cloudName)
-//                                }
-//                            }
-//                            isPM = suspendCoroutine<Boolean> { continuation ->
-//                                accessData(i, "isPM") { cloudisPM ->
-//                                    continuation.resume(cloudisPM.toBoolean())
-//                                }
-//                            }
-//                            isEnabled = suspendCoroutine<Boolean> { continuation ->
-//                                accessData(i, "isEnabled") { cloudisEnabled ->
-//                                    continuation.resume(cloudisEnabled.toBoolean())
-//                                }
-//                            }
-//                            if (name != null) {
-//                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
-//                                Log.d(TAG,"Sync: Syncing $i")
-//                            }
-//
-//
-//                        }
-//                    }
-                    //Loads alarms only after syncing with firebase
-                    //loadAlarms()
-//                } catch (e: Exception) {
-//                    // Handle any errors that occurred during the async operation
-//                    Log.d(TAG, "Sync: Error, $e")
-//                }
-            }
+    }
 
 
     private fun shiftCloud() {
@@ -1061,10 +957,16 @@ class AlarmActivity : AppCompatActivity() {
             val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
             val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+            val savedDaysList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$i", null)
+            val daysList : List<Int> = if (savedDaysList != null) {
+                savedDaysList.map { it.toInt() }
+            } else {
+                emptyList()
+            }
 
             //Saves new values from Local Storage to Cloud
             if (savedName != null) {
-                saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM)
+                saveCloud(savedHours, savedMinutes, savedName, savedBoolean, i, savedPM, daysList.toMutableList())
             }
         }
     }
@@ -1411,6 +1313,23 @@ class AlarmActivity : AppCompatActivity() {
                 callback("end")
             }
     }
+
+    private suspend fun accessDaysList(i: Int): List<Int> = suspendCoroutine { continuation ->
+        accessData(i, "daysList") { cloudDaysList ->
+            if (cloudDaysList == "[]") { // Check if the string is empty
+                //var accessDaysList: List<Int> = mutableListOf()
+                Log.d(TAG, "Sync: CloudDaysList is Empty")
+                continuation.resume(emptyList()) // Return an empty list
+            } else {
+                // Remove square brackets from the string using String.replace() method
+                val cleanedString = cloudDaysList.replace("[", "").replace("]", "")
+                val minutesList = cleanedString.split(",").map { it.trim().toInt() }
+                Log.d(TAG, "Sync: CloudDaysList is Not Empty")
+                continuation.resume(minutesList)
+            }
+        }
+    }
+
 
     private fun isInternetConnected(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
