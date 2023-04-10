@@ -8,6 +8,8 @@
 
 package com.example.lologin
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -28,6 +30,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.HandlerCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -35,6 +38,10 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 //import kotlinx.coroutines.NonCancellable.message
 import java.io.File
 import java.io.InputStream
@@ -42,6 +49,8 @@ import java.io.OutputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 //global variables:
 var numTimer = -1
@@ -68,7 +77,7 @@ class TimerActivity : AppCompatActivity() {
         //On Click of the logOutButton
         logOutButton.setOnClickListener {
             Firebase.auth.signOut()
-            Log.d(AlarmActivity.TAG, "User Signed out")
+            Log.d(TAG, "User Signed out")
             //when user signs out, change LoginSkipCheck to false
             writeLoginSkipCheck()
 
@@ -76,16 +85,21 @@ class TimerActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        //create timer storage
-        createTimerStorage()
+//        //create timer storage
+//        createTimerStorage()
 
-        //load timers
-        loadTimers()
-
+        if (auth.currentUser != null) {
+            syncCloud()
+            Log.d(TAG, "Sync: Difference Sync - Begin")
+        }
+        else {
+            loadTimers()
+            Log.d(TAG, "Sync: Difference Sync - Not Logged in")
+        }
 
         //Create val for timer_item.xml
         val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
-        Log.d(TAG, "Child count is ${activityTimerLayout.childCount} Start")
+
         val inputTimerHours = activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
         val inputTimerMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
         val inputTimerSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
@@ -372,21 +386,6 @@ class TimerActivity : AppCompatActivity() {
             val y = screenHeight * .45f //45% from top
             val yIncrement = screenHeight * .13f //13% down the screen
 
-
-            //Set the Parameters for the new Layout
-            val params = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT, // set width to wrap content
-                ConstraintLayout.LayoutParams.MATCH_PARENT // set height to wrap content
-            )
-            Log.d(AlarmActivity.TAG, "Child count is ${activityTimerLayout.childCount}")
-
-            val context: Context = this
-//            val parentRight = context.dpToPx(120)
-//            val parentLeft = context.dpToPx(25)
-//            val parentTop = context.dpToPx(100)
-//            val parentBottom = context.dpToPx(600)
-//            val marginIncrement = context.dpToPx(100)
-
             var timerItem: TimerItem?
             val convertedSeconds: Long = convertToSec(presetHours, presetMinutes, presetSeconds)
 
@@ -398,7 +397,7 @@ class TimerActivity : AppCompatActivity() {
 
 
             if (activityTimerLayout.childCount <= 11) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 10")
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 11")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                 timerItemLayout.y = y
@@ -416,7 +415,7 @@ class TimerActivity : AppCompatActivity() {
                 numTimer += 1
 
             } else if (activityTimerLayout.childCount <= 13) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} HAHAHAHAH")
+                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 13")
 
                 timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                 timerItemLayout.y = y + ((activityTimerLayout.childCount - 11) * yIncrement)
@@ -494,18 +493,18 @@ class TimerActivity : AppCompatActivity() {
     /* Precondition: none
        Postcondition: checks if timer storage already exists and creates a storage file if there is none
          */
-    private fun createTimerStorage() {
-        val timerStorage = File(this.filesDir, "timerStorage.txt")
-        val timerStorageExists = timerStorage.exists()
-
-        if (timerStorageExists) {
-            Log.w(AlarmActivity.TAG, "Timer Storage file exists")
-        } else {
-            //creates file if doesn't exists
-            timerStorage.createNewFile()
-            Log.w(AlarmActivity.TAG, "Timer Storage file created")
-        }
-    }
+//    private fun createTimerStorage() {
+//        val timerStorage = File(this.filesDir, "timerStorage.txt")
+//        val timerStorageExists = timerStorage.exists()
+//
+//        if (timerStorageExists) {
+//            Log.w(TAG, "Timer Storage file exists")
+//        } else {
+//            //creates file if doesn't exists
+//            timerStorage.createNewFile()
+//            Log.w(TAG, "Timer Storage file created")
+//        }
+//    }
 
     /* Precondition: hours is of type Int?, minutes is of type Int?, name is of type String, and
                      timerIndex is of type Int
@@ -522,23 +521,24 @@ class TimerActivity : AppCompatActivity() {
             putInt("SECONDS_$timerIndex", seconds ?: 0)
         }.apply()
 
-//        editor.clear()
-//        editor.apply()
         Log.d(TAG, "Saved Timer $timerIndex")
+
+        if (auth.currentUser != null) {
+            saveCloud(hours, minutes, name, seconds, timerIndex)
+        }
     }
 
     //Precondition: none
     //Postcondition: loads saved timers on timer page
     private fun loadTimers() {
-        val sharedPreferences: SharedPreferences =
-            getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
 
 
         var timerItem: TimerItem? = null
 
         for (i in 0 until 4) {
 
-            //Setting default values
+            //Grabbing Local Values
             val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
             val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
             val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
@@ -677,7 +677,7 @@ class TimerActivity : AppCompatActivity() {
             val db = Firebase.firestore
             val token = getToken()
 
-            Log.d(AlarmActivity.TAG, "Save: Current User Not Null")
+            Log.d(TAG, "Save: Current User Not Null")
 
             val timerData = hashMapOf(
                 "name" to "$name",
@@ -691,7 +691,7 @@ class TimerActivity : AppCompatActivity() {
                 .addOnFailureListener { e -> Log.w(TAG, "Error writing to cloud", e) }
         }
         else {
-            Log.w(AlarmActivity.TAG, "SaveCloud: User is not logged in")
+            Log.w(TAG, "SaveCloud: User is not logged in")
         }
     }
 
@@ -755,11 +755,222 @@ class TimerActivity : AppCompatActivity() {
 
         Log.d(TAG, "numTimer $numTimer")
 
-        //editor.clear()
-
         editor.apply()
 
         Log.d(TAG, "Deleted Timer $timerIndex")
+
+        if (auth.currentUser != null) {
+            Log.d(TAG, "Shift Cloud Called")
+            shiftCloud()
+        }
+
+    }
+
+    private fun shiftCloud() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+        val db = Firebase.firestore
+        val token = getToken()
+
+        for (i in 0 until 3) {
+            //Deletes each alarm
+            db.collection("users/$token/timers").document("timer$i")
+                .delete()
+                .addOnSuccessListener { Log.d(TAG, "Successfully shifted timers") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error shifting timers", e) }
+
+            //Grabs values from Local Storage
+            val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+            val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+            val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+            val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
+
+            //Saves new values from Local Storage to Cloud
+            if (savedName != null) {
+                saveCloud(savedHours, savedMinutes, savedName, savedSeconds, i)
+            }
+        }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    private fun syncCloud() {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("timerStorage", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        var differenceFound = false
+
+        Log.d(TAG, "Sync: Before GlobalScope")
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d(TAG, "Sync: In GlobalScope")
+            try {
+                Log.d(TAG, "Sync: Trying $numTimer")
+                var hours = 0
+                var minutes = 0
+                var name = ""
+                var seconds = 0
+
+                //Creates a message that indicates Cloud Sync that lasts for 2.8s
+                val handler = HandlerCompat.createAsync(mainLooper)
+                val durationInMillis = 2800L // Custom duration in milliseconds
+                val toast = Toast.makeText(applicationContext, "Syncing...", Toast.LENGTH_LONG)
+                toast.show()
+                handler.postDelayed({ toast.cancel() }, durationInMillis)
+
+                loop@ for (i in 0 until 3) {
+                    //Grabs data per index from the cloud
+                    hours = suspendCoroutine<Int> { continuation ->
+                        accessData(i, "hours") { cloudHours ->
+                            if (cloudHours == "end") {
+                                val breakValue = -1
+                                continuation.resume(breakValue)
+                            }
+                            else {
+                                continuation.resume(cloudHours.toInt())
+                            }
+                        }
+                    }
+                    //If no alarm is found, break the loop
+                    if (hours == -1) {
+                        Log.d(TAG, "Sync: No Cloud Timer Found, checking for Local Timer $i")
+                        val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+                        if (savedName != null) {
+                            Log.d(TAG, "Sync: Local Timer Found when no Cloud Timer")
+                            differenceFound = true
+                        }
+                        else {
+                            Log.d(TAG, "Sync: No Local or Cloud Timer")
+                        }
+                        break@loop
+                    }
+                    minutes = suspendCoroutine<Int> { continuation ->
+                        accessData(i, "minutes") { cloudMinutes ->
+                            continuation.resume(cloudMinutes.toInt())
+                        }
+                    }
+                    name = suspendCoroutine<String> { continuation ->
+                        accessData(i, "name") { cloudName ->
+                            continuation.resume(cloudName)
+                        }
+                    }
+                    seconds = suspendCoroutine<Int> { continuation ->
+                        accessData(i, "seconds") { cloudSeconds ->
+                            continuation.resume(cloudSeconds.toInt())
+                        }
+                    }
+
+                    //Grabs Local Storage per index
+                    val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+                    val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
+                    val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+                    val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+
+                    //check for differences between local and cloud storage
+                    if (savedName == name && savedSeconds == seconds && savedHours == hours && savedMinutes == minutes) {
+                        Log.d(TAG, "Sync: no differences")
+                    }
+                    else {
+                        //If a difference is found, break the loop and rewrite Local Storage
+                        Log.d(TAG, "Sync: Difference Found timer$i")
+                        differenceFound = true
+                        break@loop
+                    }
+                }
+
+                if (differenceFound == true) {
+                    //Asks the user whether they want to use Local or Cloud Storage
+                    val builder = AlertDialog.Builder(this@TimerActivity)
+                    builder.setTitle("Timers Out of Sync")
+                    builder.setMessage("Choose to keep either Cloud or Locally saved Timers")
+
+                    val completableDeferred = CompletableDeferred<Boolean>()
+
+                    builder.setPositiveButton("Cloud") { dialog, which ->
+                        completableDeferred.complete(true)
+                        dialog.dismiss()
+                    }
+                    builder.setNegativeButton("Local") { dialog, which ->
+                        completableDeferred.complete(false)
+                        dialog.dismiss()
+                        //return@setNegativeButton
+                    }
+                    builder.show()
+
+                    //Suspend the code here and wait for the user's response
+                    val useCloudStorage = completableDeferred.await()
+
+                    //If keeping cloud data
+                    if (useCloudStorage) {
+                        val handler = HandlerCompat.createAsync(mainLooper)
+                        val durationInMillis = 1500L // Custom duration in milliseconds
+                        val toast = Toast.makeText(applicationContext, "Syncing from Cloud", Toast.LENGTH_LONG)
+                        toast.show()
+                        handler.postDelayed({ toast.cancel() }, durationInMillis)
+
+                        //clears the local storage and rewrites it with cloud data
+                        editor.clear()
+                        editor.apply()
+                        numAlarm = -1
+
+                        diff@ for (i in 0 until 5) {
+                            Log.d(TAG, "Sync: differenceFound - numTimer$numTimer - $i")
+                            //Grabs data per index from the cloud
+                            hours = suspendCoroutine<Int> { continuation ->
+                                accessData(i, "hours") { cloudHours ->
+                                    if (cloudHours == "end") {
+                                        val breakValue = -1
+                                        continuation.resume(breakValue)
+                                    } else {
+                                        continuation.resume(cloudHours.toInt())
+                                    }
+                                }
+                            }
+                            //If no alarm is found, break the loop
+                            if (hours == -1) {
+                                Log.d(TAG, "Sync: No Timer Found, Loop Broken $numTimer")
+                                break@diff
+                            }
+                            minutes = suspendCoroutine<Int> { continuation ->
+                                accessData(i, "minutes") { cloudMinutes ->
+                                    continuation.resume(cloudMinutes.toInt())
+                                }
+                            }
+                            name = suspendCoroutine<String> { continuation ->
+                                accessData(i, "name") { cloudName ->
+                                    continuation.resume(cloudName)
+                                }
+                            }
+                            seconds = suspendCoroutine<Int> { continuation ->
+                                accessData(i, "seconds") { cloudisPM ->
+                                    continuation.resume(cloudisPM.toInt())
+                                }
+                            }
+                            Log.d(TAG, "Sync: About to save: $hours $minutes $seconds $name $i")
+                            saveTimer(hours, minutes, seconds, name, i)
+                        }
+                    }
+                    else { //If keeping local data update cloud data
+                        for (i in 0 until 3) {
+                            //Grabs Local Storage per index
+                            val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
+                            val savedSeconds: Int? = sharedPreferences.getInt("SECONDS_$i", 0)
+                            val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
+                            val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
+
+                            if (savedName != null) {
+                                saveCloud(savedHours, savedMinutes, savedName, savedSeconds, i)
+                            }
+                        }
+                    }
+
+                }
+
+                loadTimers()
+
+            }
+            catch (e: Exception) {
+                // Handle any errors that occurred during the async operation
+                Log.d(TAG, "Sync: Error, $e")
+            }
+
+        }
     }
 
     //Precondition: None
@@ -818,12 +1029,29 @@ class TimerActivity : AppCompatActivity() {
 
     }
 
-    companion object {
-        const val TAG = "TimerActivity"
+    private fun accessData(timerIndex: Int, field: String, callback: (String) -> Unit) {
+        val db = Firebase.firestore
+        val token = getToken()
+
+        val timerAccess = db.collection("users/$token/timers").document("timer$timerIndex")
+        timerAccess.get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    val fieldValue = document.get(field) // Get the field value based on the field name
+                    Log.d(TAG, "Cloud: Timer $timerIndex - $field: $fieldValue")
+                    callback(fieldValue.toString())
+                } else {
+                    Log.d(TAG, "Cloud: Failed to grab Timer $timerIndex")
+                    callback("end")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+                callback("end")
+            }
     }
 
-    fun Context.dpToPx(dp: Int): Int {
-        val density = resources.displayMetrics.density
-        return (dp * density).toInt()
+    companion object {
+        const val TAG = "TimerActivity"
     }
 }
