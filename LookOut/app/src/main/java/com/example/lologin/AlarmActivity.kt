@@ -227,7 +227,7 @@ class AlarmActivity : AppCompatActivity() {
         val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
         var daysList = mutableListOf<Int>()
 
-        //Calculating value for days selector
+
         for (day in daysArray) {
             Log.w(TAG, "Currently on day ${day.text}")
             day.setOnClickListener {
@@ -239,7 +239,7 @@ class AlarmActivity : AppCompatActivity() {
 
             val alarmName = popUpView.findViewById<EditText>(R.id.name_text_box)
             val name = alarmName.text.toString()
-            var hours = inputHours.text.toString().toInt()
+            var hours = inputHours.text.toString().toIntOrNull()
             val minutes = inputMinutes.text.toString().toIntOrNull()
 
             if (hours != null && hours in 1..12 && minutes != null && minutes in 0..59) {
@@ -353,8 +353,10 @@ class AlarmActivity : AppCompatActivity() {
                     arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
                     //passes through hours, minutes, name, and enabled state to saveAlarms
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM, daysList)
                     numAlarm += 1
+                    daysList.clear()
+                    Log.w(TAG, "List deleted")
 
                 } else if (activityAlarmLayout.childCount <= 7) {
                     Log.d(TAG, "Child count is ${activityAlarmLayout.childCount}")
@@ -372,8 +374,10 @@ class AlarmActivity : AppCompatActivity() {
                     //GetIndex for save alarms
                     arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
+                    Log.w(TAG, "List to be added to saveAlarms at index $arrayIndex: $daysList")
+                    saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM, daysList)
                     numAlarm += 1
+                    daysList.clear()
 
                 } else {
                     Toast.makeText(
@@ -394,7 +398,7 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        saveAlarms(hours, minutes, name, false, arrayIndex, isPM)
+                        saveAlarms(hours, minutes, name, false, arrayIndex, isPM, daysList)
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
 //                        alarmItem?.let(scheduler::schedule)
@@ -402,7 +406,7 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        saveAlarms(hours, minutes, name, true, arrayIndex, isPM)
+                        saveAlarms(hours, minutes, name, true, arrayIndex, isPM, daysList)
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -456,10 +460,11 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     //Saves created alarms to using
-    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
+    private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean, daysList: MutableList<Int>) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         val connected = isInternetConnected(this)
+        val daysListString = daysList.map { it.toString() }.toMutableList()
 
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
@@ -467,6 +472,8 @@ class AlarmActivity : AppCompatActivity() {
             putInt("HOURS_$alarmIndex", hours ?: 0)
             putInt("MINUTES_$alarmIndex", minutes ?: 0)
             putBoolean("IS_PM_$alarmIndex", isPM)
+            putStringSet("DAYS_LIST_$alarmIndex", daysListString.toSet())
+
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
 
@@ -514,13 +521,19 @@ class AlarmActivity : AppCompatActivity() {
             val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
             val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
-
+            val savedDaysList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$i", null)
+            val daysList : List<Int> = if (savedDaysList != null) {
+                savedDaysList.map { it.toInt() }
+            } else {
+                emptyList()
+            }
             Log.d(TAG, "Alarm: $i")
             Log.d(TAG, "Saved name: $savedName")
             Log.d(TAG, "Saved boolean: $savedBoolean")
             Log.d(TAG, "Saved hours: $savedHours")
             Log.d(TAG, "Saved minutes: $savedMinutes")
             Log.d(TAG, "Saved PM/AM State: $savedPM")
+            Log.d(TAG, "Saved daysList: $savedDaysList")
 
             if (savedName != null) {
                 numAlarm += 1
@@ -627,6 +640,7 @@ class AlarmActivity : AppCompatActivity() {
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
 //                        alarmItem?.let(scheduler::schedule)
+                        alarmItem.let { scheduler.schedule(alarmItem, daysList) }
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
 
@@ -637,7 +651,8 @@ class AlarmActivity : AppCompatActivity() {
 
                     activityAlarmLayout.addView(alarmItemLayout)
                     if (toggleSwitch.isChecked && toggleSwitch.isEnabled) {
-//                        alarmItem?.let(scheduler::schedule)
+//                        alarmItem?.let(scheduler::schedule) //Fixed
+                        alarmItem.let { scheduler.schedule(alarmItem, daysList) }
                     }
                     heightIndexes = populateHeightArray(alarmItemLayout)
                 } else {
@@ -658,15 +673,16 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM)
+//                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM, daysList.toMutableList())
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
 //                        alarmItem?.let(scheduler::schedule)
+                        alarmItem.let { scheduler.schedule(alarmItem, daysList) }
 
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM)
+                        saveAlarms(savedHours, savedMinutes, name, true, arrayIndex, savedPM, daysList.toMutableList())
                         Log.d(TAG, "Alarm Enable")
                     }
 
@@ -869,7 +885,7 @@ class AlarmActivity : AppCompatActivity() {
                                     TAG,
                                     "Sync: About to save: $hours $minutes $name $isEnabled $i $isPM"
                                 )
-                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
+//                                saveAlarms(hours, minutes, name, isEnabled, i, isPM)
                             }
                         }
                         else { //If keeping local data update cloud data
@@ -1186,7 +1202,7 @@ class AlarmActivity : AppCompatActivity() {
 
             //save the alarm
             var arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
-            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
+//            saveAlarms(hours, minutes, name, alarmItem!!.isEnabled, arrayIndex, isPM)
 
         }
 
@@ -1203,6 +1219,7 @@ class AlarmActivity : AppCompatActivity() {
         val savedHours: Int? = sharedPreferences.getInt("HOURS_$alarmIndex", 0)
         val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$alarmIndex", 0)
         val savedPM: Boolean = sharedPreferences.getBoolean("IS_PM_$alarmIndex", false)
+        val savedDaysList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$alarmIndex", null)
 
         Log.d(TAG, "Removing Alarm: $alarmIndex")
         Log.d(TAG, "Deleting Saved name: $savedName")
@@ -1210,6 +1227,7 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Deleting Saved hours: $savedHours")
         Log.d(TAG, "Deleting Saved minutes: $savedMinutes")
         Log.d(TAG, "Deleting Saved AM/PM State: $savedPM")
+        Log.d(TAG, "Deleting Saved daysList: $savedDaysList")
 
         // Shift the remaining alarms down by one index
         for (i in (alarmIndex + 1)..4) {
@@ -1222,16 +1240,23 @@ class AlarmActivity : AppCompatActivity() {
             val tempHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val tempMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
             val tempPM: Boolean = sharedPreferences.getBoolean("IS_PM_$i", false)
+            val tempDaysList : MutableSet<String>? = sharedPreferences.getStringSet("DAYS_LIST_$i", null)
+            val daysList : List<Int> = if (tempDaysList != null) {
+                tempDaysList.map { it.toInt() }
+            } else {
+                emptyList()
+            }
 
             Log.d(TAG, "Moving saved name: $tempName from $i to $newIndex")
             Log.d(TAG, "Moving saved boolean: $tempBoolean from $i to $newIndex")
             Log.d(TAG, "Moving saved hours: $tempHours from $i to $newIndex")
             Log.d(TAG, "Moving saved minutes: $tempMinutes from $i to $newIndex")
             Log.d(TAG, "Moving saved isPM: $tempPM from $i to $newIndex")
+            Log.d(TAG, "Moving saved DaysList: $tempDaysList from $i to $newIndex")
 
             if (tempName != null) {
                 if (updateCloud) {
-                    saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex, tempPM)
+                    saveAlarms(tempHours, tempMinutes, tempName, tempBoolean, newIndex, tempPM, daysList.toMutableList())
                 }
             }
 
@@ -1243,9 +1268,9 @@ class AlarmActivity : AppCompatActivity() {
         editor.remove("HOURS_$numAlarm")
         editor.remove("MINUTES_$numAlarm")
         editor.remove("IS_PM_$numAlarm")
+        editor.remove("DAYS_LIST_$numAlarm")
 
         numAlarm -= 1
-
         editor.apply()
 
         Log.d(TAG, "Deleted Alarm $alarmIndex - numAlarm:$numAlarm")
@@ -1307,6 +1332,8 @@ class AlarmActivity : AppCompatActivity() {
         return selectedDays
 
     }
+
+
     private fun getDayOfWeek(day: String): Int {
         return when(day.toLowerCase()) {
             "sun" -> Calendar.SUNDAY
