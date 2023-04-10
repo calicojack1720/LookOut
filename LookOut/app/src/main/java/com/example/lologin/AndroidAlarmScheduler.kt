@@ -29,6 +29,13 @@ class AndroidAlarmScheduler(
         }
         calendar.timeZone = TimeZone.getDefault()
 
+        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+            Log.d(TAG, "Duration is negative, adding 1 day for alarm")
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
+
+
+
         if (daysOfWeek.isEmpty()) {
             // Set the alarm to fire once on the specified date and time
             alarmManager.setExactAndAllowWhileIdle(

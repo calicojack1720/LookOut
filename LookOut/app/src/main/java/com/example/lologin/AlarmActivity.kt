@@ -248,10 +248,7 @@ class AlarmActivity : AppCompatActivity() {
                 // Calculate the time difference between the current time and the time for the alarm //
                 val currentTime = LocalDateTime.now()
 
-                if (dateTimeForAlarm.isBefore(currentTime)) {
-                    Log.d(TAG, "Duration is negative, adding 1 day for alarm")
-                    dateTimeForAlarm = dateTimeForAlarm.plusDays(1)
-                }
+
 
                 alarmItem = AlarmItem(
                     time = dateTimeForAlarm,
