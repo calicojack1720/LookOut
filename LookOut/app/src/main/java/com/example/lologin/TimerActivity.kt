@@ -27,6 +27,9 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.RippleDrawable
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -88,13 +91,18 @@ class TimerActivity : AppCompatActivity() {
 //        //create timer storage
 //        createTimerStorage()
 
-        if (auth.currentUser != null) {
+        //Creates a value to check if connected to the internet
+        val connected = isInternetConnected(this)
+
+        Log.d(TAG, "Sync: Connectivity Status - $connected")
+
+        if (auth.currentUser != null && connected) {
             syncCloud()
             Log.d(TAG, "Sync: Difference Sync - Begin")
         }
         else {
             loadTimers()
-            Log.d(TAG, "Sync: Difference Sync - Not Logged in")
+            Log.d(TAG, "Sync: Difference Sync - Not Logged in or no Internet Connection")
         }
 
         //Create val for timer_item.xml
@@ -1049,6 +1057,17 @@ class TimerActivity : AppCompatActivity() {
                 Log.d(TAG, "get failed with ", exception)
                 callback("end")
             }
+    }
+
+    private fun isInternetConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
+        }
     }
 
     companion object {
