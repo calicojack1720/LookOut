@@ -21,6 +21,9 @@ import java.io.OutputStream
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.content.SharedPreferences
 import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.NotificationManagerCompat
 import android.util.Log
@@ -74,8 +77,13 @@ class AlarmActivity : AppCompatActivity() {
         //Creates Alarm Storage File
         createAlarmStorage()
 
+        //Creates a value to check if connected to the internet
+        val connected = isInternetConnected(this)
+
+        Log.d(TAG, "Sync: Connectivity Status - $connected")
+
         //loadAlarms
-        if (auth.currentUser != null) {
+        if (auth.currentUser != null && connected) {
             syncCloud()
             Log.d(TAG, "Sync: Difference Sync - Begin")
         }
@@ -451,6 +459,7 @@ class AlarmActivity : AppCompatActivity() {
     private fun saveAlarms(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        val connected = isInternetConnected(this)
 
         editor.apply() {
             putString("ALARM_NAME_$alarmIndex", name)
@@ -461,13 +470,14 @@ class AlarmActivity : AppCompatActivity() {
         }.apply()
         Log.d(TAG, "Saved Alarm $alarmIndex")
 
-        if (auth.currentUser != null) {
+        if (auth.currentUser != null && connected) {
             saveCloud(hours, minutes, name, isEnabled, alarmIndex, isPM)
         }
     }
 
     private fun saveCloud(hours: Int?, minutes: Int?, name: String, isEnabled: Boolean, alarmIndex: Int, isPM: Boolean) {
-        if (auth.currentUser != null) {
+        val connected = isInternetConnected(this)
+        if (auth.currentUser != null && connected) {
             val db = Firebase.firestore
             val token = getToken()
 
@@ -1183,6 +1193,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     private fun deleteAlarms(alarmIndex: Int, updateCloud: Boolean) {
+        val connected = isInternetConnected(this)
         //Local Storage
         val sharedPreferences: SharedPreferences = getSharedPreferences("alarmStorage", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -1240,7 +1251,7 @@ class AlarmActivity : AppCompatActivity() {
         Log.d(TAG, "Deleted Alarm $alarmIndex - numAlarm:$numAlarm")
 
         if (updateCloud) {
-            if (auth.currentUser != null) {
+            if (auth.currentUser != null && connected) {
                 Log.d(TAG, "Shift Cloud Called")
                 shiftCloud()
             }
@@ -1354,6 +1365,17 @@ class AlarmActivity : AppCompatActivity() {
                 Log.d(TAG, "get failed with ", exception)
                 callback("end")
             }
+    }
+
+    private fun isInternetConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting
+        }
     }
 
     companion object {
