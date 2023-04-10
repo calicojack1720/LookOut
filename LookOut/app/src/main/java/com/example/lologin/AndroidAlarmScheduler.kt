@@ -5,7 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import java.time.ZoneId
 import android.content.Intent
-import java.util.Calendar
+import android.util.Log
+import com.example.lologin.AlarmActivity.Companion.TAG
+import java.util.*
 
 class AndroidAlarmScheduler(
     private val context:Context
@@ -17,19 +19,21 @@ class AndroidAlarmScheduler(
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("EXTRA_MESSAGE", item.message)
         }
+        Log.w(TAG, "${item.time} is the current time being set")
 
         val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, item.time.hour)
             set(Calendar.MINUTE, item.time.minute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
+        calendar.timeZone = TimeZone.getDefault()
 
         if (daysOfWeek.isEmpty()) {
             // Set the alarm to fire once on the specified date and time
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
+//                item.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
                 calendar.timeInMillis,
                 PendingIntent.getBroadcast(
                     context,

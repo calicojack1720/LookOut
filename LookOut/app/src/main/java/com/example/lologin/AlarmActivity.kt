@@ -19,9 +19,6 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import android.content.SharedPreferences
 import android.content.res.Resources
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -45,6 +42,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import java.util.concurrent.CompletableFuture
 import org.w3c.dom.Text
+import java.time.*
 import java.util.*
 
 var numAlarm = -1
@@ -1324,6 +1322,7 @@ class AlarmActivity : AppCompatActivity() {
         if (newHours == 24) {
             newHours = 0
         }
+        "New Hours: $newHours"
         return newHours
     }
 
