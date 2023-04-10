@@ -236,6 +236,7 @@ class AlarmActivity : AppCompatActivity() {
 
             if (hours != null && hours in 1..12 && minutes != null && minutes in 0..59) {
                 //AMPMCHECK
+                Log.w(TAG, "Hours before time $hours")
                 hours = amPmCheck(hours, isPM)
                 Log.w(TAG, "Hours: $hours, isPM: $isPM")
 
@@ -1313,13 +1314,13 @@ class AlarmActivity : AppCompatActivity() {
 
     private fun amPmCheck(hours: Int, isPm: Boolean): Int {
         var newHours = 0
-        if (isPm) {
+        if (isPm && hours != 12) {
             newHours = hours + 12
         }
         else {
             newHours = hours
         }
-        if (newHours == 24) {
+        if (newHours == 12 && !isPm) {
             newHours = 0
         }
         "New Hours: $newHours"
