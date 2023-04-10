@@ -32,6 +32,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 //import kotlinx.coroutines.NonCancellable.message
 import java.io.File
@@ -466,7 +468,6 @@ class TimerActivity : AppCompatActivity() {
                     }
                     else {
                         child.y = y + ((yIncrement * -1) * (i-13))
-                        Log.d(TAG, "Delete Debugging i:$i i-11:${i-11} ")
                     }
 
                 }
@@ -535,7 +536,7 @@ class TimerActivity : AppCompatActivity() {
 
         var timerItem: TimerItem? = null
 
-        for (i in 0 until 5) {
+        for (i in 0 until 4) {
 
             //Setting default values
             val savedName: String? = sharedPreferences.getString("TIMER_NAME_$i", null)
@@ -543,11 +544,11 @@ class TimerActivity : AppCompatActivity() {
             val savedHours: Int? = sharedPreferences.getInt("HOURS_$i", 0)
             val savedMinutes: Int? = sharedPreferences.getInt("MINUTES_$i", 0)
 
-            Log.d(TAG, "Timer: $i")
-            Log.d(TAG, "Saved name: $savedName")
-            Log.d(TAG, "Saved seconds: $savedSeconds")
-            Log.d(TAG, "Saved hours: $savedHours")
-            Log.d(TAG, "Saved minutes: $savedMinutes")
+            Log.d(TAG, "Load: Timer: $i")
+            Log.d(TAG, "Load: Saved name: $savedName")
+            Log.d(TAG, "Load: Saved seconds: $savedSeconds")
+            Log.d(TAG, "Load: Saved hours: $savedHours")
+            Log.d(TAG, "Load: Saved minutes: $savedMinutes")
 
             if (savedName != null) {
                 numTimer += 1
@@ -556,7 +557,7 @@ class TimerActivity : AppCompatActivity() {
 
             //Everything above here works
 
-            if (savedHours != null && savedHours in 0..23 && savedMinutes != null && savedMinutes in 0..59 && savedName != null) {
+            if (savedHours != null && savedHours in 0..99 && savedMinutes != null && savedMinutes in 0..59 && savedName != null && savedSeconds != null && savedSeconds in 0..59){
                 val timeForAlarm = LocalTime.of(savedHours, savedMinutes)
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm) //
 
@@ -601,7 +602,7 @@ class TimerActivity : AppCompatActivity() {
                 var heightIndexes = arrayOf(0.0, 0.0, 0.0)
 
                 if (activityTimerLayout.childCount <= 11) {
-                    Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+                    Log.d(TAG, "Load: Child count is ${activityTimerLayout.childCount}")
                     timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     timerItemLayout.y = y
 
@@ -611,11 +612,11 @@ class TimerActivity : AppCompatActivity() {
 
                     //GetIndex for save timers
                     arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
-                    Log.d(TAG, "Loaded Index: $arrayIndex")
+                    Log.d(TAG, "Load: Index: $arrayIndex")
 
                     saveTimer(savedHours, savedMinutes, savedSeconds, savedName, arrayIndex)
                 } else if (activityTimerLayout.childCount <= 13) {
-                    Log.d(TAG, "Child count is ${activityTimerLayout.childCount}")
+                    Log.d(TAG, "Load: Child count is ${activityTimerLayout.childCount}")
                     timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
                     timerItemLayout.y = y + ((activityTimerLayout.childCount - 11) * yIncrement)
 
@@ -625,7 +626,7 @@ class TimerActivity : AppCompatActivity() {
 
                     //GetIndex for save timers
                     arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
-                    Log.d(TAG, "Loaded Index: $arrayIndex")
+                    Log.d(TAG, "Load: Index: $arrayIndex")
 
                     saveTimer(savedHours, savedMinutes, savedSeconds, savedName, arrayIndex)
                 } else {
@@ -661,7 +662,6 @@ class TimerActivity : AppCompatActivity() {
                         }
                         else {
                             child.y = y + ((yIncrement * -1) * (i-13))
-                            Log.d(TAG, "Delete Debugging i:$i i-11:${i-11} ")
                         }
 
                     }
@@ -670,6 +670,39 @@ class TimerActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun saveCloud(hours: Int?, minutes: Int?, name: String, seconds: Int?, timerIndex: Int) {
+        if (auth.currentUser != null) {
+            val db = Firebase.firestore
+            val token = getToken()
+
+            Log.d(AlarmActivity.TAG, "Save: Current User Not Null")
+
+            val timerData = hashMapOf(
+                "name" to "$name",
+                "hours" to hours,
+                "minutes" to minutes,
+                "seconds" to seconds,
+            )
+            db.collection("users/$token/timers").document("timer$timerIndex")
+                .set(timerData, SetOptions.merge())
+                .addOnSuccessListener { Log.d(TAG, "Successfully written to cloud!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error writing to cloud", e) }
+        }
+        else {
+            Log.w(AlarmActivity.TAG, "SaveCloud: User is not logged in")
+        }
+    }
+
+    private fun getToken(): String {
+        val user = Firebase.auth.currentUser
+        var uid = ""
+        user?.let {
+            // The user's ID, unique to the Firebase project.
+            uid = it.uid
+        }
+        return uid
     }
 
     private fun deleteTimer(timerIndex: Int) {
