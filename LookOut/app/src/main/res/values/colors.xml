@@ -9,5 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="button_background">#5AD0FF</color>
     <color name="grey">#808080</color>
-
+    <color name="main">#16161c</color>
+    <color name="secondary">#F4F4FB</color>
+    <color name="accent">#040506</color>
 </resources>

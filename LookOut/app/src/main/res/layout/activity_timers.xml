@@ -1,8 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_timers"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TimerActivity">
+    tools:context=".TimerActivity"
+    android:background="?attr/colorPrimary"
+    >
+
+    <Button
+        android:id="@+id/stopTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/resetTimer"
+        app:layout_constraintStart_toEndOf="@+id/StartTimer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.307" />
+
+    <Button
+        android:id="@+id/resetTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:text="Reset"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.307" />
+
+    <TextView
+        android:id="@+id/TimerColon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text=":"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/StartTimer"
+        app:layout_constraintEnd_toStartOf="@+id/TimerSeconds"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/TimerMinutes"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="0.333" />
+
+    <EditText
+        android:id="@+id/TimerSeconds"
+        android:layout_width="93dp"
+        android:layout_height="84dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="230dp"
+        android:layout_marginEnd="32dp"
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/colorOnPrimary"
+        android:hint="00"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:inputType="number"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toTopOf="@+id/StartTimer"
+        android:backgroundTint="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/TimerColon1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="0.346" />
+
+    <EditText
+        android:id="@+id/TimerMinutes"
+        android:layout_width="93dp"
+        android:layout_height="84dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="?attr/colorOnPrimary"
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:hint="00"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:inputType="number"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toTopOf="@+id/StartTimer"
+        app:layout_constraintEnd_toStartOf="@+id/TimerSeconds"
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toEndOf="@+id/TimerHours"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="0.346" />
+
+    <TextView
+        android:id="@+id/TimerColon2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textColor="?attr/colorOnPrimary"
+        android:layout_alignParentEnd="true"
+        android:text=":"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toTopOf="@+id/StartTimer"
+        app:layout_constraintEnd_toStartOf="@+id/TimerMinutes"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/TimerHours"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="0.333" />
+
+    <EditText
+        android:id="@+id/TimerHours"
+        android:layout_width="93dp"
+        android:layout_height="84dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:textColor="?attr/colorOnPrimary"
+        android:layout_marginStart="22dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:gravity="center_horizontal"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:hint="00"
+        android:inputType="number"
+        android:textSize="48sp"
+        android:textColorHint="?attr/colorOnPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/StartTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/TimerColon2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout"
+        app:layout_constraintVertical_bias="0.346" />
+
+    <Button
+        android:id="@+id/StartTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.123"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.307" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:clickable="true"
+        android:contentDescription="@string/new_alarm"
+        android:focusable="true"
+        android:textColor="?attr/colorSecondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:textColor="?attr/colorOnSecondary"
+        android:text="Log Out"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/navigation_bar"
+            android:layout_width="411dp"
+            android:layout_height="56dp"
+            android:background="?attr/colorOnPrimary"
+            app:tabTextColor="?attr/colorOnSecondary"
+            app:tabSelectedTextColor="?attr/colorOnSecondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            >
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/alarms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alarms"
+                tools:layout_editor_absoluteX="-2dp"
+                tools:layout_editor_absoluteY="825dp"
+                />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/timers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/timers"
+                tools:layout_editor_absoluteX="201dp"
+                tools:layout_editor_absoluteY="821dp" />
+        </com.google.android.material.tabs.TabLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
