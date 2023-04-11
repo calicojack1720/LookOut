@@ -188,17 +188,18 @@ class TimerActivity : AppCompatActivity() {
                                         //check continueCountDown, finish if false
                                         if (!continueCountDown){
                                             cancel()
-                        inputTimerHours.setText("")
-                        inputTimerMinutes.setText("")
-                        inputTimerMinutes.setText("")
-                    }
-                    else {
-                                        //update countHours, countMinutes, and countSeconds
-                                        getTimeLeft()
-                                        inputTimerHours.setText("$countHours")
-                                        inputTimerMinutes.setText("$countMinutes")
-                                        inputTimerSeconds.setText("$countSeconds")
-                                    }}
+                                            inputTimerHours.setText("")
+                                            inputTimerMinutes.setText("")
+                                            inputTimerMinutes.setText("")
+                                        }
+                                        else {
+                                            //update countHours, countMinutes, and countSeconds
+                                            getTimeLeft()
+                                            inputTimerHours.setText("$countHours")
+                                            inputTimerMinutes.setText("$countMinutes")
+                                            inputTimerSeconds.setText("$countSeconds")
+                                        }
+                                    }
 
                                     override fun onFinish() {
                                         startTimer.setBackgroundColor(Color.BLUE)
