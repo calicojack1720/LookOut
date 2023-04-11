@@ -129,80 +129,118 @@ class TimerActivity : AppCompatActivity() {
 
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
-            //set continueCountDown to true
-            continueCountDown = true
-
-            //change startTimer background color
-            startTimer.setBackgroundColor(Color.DKGRAY)
-            Log.w(TAG, "Background Color 'changed'")
-
-            //change stop and reset colors
-            stopTimer.setBackgroundColor(Color.BLUE)
-            resetTimer.setBackgroundColor(Color.BLUE)
-
             //create values to hold input time
             val timerHours = inputTimerHours.text.toString().toIntOrNull()
             val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
             val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
 
-            val convertedSeconds: Long = convertToSec(timerHours, timerMinutes, timerSeconds)
-
-            val milliseconds: Long = convertedSeconds * 1000
-
-            //set countSeconds, countMinutes, and countHours
-            if(timerSeconds != null)
-                countSeconds = timerSeconds
-            else
-                countSeconds = 0
-            if(timerMinutes != null)
-                countMinutes = timerMinutes
-            else
-                countMinutes = 0
-            if(timerHours != null)
-                countHours = timerHours
-            else
-                countHours = 0
-
-            //start timer count down diplay
-            object : CountDownTimer(milliseconds, 1000) {
-
-                override fun onTick(millisUntilFinished: Long) {
-                    //check continueCountDown, finish if false
-                    if(!continueCountDown)
-                        cancel()
-
-                    //update countHours, countMinutes, and countSeconds
-                    getTimeLeft()
-                    inputTimerHours.setText("$countHours")
-                    inputTimerMinutes.setText("$countMinutes")
-                    inputTimerSeconds.setText("$countSeconds")
-                }
-
-                override fun onFinish() {
-                    startTimer.setBackgroundColor(Color.BLUE)
-
-                    //reset countHours, countMinutes, countSeconds
-                    countHours = 0
-                    countMinutes = 0
-                    countSeconds = 0
-
-                    //reset enter tie boxes to empty
-                    inputTimerHours.setText("")
-                    inputTimerMinutes.setText("")
-                    inputTimerSeconds.setText("")
-                }
-            }.start()
-
-
-            if(timerSeconds != null || timerMinutes != null || timerHours != null) {
-                timerItem = TimerItem(
-                    time = LocalDateTime.now()
-                        .plusSeconds(convertedSeconds.toLong()),
-                    message = ""
-                )
+            var allZero = false
+            if (timerHours == 0 && timerMinutes == 0 && timerSeconds == 0) {
+                allZero = true
             }
 
-            timerItem?.let(scheduler::schedule)
+            if (timerHours != null && allZero == false) {
+                    if (timerHours in 0..99) {
+                        if (timerMinutes in 0..59) {
+                            if (timerSeconds in 0..59) {
+                                //set continueCountDown to true
+                                continueCountDown = true
+
+                                //change startTimer background color
+                                startTimer.setBackgroundColor(Color.DKGRAY)
+                                Log.w(TAG, "Background Color 'changed'")
+
+                                //change stop and reset colors
+                                stopTimer.setBackgroundColor(Color.BLUE)
+                                resetTimer.setBackgroundColor(Color.BLUE)
+
+                                val convertedSeconds: Long =
+                                    convertToSec(timerHours, timerMinutes, timerSeconds)
+
+                                val milliseconds: Long = convertedSeconds * 1000
+
+                                //set countSeconds, countMinutes, and countHours
+                                if (timerSeconds != null)
+                                    countSeconds = timerSeconds
+                                else
+                                    countSeconds = 0
+                                if (timerMinutes != null)
+                                    countMinutes = timerMinutes
+                                else
+                                    countMinutes = 0
+                                if (timerHours != null)
+                                    countHours = timerHours
+                                else
+                                    countHours = 0
+
+                                //start timer count down diplay
+                                object : CountDownTimer(milliseconds, 1000) {
+
+                                    override fun onTick(millisUntilFinished: Long) {
+                                        //check continueCountDown, finish if false
+                                        if (!continueCountDown)
+                                            cancel()
+
+                                        //update countHours, countMinutes, and countSeconds
+                                        getTimeLeft()
+                                        inputTimerHours.setText("$countHours")
+                                        inputTimerMinutes.setText("$countMinutes")
+                                        inputTimerSeconds.setText("$countSeconds")
+                                    }
+
+                                    override fun onFinish() {
+                                        startTimer.setBackgroundColor(Color.BLUE)
+
+                                        //reset countHours, countMinutes, countSeconds
+                                        countHours = 0
+                                        countMinutes = 0
+                                        countSeconds = 0
+
+                                        //reset enter tie boxes to empty
+                                        inputTimerHours.setText("")
+                                        inputTimerMinutes.setText("")
+                                        inputTimerSeconds.setText("")
+                                    }
+                                }.start()
+
+
+                                if (timerSeconds != null || timerMinutes != null || timerHours != null) {
+                                    timerItem = TimerItem(
+                                        time = LocalDateTime.now()
+                                            .plusSeconds(convertedSeconds.toLong()),
+                                        message = ""
+                                    )
+                                }
+
+                                timerItem?.let(scheduler::schedule)
+                            } else {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Enter a Seconds value between 0-59",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                applicationContext,
+                                "Enter a Minutes value between 0-59",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Enter an Hours value between 0-99",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                Toast.makeText(
+                    applicationContext,
+                    "Invalid Time Value",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
 
             //set listener for timer reset, stop timer when clicked
             resetTimer.setOnClickListener {
@@ -327,8 +365,10 @@ class TimerActivity : AppCompatActivity() {
     private fun showTimerPopup() {
         //create values for buttons
         val timerPopupView = layoutInflater.inflate(R.layout.timer_popup_window, null)  //the popup
-        val cancelButton = timerPopupView.findViewById<Button>(R.id.cancel_button)      //cancel button
-        val submitButton = timerPopupView.findViewById<Button>(R.id.submitbutton)          //add button
+        val cancelButton =
+            timerPopupView.findViewById<Button>(R.id.cancel_button)      //cancel button
+        val submitButton =
+            timerPopupView.findViewById<Button>(R.id.submitbutton)          //add button
 
         val popupWindow = PopupWindow(
             timerPopupView,
@@ -360,140 +400,187 @@ class TimerActivity : AppCompatActivity() {
             var presetSeconds = popSeconds.text.toString().toIntOrNull()
 
             //if time is null, set to 0
-            if(presetHours == null)
+            if (presetHours == null)
                 presetHours = 0
-            if(presetMinutes == null)
+            if (presetMinutes == null)
                 presetMinutes = 0
-            if(presetSeconds == null)
+            if (presetSeconds == null)
                 presetSeconds = 0
 
-            //inflate the layout file
-            val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
-            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val timerItemLayout =
-                inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
+            if (presetHours != 0 && presetMinutes != 0 && presetSeconds != 0) {
+                if (presetHours in 0..99) {
+                    if (presetMinutes in 0..59) {
+                        if (presetSeconds in 0..59) {
 
-            //User input of timer into layout
-            val timeTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+                            //inflate the layout file
+                            val activityTimerLayout: ViewGroup = findViewById(R.id.activity_timers)
+                            val inflater =
+                                getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                            val timerItemLayout =
+                                inflater.inflate(R.layout.timer_item, activityTimerLayout, false)
 
-            //set timeTextView text
-            timeTextView.text = "$presetHours:$presetMinutes:$presetSeconds"
+                            //User input of timer into layout
+                            val timeTextView =
+                                timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
 
-            //User input of name into layout
-            val nameTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_name)
+                            //set timeTextView text
+                            timeTextView.text = "$presetHours:$presetMinutes:$presetSeconds"
 
-            //set nameTextView text
-            nameTextView.text = "$presetName"
+                            //User input of name into layout
+                            val nameTextView =
+                                timerItemLayout.findViewById<TextView>(R.id.existing_timer_name)
 
-            //set values for screen width, height, and the max child view
-            val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-            val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
+                            //set nameTextView text
+                            nameTextView.text = "$presetName"
 
-            val x = screenWidth * 0.05f //5% from left
-            val y = screenHeight * .45f //45% from top
-            val yIncrement = screenHeight * .13f //13% down the screen
+                            //set values for screen width, height, and the max child view
+                            val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+                            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+                            val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
 
-            var timerItem: TimerItem?
-            val convertedSeconds: Long = convertToSec(presetHours, presetMinutes, presetSeconds)
+                            val x = screenWidth * 0.05f //5% from left
+                            val y = screenHeight * .45f //45% from top
+                            val yIncrement = screenHeight * .13f //13% down the screen
 
-            var arrayIndex = 0
-            var heightIndexes = arrayOf(0.0, 0.0, 0.0)
+                            var timerItem: TimerItem?
+                            val convertedSeconds: Long =
+                                convertToSec(presetHours, presetMinutes, presetSeconds)
 
-            //Vars for changing how alarms are saved!
-            var timerItemPositionY = timerItemLayout.y
+                            var arrayIndex = 0
+                            var heightIndexes = arrayOf(0.0, 0.0, 0.0)
+
+                            //Vars for changing how alarms are saved!
+                            var timerItemPositionY = timerItemLayout.y
 
 
-            if (activityTimerLayout.childCount <= 11) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 11")
+                            if (activityTimerLayout.childCount <= 11) {
+                                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 11")
 
-                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                timerItemLayout.y = y
+                                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                                timerItemLayout.y = y
 
-                activityTimerLayout.addView(timerItemLayout)
+                                activityTimerLayout.addView(timerItemLayout)
 
-                heightIndexes = populateHeightArray(timerItemLayout)
-                Log.d(TAG, "Index: $arrayIndex")
+                                heightIndexes = populateHeightArray(timerItemLayout)
+                                Log.d(TAG, "Index: $arrayIndex")
 
-                //GetIndex for save timers
-                arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
+                                //GetIndex for save timers
+                                arrayIndex =
+                                    getIndex(
+                                        timerItemLayout,
+                                        heightIndexes,
+                                        timerItemLayout.y.toDouble()
+                                    )
 
-                //passes through hours, minutes, name, and enabled state to saveAlarms
-                saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
-                numTimer += 1
+                                //passes through hours, minutes, name, and enabled state to saveAlarms
+                                saveTimer(
+                                    presetHours,
+                                    presetMinutes,
+                                    presetSeconds,
+                                    presetName,
+                                    arrayIndex
+                                )
+                                numTimer += 1
 
-            } else if (activityTimerLayout.childCount <= 13) {
-                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 13")
+                            } else if (activityTimerLayout.childCount <= 13) {
+                                Log.d(TAG, "Child count is ${activityTimerLayout.childCount} <= 13")
 
-                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
-                timerItemLayout.y = y + ((activityTimerLayout.childCount - 11) * yIncrement)
+                                timerItemLayout.x = x.coerceIn(0f, maxChildViewX)
+                                timerItemLayout.y =
+                                    y + ((activityTimerLayout.childCount - 11) * yIncrement)
 
-                activityTimerLayout.addView(timerItemLayout)
+                                activityTimerLayout.addView(timerItemLayout)
 
-                heightIndexes = populateHeightArray(timerItemLayout)
+                                heightIndexes = populateHeightArray(timerItemLayout)
 
-                //GetIndex for save timers
-                arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
-                Log.d(TAG, "Index: $arrayIndex")
+                                //GetIndex for save timers
+                                arrayIndex =
+                                    getIndex(
+                                        timerItemLayout,
+                                        heightIndexes,
+                                        timerItemLayout.y.toDouble()
+                                    )
+                                Log.d(TAG, "Index: $arrayIndex")
 
-                saveTimer(presetHours, presetMinutes, presetSeconds, presetName, arrayIndex)
-                numTimer += 1
+                                saveTimer(
+                                    presetHours,
+                                    presetMinutes,
+                                    presetSeconds,
+                                    presetName,
+                                    arrayIndex
+                                )
+                                numTimer += 1
 
-            } else {
-                Toast.makeText(
-                    applicationContext,
-                    "Maximum Timer Number has been reached.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+                            } else {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Maximum Timer Number has been reached.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
 
-            //close out popup window when finished
-            popupWindow.dismiss()
+                            //close out popup window when finished
+                            popupWindow.dismiss()
 
-            //set deletion button
-            val deletionButton = timerItemLayout.findViewById<TextView>(R.id.deletion_button)
-            //On Click of Delete Button
+                            //set deletion button
+                            val deletionButton =
+                                timerItemLayout.findViewById<TextView>(R.id.deletion_button)
+                            //On Click of Delete Button
 
-            deletionButton.setOnClickListener {
-                heightIndexes = populateHeightArray(timerItemLayout)
+                            deletionButton.setOnClickListener {
+                                heightIndexes = populateHeightArray(timerItemLayout)
 
-                //GetIndex for save timers
-                arrayIndex = getIndex(timerItemLayout, heightIndexes, timerItemLayout.y.toDouble())
+                                //GetIndex for save timers
+                                arrayIndex =
+                                    getIndex(
+                                        timerItemLayout,
+                                        heightIndexes,
+                                        timerItemLayout.y.toDouble()
+                                    )
 
-                val parentView = timerItemLayout.parent as ViewGroup
-                parentView.removeView(timerItemLayout)
+                                val parentView = timerItemLayout.parent as ViewGroup
+                                parentView.removeView(timerItemLayout)
 
-                deleteTimer(arrayIndex)
+                                deleteTimer(arrayIndex)
 
-                //TODO: Need to update layout as items are deleted
-                //Update layout of remaining views
+                                //TODO: Need to update layout as items are deleted
+                                //Update layout of remaining views
 
-                for (i in 11 until parentView.childCount) {
-                    val child = parentView.getChildAt(i)
-                    if (i == 11) {
-                        child.y = y
+                                for (i in 11 until parentView.childCount) {
+                                    val child = parentView.getChildAt(i)
+                                    if (i == 11) {
+                                        child.y = y
+                                    } else {
+                                        child.y = y + ((yIncrement * -1) * (i - 13))
+                                    }
+
+                                }
+
+
+                            }
+
+                            //set time button
+                            val timeButton =
+                                timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+
+                            //set listener for time button, update time on click
+                            timeButton.setOnClickListener {
+                                val inputPresetHours =
+                                    activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
+                                val inputPresetMinutes =
+                                    activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
+                                val inputPresetSeconds =
+                                    activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
+
+                                inputPresetHours.setText("$presetHours")
+                                inputPresetMinutes.setText("$presetMinutes")
+                                inputPresetSeconds.setText("$presetSeconds")
+                            }
+                        }
                     }
-                    else {
-                        child.y = y + ((yIncrement * -1) * (i-13))
-                    }
-
                 }
-
-
-            }
-
-            //set time button
-            val timeButton = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
-
-            //set listener for time button, update time on click
-            timeButton.setOnClickListener {
-                val inputPresetHours = activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
-                val inputPresetMinutes = activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
-                val inputPresetSeconds = activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
-
-                inputPresetHours.setText("$presetHours")
-                inputPresetMinutes.setText("$presetMinutes")
-                inputPresetSeconds.setText("$presetSeconds")
+            } else {
+                Toast.makeText(applicationContext, "Invalid values", Toast.LENGTH_LONG).show()
             }
         }
     }
