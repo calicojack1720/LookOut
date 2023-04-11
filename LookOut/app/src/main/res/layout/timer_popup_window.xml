@@ -8,51 +8,12 @@
     <RelativeLayout
         android:layout_width="352dp"
         android:layout_height="382dp"
-        android:background="#62def8"
+        android:background="?attr/colorOnPrimary"
         tools:ignore="MissingConstraints">
-
-        <!--CODE BELOW COMMENTED OUT HAS NO USE-->
-        <!--    <EditText-->
-        <!--        android:id="@+id/EnterName"-->
-        <!--        android:layout_width="wrap_content"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_centerInParent="true"-->
-        <!--        android:layout_marginStart="30dp"-->
-        <!--        android:layout_marginTop="30dp"-->
-        <!--        android:layout_marginEnd="30dp"-->
-        <!--        android:layout_marginBottom="30dp"-->
-        <!--        android:hint="Enter Alarm Name"-->
-        <!--        android:inputType="text"-->
-        <!--        android:textSize="22sp"/>-->
-        <!--    <TextView-->
-        <!--        android:id="@+id/popup_title"-->
-        <!--        android:layout_width="match_parent"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:text="Enter a name"-->
-        <!--        android:textAlignment="center"-->
-        <!--        android:textSize="25sp" />-->
-
-
-        <!--    //Legacy Time Entry for debugging in case of bugs with new system-->
-        <!--    <EditText-->
-        <!--        android:id="@+id/time_entry"-->
-        <!--        android:layout_width="wrap_content"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_alignParentStart="true"-->
-        <!--        android:layout_alignParentTop="true"-->
-        <!--        android:layout_alignParentEnd="true"-->
-        <!--        android:layout_marginStart="121dp"-->
-        <!--        android:layout_marginTop="300dp"-->
-        <!--        android:layout_marginEnd="120dp"-->
-        <!--        android:hint="Enter Time:"-->
-        <!--        android:inputType="time"-->
-        <!--        android:minHeight="48dp"-->
-        <!--        android:textAlignment="center"-->
-        <!--        android:textSize="15sp" />-->
-
 
         <TextView
             android:id="@+id/colon3"
+            android:textColor="?attr/colorOnSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -60,6 +21,7 @@
             android:layout_marginTop="109dp"
             android:layout_marginEnd="122dp"
             android:text=":"
+            android:backgroundTint="?attr/colorOnSecondary"
             android:textSize="40sp" />
 
         <EditText
@@ -68,12 +30,15 @@
             android:layout_height="84dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
+            android:textColor="?attr/colorOnSecondary"
             android:layout_marginStart="230dp"
             android:layout_marginTop="93dp"
             android:autofillHints=""
             android:ems="10"
             android:gravity="center_horizontal"
+            android:textColorHint="?attr/colorOnSecondary"
             android:hint="00"
+            android:backgroundTint="?attr/colorOnSecondary"
             android:inputType="number"
             android:textSize="48sp" />
 
@@ -84,10 +49,13 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="130dp"
+            android:textColor="?attr/colorOnSecondary"
             android:layout_marginTop="92dp"
             android:autofillHints=""
             android:ems="10"
             android:gravity="center_horizontal"
+            android:textColorHint="?attr/colorOnSecondary"
+            android:backgroundTint="?attr/colorOnSecondary"
             android:hint="00"
             android:inputType="number"
             android:textSize="48sp" />
@@ -98,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:textColor="?attr/colorOnSecondary"
             android:layout_marginTop="112dp"
             android:layout_marginEnd="223dp"
             android:text=":"
@@ -115,20 +84,25 @@
             android:ems="10"
             android:gravity="center_horizontal"
             android:hint="00"
+            android:backgroundTint="?attr/colorOnSecondary"
             android:inputType="number"
+            android:textColorHint="?attr/colorOnSecondary"
             android:textSize="48sp" />
 
         <EditText
             android:id="@+id/name_text_box"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/preset_message"
+            android:layout_below="@+id/timer_pop_minutes"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="103dp"
-            android:layout_marginTop="167dp"
-            android:layout_marginEnd="97dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="33dp"
+            android:layout_marginEnd="100dp"
             android:gravity="center_horizontal"
+            android:textColor="?attr/colorOnSecondary"
+            android:textColorHint="?attr/colorOnSecondary"
+            android:backgroundTint="?attr/colorOnSecondary"
             android:hint="Name"
             android:importantForAutofill="no"
             android:inputType="text"
@@ -144,6 +118,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="31dp"
+            android:textColor="?attr/colorSecondary"
             android:layout_marginTop="310dp"
             android:text="Cancel" />
 
@@ -155,22 +130,22 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="312dp"
             android:layout_marginEnd="29dp"
+            android:textColor="?attr/colorSecondary"
             android:layout_marginBottom="12dp"
-            android:color="@color/button_background"
             android:text="Add" />
 
-        <TextView
-            android:id="@+id/preset_message"
-            android:layout_width="245dp"
-            android:layout_height="44dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="52dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="53dp"
-            android:text="Create a Timer Preset"
-            android:textSize="25sp" />
+<!--        <TextView-->
+<!--            android:id="@+id/preset_message"-->
+<!--            android:layout_width="245dp"-->
+<!--            android:layout_height="44dp"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginStart="52dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:layout_marginEnd="53dp"-->
+<!--            android:text="Create a Timer Preset"-->
+<!--            android:textSize="25sp" />-->
 
         <!--    <ToggleButton-->
         <!--        android:id="@+id/toggleAMPM"-->
