@@ -87,6 +87,7 @@
             android:backgroundTint="?attr/colorOnSecondary"
             android:inputType="number"
             android:textColorHint="?attr/colorOnSecondary"
+            android:textColor="?attr/colorOnSecondary"
             android:textSize="48sp" />
 
         <EditText
