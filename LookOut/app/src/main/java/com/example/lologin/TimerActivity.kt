@@ -6,7 +6,6 @@
    Updated: 4/10/2023
  */
 
-
 package com.example.lologin
 
 import android.annotation.SuppressLint
@@ -181,7 +180,7 @@ class TimerActivity : AppCompatActivity() {
                                         //check continueCountDown, finish if false
                                         if (!continueCountDown){
                                             cancel()
-inputTimerHours.setText("")
+                        inputTimerHours.setText("")
                         inputTimerMinutes.setText("")
                         inputTimerMinutes.setText("")
                     }
@@ -309,10 +308,12 @@ inputTimerHours.setText("")
             //things we want to run when tab is reselected/unselected
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 //Handle tab unselection
+                numTimer = -1
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
                 // Handle tab reselection
+
             }
         })
     }
@@ -413,7 +414,15 @@ inputTimerHours.setText("")
             if (presetSeconds == null)
                 presetSeconds = 0
 
-            if (presetHours != 0 && presetMinutes != 0 && presetSeconds != 0) {
+            var allZero = false
+
+            if (presetHours == 0 && presetMinutes == 0 && presetSeconds == 0) {
+                allZero = true
+                Log.d(TAG, "preset: allZero $allZero")
+            }
+            Log.d(TAG, "preset: $presetHours $presetMinutes $presetSeconds")
+
+            if (!allZero) {
                 if (presetHours in 0..99) {
                     if (presetMinutes in 0..59) {
                         if (presetSeconds in 0..59) {
