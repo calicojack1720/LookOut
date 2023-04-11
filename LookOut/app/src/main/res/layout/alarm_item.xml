@@ -46,12 +46,13 @@
 
     <TextView
         android:id="@+id/deletion_button"
-        android:layout_width="16dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="6dp"
-        android:text="X"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="-6dp"
         android:clickable="true"
-        android:textSize="24sp"
+        android:text="X"
+        android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

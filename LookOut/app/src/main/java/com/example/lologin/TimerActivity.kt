@@ -290,32 +290,32 @@ class TimerActivity : AppCompatActivity() {
             showTimerPopup()
         }
 
-        //Navigation bar
-        val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
-
-        //set selected tab to the Timer tab
-        navigationBar.selectTab(navigationBar.getTabAt(1))
-
-        //set listener for tab selection
-        navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
-                    0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
-                }
-            }
-
-            //things we want to run when tab is reselected/unselected
-            override fun onTabUnselected(tab: TabLayout.Tab) {
-                //Handle tab unselection
-                numTimer = -1
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab) {
-                // Handle tab reselection
-
-            }
-        })
+//        //Navigation bar
+//        val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
+//
+//        //set selected tab to the Timer tab
+//        navigationBar.selectTab(navigationBar.getTabAt(1))
+//
+//        //set listener for tab selection
+//        navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+//            override fun onTabSelected(tab: TabLayout.Tab) {
+//                when (tab.position) {
+//                    //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
+//                    0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
+//                }
+//            }
+//
+//            //things we want to run when tab is reselected/unselected
+//            override fun onTabUnselected(tab: TabLayout.Tab) {
+//                //Handle tab unselection
+//                numTimer = -1
+//            }
+//
+//            override fun onTabReselected(tab: TabLayout.Tab) {
+//                // Handle tab reselection
+//
+//            }
+//        })
     }
 
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
@@ -777,6 +777,22 @@ class TimerActivity : AppCompatActivity() {
                     }
 
 
+                }
+                //set time button
+                val timeButton = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
+
+                //set listener for time button, update time on click
+                timeButton.setOnClickListener {
+                    val inputPresetHours =
+                        activityTimerLayout.findViewById<EditText>(R.id.TimerHours)     //hours input
+                    val inputPresetMinutes =
+                        activityTimerLayout.findViewById<EditText>(R.id.TimerMinutes) //minutes input
+                    val inputPresetSeconds =
+                        activityTimerLayout.findViewById<EditText>(R.id.TimerSeconds) //seconds input
+
+                    inputPresetHours.setText("$savedHours")
+                    inputPresetMinutes.setText("$savedMinutes")
+                    inputPresetSeconds.setText("$savedSeconds")
                 }
             }
         }
