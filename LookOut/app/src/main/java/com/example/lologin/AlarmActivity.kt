@@ -674,7 +674,7 @@ class AlarmActivity : AppCompatActivity() {
                         //GetIndex for save alarms
                         arrayIndex = getIndex(alarmItemLayout, heightIndexes, alarmItemLayout.y.toDouble())
 
-//                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM, daysList.toMutableList())
+                        saveAlarms(savedHours, savedMinutes, name, false, arrayIndex, savedPM, daysList.toMutableList())
                         Log.d(TAG, "Alarm Cancelled")
                     } else {
 //                        alarmItem?.let(scheduler::schedule)
