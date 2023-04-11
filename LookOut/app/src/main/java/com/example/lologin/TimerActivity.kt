@@ -130,16 +130,24 @@ class TimerActivity : AppCompatActivity() {
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
             //create values to hold input time
-            val timerHours = inputTimerHours.text.toString().toIntOrNull()
-            val timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
-            val timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
+            var timerHours = inputTimerHours.text.toString().toIntOrNull()
+            var timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
+            var timerSeconds = inputTimerSeconds.text.toString().toIntOrNull()
+
+            //if time is null, set to 0
+            if (timerHours == null)
+                timerHours = 0
+            if (timerMinutes == null)
+                timerMinutes = 0
+            if (timerSeconds == null)
+                timerSeconds = 0
 
             var allZero = false
             if (timerHours == 0 && timerMinutes == 0 && timerSeconds == 0) {
                 allZero = true
             }
 
-            if (timerHours != null && allZero == false) {
+            if (allZero == false) {
                     if (timerHours in 0..99) {
                         if (timerMinutes in 0..59) {
                             if (timerSeconds in 0..59) {
@@ -454,7 +462,7 @@ class TimerActivity : AppCompatActivity() {
                             val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
 
                             val x = screenWidth * 0.05f //5% from left
-                            val y = screenHeight * .45f //45% from top
+                            val y = screenHeight * .40f //40% from top
                             val yIncrement = screenHeight * .13f //13% down the screen
 
                             var timerItem: TimerItem?
@@ -705,7 +713,7 @@ class TimerActivity : AppCompatActivity() {
                 val maxChildViewX = screenWidth * 0.9f - timerItemLayout.width
 
                 val x = screenWidth * 0.05f //5% from left
-                val y = screenHeight * .45f //45% from top
+                val y = screenHeight * .40f //45% from top
                 val yIncrement = screenHeight * .13f //13% down the screen
 
                 var arrayIndex = 0
@@ -1133,24 +1141,26 @@ class TimerActivity : AppCompatActivity() {
         for (i in 11 until parentView.childCount) {
             val child = parentView.getChildAt(i)
             timerItemYIndexs[i-11] = child.y.toDouble()
-            Log.d(TAG, "Timer at index ${i - 11} has a height value of ${timerItemYIndexs[i-11]}")
+            Log.d(TAG, "Height: Timer at index ${i - 11} has a height value of ${timerItemYIndexs[i-11]}")
         }
         return timerItemYIndexs
     }
 
     private fun getIndex (timerItemLayout: View, heightIndexes : Array<Double>, heightWanted: Double ): Int {
-
         val parentView = timerItemLayout.parent as ViewGroup
+        Log.d(TAG, "Height: Searching for Index ${parentView.childCount} $heightWanted")
 
         for (arrayIndex in 0 until 3) {
             val child = parentView.getChildAt(arrayIndex+11)
+
+            Log.d(TAG, "Height: ${heightIndexes[arrayIndex]} = $heightWanted")
 
             if (heightIndexes[arrayIndex] == heightWanted) {
                 Log.d(TAG, "ArrayIndex saved properly!")
                 return arrayIndex
             }
         }
-        Log.d(TAG, "ERR: Height NOT FOUND")
+        Log.d(TAG, "ERR: Height NOT FOUND ${parentView.childCount}")
         return -1 //-1 is returned, height now found
 
     }
