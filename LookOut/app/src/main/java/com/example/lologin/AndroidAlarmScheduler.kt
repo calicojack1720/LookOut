@@ -38,9 +38,9 @@ class AndroidAlarmScheduler(
 
         if (daysOfWeek.isEmpty()) {
             // Set the alarm to fire once on the specified date and time
+            Log.w(TAG, "")
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-//                item.time.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,
                 calendar.timeInMillis,
                 PendingIntent.getBroadcast(
                     context,
@@ -49,10 +49,12 @@ class AndroidAlarmScheduler(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
+            Log.w(TAG, "Alarm set for ${calendar.time}")
         } else {
             // Set the alarm to repeat on the specified days
 
             for (dayOfWeek in daysOfWeek) {
+                Log.w(TAG, "day to be processed: $dayOfWeek")
                 calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek)
                 var alarmTime = calendar.timeInMillis
                 if (alarmTime < System.currentTimeMillis()) {
@@ -71,6 +73,7 @@ class AndroidAlarmScheduler(
                             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                         )
                     )
+
                 }
                 alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
@@ -83,6 +86,8 @@ class AndroidAlarmScheduler(
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                 )
+                Log.w(TAG, "Alarm set for ${calendar.time}")
+
             }
         }
     }

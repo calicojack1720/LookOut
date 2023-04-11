@@ -253,9 +253,6 @@ class AlarmActivity : AppCompatActivity() {
                 var dateTimeForAlarm = LocalDateTime.of(LocalDate.now(), timeForAlarm)
 
 
-                // Calculate the time difference between the current time and the time for the alarm //
-                val currentTime = LocalDateTime.now()
-
 
 
                 alarmItem = AlarmItem(
@@ -1065,6 +1062,7 @@ class AlarmActivity : AppCompatActivity() {
                     message = name,
                     isEnabled = true
                 )
+                //FIXME: Alarms do not schedule using newAlarmItem? Need to find way to just use alarmItem
                 
                 //Input of alarmName from popup into existing alarm
                 nameTextView.text = inputName.text.toString()
@@ -1116,7 +1114,7 @@ class AlarmActivity : AppCompatActivity() {
                 }
 
                 //Schedule the alarmItem
-                newAlarmItem.let { scheduler::schedule }
+                newAlarmItem.let { scheduler.schedule(newAlarmItem, daysList) }
             }
             popupWindow.dismiss()
 
