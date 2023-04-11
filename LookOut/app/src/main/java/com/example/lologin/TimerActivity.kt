@@ -8,31 +8,27 @@
 
 package com.example.lologin
 
+//import kotlinx.coroutines.NonCancellable.message
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
-import android.net.Uri
+import android.content.SharedPreferences
+import android.content.res.Resources
+import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import android.content.SharedPreferences
-import android.content.res.Resources
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.drawable.RippleDrawable
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
-import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.os.HandlerCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
@@ -45,7 +41,6 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-//import kotlinx.coroutines.NonCancellable.message
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -188,11 +183,8 @@ class TimerActivity : AppCompatActivity() {
                                         //check continueCountDown, finish if false
                                         if (!continueCountDown){
                                             cancel()
-                        inputTimerHours.setText("")
-                        inputTimerMinutes.setText("")
-                        inputTimerMinutes.setText("")
-                    }
-                    else {
+                                            }
+                                    else {
                                         //update countHours, countMinutes, and countSeconds
                                         getTimeLeft()
                                         inputTimerHours.setText("$countHours")
@@ -298,32 +290,32 @@ class TimerActivity : AppCompatActivity() {
             showTimerPopup()
         }
 
-//        //Navigation bar
-//        val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
-//
-//        //set selected tab to the Timer tab
-//        navigationBar.selectTab(navigationBar.getTabAt(1))
-//
-//        //set listener for tab selection
-//        navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-//            override fun onTabSelected(tab: TabLayout.Tab) {
-//                when (tab.position) {
-//                    //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
-//                    0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
-//                }
-//            }
-//
-//            //things we want to run when tab is reselected/unselected
-//            override fun onTabUnselected(tab: TabLayout.Tab) {
-//                //Handle tab unselection
-//                numTimer = -1
-//            }
-//
-//            override fun onTabReselected(tab: TabLayout.Tab) {
-//                // Handle tab reselection
-//
-//            }
-//        })
+        //Navigation bar
+        val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
+
+        //set selected tab to the Timer tab
+        navigationBar.selectTab(navigationBar.getTabAt(1))
+
+        //set listener for tab selection
+        navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                when (tab.position) {
+                    //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
+                    0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
+                }
+            }
+
+            //things we want to run when tab is reselected/unselected
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                //Handle tab unselection
+                numTimer = -1
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Handle tab reselection
+
+            }
+        })
     }
 
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
@@ -446,8 +438,30 @@ class TimerActivity : AppCompatActivity() {
                             val timeTextView =
                                 timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
 
+                            var hoursString = ""
+                            var minutesString = ""
+                            var secondsString = ""
+
                             //set timeTextView text
-                            timeTextView.text = "$presetHours:$presetMinutes:$presetSeconds"
+                            if (presetHours in 0..9) {
+                                hoursString = "0$presetHours:"
+                            }
+                            else {
+                                hoursString = "$presetHours:"
+                            }
+                            if (presetMinutes in 0..9) {
+                                minutesString = "0$presetMinutes:"
+                            }
+                            else {
+                                minutesString = "$presetMinutes:"
+                            }
+                            if (presetSeconds in 0..9) {
+                                secondsString = "0$presetSeconds"
+                            }
+                            else {
+                                secondsString = "$presetSeconds"
+                            }
+                            timeTextView.text = "$hoursString$minutesString$secondsString"
 
                             //User input of name into layout
                             val nameTextView =
@@ -700,7 +714,31 @@ class TimerActivity : AppCompatActivity() {
                 //UserInput of Timer into Layout
                 var textViewString = ""
                 val timeTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_time)
-                timeTextView.text = "$savedHours:$savedMinutes:$savedSeconds"
+                var hoursString = ""
+                var minutesString = ""
+                var secondsString = ""
+
+                //set timeTextView text
+                if (savedHours in 0..9) {
+                    hoursString = "0$savedHours:"
+                }
+                else {
+                    hoursString = "$savedHours:"
+                }
+                if (savedMinutes in 0..9) {
+                    minutesString = "0$savedMinutes:"
+                }
+                else {
+                    minutesString = "$savedMinutes:"
+                }
+                if (savedSeconds in 0..9) {
+                    secondsString = "0$savedSeconds"
+                }
+                else {
+                    secondsString = "$savedSeconds"
+                }
+                timeTextView.text = "$hoursString$minutesString$secondsString"
+
 
                 //UserInput of AlarmName into Layout
                 val nameTextView = timerItemLayout.findViewById<TextView>(R.id.existing_timer_name)

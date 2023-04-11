@@ -3,11 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/timer_item"
-    android:layout_width="300dp"
+    android:layout_width="320dp"
     android:layout_height="66dp"
-    android:background="#D3888787"
+    android:background="?attr/colorOnPrimary"
     android:orientation="horizontal">
-
 
     <TextView
         android:id="@+id/existing_timer_time"
@@ -17,6 +16,7 @@
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:text="00:00:00"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +30,7 @@
             android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:text="Timer Name"
+            android:textColor="?attr/colorOnSecondary"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/existing_timer_time"
@@ -43,7 +44,7 @@
         android:layout_marginStart="3dp"
         android:clickable="true"
         android:text="X"
-        android:textColor="#F01111"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="48sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="button_background">#5AD0FF</color>
-    <color name="main">#212335</color>
-    <color name="secondary">#F4F5FB</color>
-    <color name="accent">#12191C</color>
+    <color name="main">#16161c</color>
+    <color name="secondary">#F4F4FB</color>
+    <color name="accent">#040506</color>
 </resources>
