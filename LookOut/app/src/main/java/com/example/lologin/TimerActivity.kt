@@ -148,106 +148,102 @@ class TimerActivity : AppCompatActivity() {
             }
 
             if (allZero == false) {
-                    if (timerHours in 0..99) {
-                        if (timerMinutes in 0..59) {
-                            if (timerSeconds in 0..59) {
-                                //set continueCountDown to true
-                                continueCountDown = true
+                if (timerHours in 0..99) {
+                    if (timerMinutes in 0..59) {
+                        if (timerSeconds in 0..59) {
+                            //set continueCountDown to true
+                            continueCountDown = true
 
-                                //change startTimer background color
-                                startTimer.setBackgroundColor(Color.DKGRAY)
-                                Log.w(TAG, "Background Color 'changed'")
+                            //change startTimer background color
+                            startTimer.setBackgroundColor(Color.DKGRAY)
+                            Log.w(TAG, "Background Color 'changed'")
 
-                                //change stop and reset colors
-                                stopTimer.setBackgroundColor(Color.BLUE)
-                                resetTimer.setBackgroundColor(Color.BLUE)
+                            //change stop and reset colors
+                            stopTimer.setBackgroundColor(Color.BLUE)
+                            resetTimer.setBackgroundColor(Color.BLUE)
 
-                                val convertedSeconds: Long =
-                                    convertToSec(timerHours, timerMinutes, timerSeconds)
+                            val convertedSeconds: Long =
+                                convertToSec(timerHours, timerMinutes, timerSeconds)
 
-                                val milliseconds: Long = convertedSeconds * 1000
+                            val milliseconds: Long = convertedSeconds * 1000
 
-                                //set countSeconds, countMinutes, and countHours
-                                if (timerSeconds != null)
-                                    countSeconds = timerSeconds
-                                else
-                                    countSeconds = 0
-                                if (timerMinutes != null)
-                                    countMinutes = timerMinutes
-                                else
-                                    countMinutes = 0
-                                if (timerHours != null)
-                                    countHours = timerHours
-                                else
-                                    countHours = 0
+                            //set countSeconds, countMinutes, and countHours
+                            if (timerSeconds != null)
+                                countSeconds = timerSeconds
+                            else
+                                countSeconds = 0
+                            if (timerMinutes != null)
+                                countMinutes = timerMinutes
+                            else
+                                countMinutes = 0
+                            if (timerHours != null)
+                                countHours = timerHours
+                            else
+                                countHours = 0
 
-                                //start timer count down diplay
-                                object : CountDownTimer(milliseconds, 1000) {
+                            //start timer count down display
+                            object : CountDownTimer(milliseconds, 1000) {
 
-                                    override fun onTick(millisUntilFinished: Long) {
-                                        //check continueCountDown, finish if false
-                                        if (!continueCountDown){
-                                            cancel()
-                                            inputTimerHours.setText("")
-                                            inputTimerMinutes.setText("")
-                                            inputTimerMinutes.setText("")
-                                        }
-                                        else {
-                                            //update countHours, countMinutes, and countSeconds
-                                            getTimeLeft()
-                                            inputTimerHours.setText("$countHours")
-                                            inputTimerMinutes.setText("$countMinutes")
-                                            inputTimerSeconds.setText("$countSeconds")
-                                        }
+                                override fun onTick(millisUntilFinished: Long) {
+                                    //check continueCountDown, finish if false
+                                    if (!continueCountDown) {
+                                        cancel()
+                                    } else {
+                                        //update countHours, countMinutes, and countSeconds
+                                        getTimeLeft()
+                                        inputTimerHours.setText("$countHours")
+                                        inputTimerMinutes.setText("$countMinutes")
+                                        inputTimerSeconds.setText("$countSeconds")
                                     }
-
-                                    override fun onFinish() {
-                                        startTimer.setBackgroundColor(Color.BLUE)
-
-                                        //reset countHours, countMinutes, countSeconds
-                                        countHours = 0
-                                        countMinutes = 0
-                                        countSeconds = 0
-
-                                        //reset enter tie boxes to empty
-                                        inputTimerHours.setText("")
-                                        inputTimerMinutes.setText("")
-                                        inputTimerSeconds.setText("")
-                                    }
-                                }.start()
-
-
-                                if (timerSeconds != null || timerMinutes != null || timerHours != null) {
-                                    timerItem = TimerItem(
-                                        time = LocalDateTime.now()
-                                            .plusSeconds(convertedSeconds.toLong()),
-                                        message = ""
-                                    )
                                 }
 
-                                timerItem?.let(scheduler::schedule)
-                            } else {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Enter a Seconds value between 0-59",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                                override fun onFinish() {
+                                    startTimer.setBackgroundColor(Color.BLUE)
+
+                                    //reset countHours, countMinutes, countSeconds
+                                    countHours = 0
+                                    countMinutes = 0
+                                    countSeconds = 0
+
+                                    //reset enter tie boxes to empty
+                                    inputTimerHours.setText("")
+                                    inputTimerMinutes.setText("")
+                                    inputTimerSeconds.setText("")
+                                }
+                            }.start()
+
+
+                            if (timerSeconds != null || timerMinutes != null || timerHours != null) {
+                                timerItem = TimerItem(
+                                    time = LocalDateTime.now()
+                                        .plusSeconds(convertedSeconds.toLong()),
+                                    message = ""
+                                )
                             }
+
+                            timerItem?.let(scheduler::schedule)
                         } else {
                             Toast.makeText(
                                 applicationContext,
-                                "Enter a Minutes value between 0-59",
+                                "Enter a Seconds value between 0-59",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
                     } else {
                         Toast.makeText(
                             applicationContext,
-                            "Enter an Hours value between 0-99",
+                            "Enter a Minutes value between 0-59",
                             Toast.LENGTH_LONG
                         ).show()
                     }
                 } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Enter an Hours value between 0-99",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } else {
                 Toast.makeText(
                     applicationContext,
                     "Invalid Time Value",
@@ -258,7 +254,7 @@ class TimerActivity : AppCompatActivity() {
             //set listener for timer reset, stop timer when clicked
             resetTimer.setOnClickListener {
                 //cancel timer
-                timerItem?.let{scheduler.cancel(it)}
+                timerItem?.let { scheduler.cancel(it) }
 
                 //cancel the countdown
                 continueCountDown = false
@@ -282,7 +278,7 @@ class TimerActivity : AppCompatActivity() {
             //set listener for stop button, pause timer when clicked
             stopTimer.setOnClickListener {
                 //cancel timer
-                timerItem?.let{scheduler.cancel(it)}
+                timerItem?.let { scheduler.cancel(it) }
 
                 //set continueCountDown to false
                 continueCountDown = false
