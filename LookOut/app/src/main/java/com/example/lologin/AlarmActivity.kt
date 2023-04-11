@@ -272,15 +272,20 @@ class AlarmActivity : AppCompatActivity() {
                 var displayHours = hours
 
                 if (isPM) {
-                    if (hours != 0) {
+                    if (hours != 0 && hours!= 12) {
                         displayHours = hours - 12
                     }
-                    else {
-                        displayHours = 12
+                    else if (hours == 12) {
+                        displayHours = hours
                     }
                 }
                 else {
-                    displayHours = hours
+                    if (hours == 0) {
+                        displayHours = 12
+                    }
+                    else {
+                        displayHours = hours
+                    }
                 }
 
                 val timeTextView = alarmItemLayout.findViewById<TextView>(R.id.existing_alarm_time)
@@ -585,6 +590,22 @@ class AlarmActivity : AppCompatActivity() {
                 }
                 else {
                     displayHours = savedHours
+                }
+                if (savedPM) {
+                    if (savedHours != 0 && savedHours!= 12) {
+                        displayHours = savedHours - 12
+                    }
+                    else if (savedHours == 12) {
+                        displayHours = savedHours
+                    }
+                }
+                else {
+                    if (savedHours == 0) {
+                        displayHours = 12
+                    }
+                    else {
+                        displayHours = savedHours
+                    }
                 }
 
                 var textViewString = ""
