@@ -5,8 +5,8 @@
     android:id="@+id/alarm_item"
     android:layout_width="300dp"
     android:layout_height="66dp"
-    android:background="#D3888787"
     android:layout_centerInParent="true"
+    android:background="?attr/colorOnPrimary"
     android:orientation="horizontal">
 
     <TextView
@@ -17,6 +17,7 @@
         android:layout_marginBottom="8dp"
         android:layout_weight="1"
         android:text="00:00"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +31,7 @@
         android:layout_marginStart="24dp"
         android:layout_weight="1"
         android:text="Alarm Name"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/existing_alarm_time"
@@ -40,27 +42,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:thumbTint="@color/grey"
+        android:trackTint="#333333"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/deletion_button"
-        android:layout_width="24dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="-6dp"
+        android:layout_width="26dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
         android:clickable="true"
         android:text="X"
+        android:textColor="?attr/colorOnSecondary"
         android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.238" />
 
     <TextView
         android:id="@+id/AMPM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="PM"
+        android:textColor="?attr/colorOnSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/existing_alarm_name"
         app:layout_constraintHorizontal_bias="0.0"
