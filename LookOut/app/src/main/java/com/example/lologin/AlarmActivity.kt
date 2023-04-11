@@ -216,23 +216,23 @@ class AlarmActivity : AppCompatActivity() {
             }
         }
 
-        //Test Idea for Days Selector
-        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
-        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
-        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
-        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
-        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
-        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
-        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
-        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+//        //Test Idea for Days Selector
+//        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
+//        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
+//        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
+//        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
+//        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
+//        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
+//        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
+//        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
         var daysList = mutableListOf<Int>()
 
 
-        for (day in daysArray) {
-            Log.w(TAG, "Currently on day ${day.text}")
-            day.setOnClickListener {
-                daysList = daysCheck(day) }
-        }
+//        for (day in daysArray) {
+//            Log.w(TAG, "Currently on day ${day.text}")
+//            day.setOnClickListener {
+//                daysList = daysCheck(day) }
+//        }
 
 
         submitButton.setOnClickListener {
@@ -1019,22 +1019,22 @@ class AlarmActivity : AppCompatActivity() {
 
         val submitButtom = popUpView.findViewById<Button>(R.id.submitbutton)
 
-        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
-        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
-        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
-        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
-        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
-        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
-        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
-        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
+//        val sundayTextView = popUpView.findViewById<TextView>(R.id.sunday_button)
+//        val mondayTextView = popUpView.findViewById<TextView>(R.id.monday_button)
+//        val tuesdayTextView = popUpView.findViewById<TextView>(R.id.tuesday_button)
+//        val wednesdayTetView = popUpView.findViewById<TextView>(R.id.wednesday_button)
+//        val thursdayTextView = popUpView.findViewById<TextView>(R.id.thursday_button)
+//        val fridayTextView = popUpView.findViewById<TextView>(R.id.friday_button)
+//        val saturdayTextView = popUpView.findViewById<TextView>(R.id.saturday_button)
+//        val daysArray = arrayOf<TextView>(sundayTextView, mondayTextView, tuesdayTextView, wednesdayTetView, thursdayTextView, fridayTextView, saturdayTextView)
         var daysList = mutableListOf<Int>()
 
 
-        for (day in daysArray) {
-            Log.w(TAG, "Currently on day ${day.text}")
-            day.setOnClickListener {
-                daysList = daysCheck(day) }
-        }
+//        for (day in daysArray) {
+//            Log.w(TAG, "Currently on day ${day.text}")
+//            day.setOnClickListener {
+//                daysList = daysCheck(day) }
+//        }
 
         submitButtom.setOnClickListener {
             var hours = inputHours.text.toString().toInt()
