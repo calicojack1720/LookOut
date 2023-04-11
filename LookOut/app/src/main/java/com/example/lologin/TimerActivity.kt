@@ -1,8 +1,9 @@
 /* TimerActivity.kt
    Initiates the timers page and handles setting, starting, stopping, and creating and using Tiemrs.
    Created by Michael Astfalk
+   Edited by Matthew Alexander
    Created: 3/17/2023
-   Updated: 4/8/2023
+   Updated: 4/10/2023
  */
 
 
@@ -178,15 +179,19 @@ class TimerActivity : AppCompatActivity() {
 
                                     override fun onTick(millisUntilFinished: Long) {
                                         //check continueCountDown, finish if false
-                                        if (!continueCountDown)
+                                        if (!continueCountDown){
                                             cancel()
-
+inputTimerHours.setText("")
+                        inputTimerMinutes.setText("")
+                        inputTimerMinutes.setText("")
+                    }
+                    else {
                                         //update countHours, countMinutes, and countSeconds
                                         getTimeLeft()
                                         inputTimerHours.setText("$countHours")
                                         inputTimerMinutes.setText("$countMinutes")
                                         inputTimerSeconds.setText("$countSeconds")
-                                    }
+                                    }}
 
                                     override fun onFinish() {
                                         startTimer.setBackgroundColor(Color.BLUE)
@@ -247,6 +252,9 @@ class TimerActivity : AppCompatActivity() {
                 //cancel timer
                 timerItem?.let{scheduler.cancel(it)}
 
+                //cancel the countdown
+                continueCountDown = false
+
                 //reset button colors
                 resetTimer.setBackgroundColor(Color.DKGRAY)
                 stopTimer.setBackgroundColor(Color.DKGRAY)
@@ -285,24 +293,22 @@ class TimerActivity : AppCompatActivity() {
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
+
+        //set selected tab to the Timer tab
+        navigationBar.selectTab(navigationBar.getTabAt(1))
+
+        //set listener for tab selection
         navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
-                    //0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
                     0 -> startActivity(Intent(this@TimerActivity, AlarmActivity::class.java))
-
-
-                    //Here for TimerActivity page
-                    1 -> startActivity(Intent(this@TimerActivity, TimerActivity::class.java))
-
-                    // Add more cases for each tab as needed
                 }
             }
 
             //things we want to run when tab is reselected/unselected
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                // Handle tab unselection
+                //Handle tab unselection
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
