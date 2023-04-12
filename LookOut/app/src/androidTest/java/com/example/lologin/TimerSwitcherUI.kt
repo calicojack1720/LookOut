@@ -1,4 +1,4 @@
-package com.example.lologin.ui.login
+package com.example.lologin
 
 
 import android.view.View
@@ -10,8 +10,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.example.lologin.LoginActivity
-import com.example.lologin.R
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -23,14 +21,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class EnableNotificationsTest {
+class TimerSwitcherUI {
 
     @Rule
     @JvmField
     var mActivityScenarioRule = ActivityScenarioRule(LoginActivity::class.java)
 
     @Test
-    fun enableNotificationsTest() {
+    fun timerSwitcherUI() {
         val materialButton = onView(
             allOf(
                 withId(R.id.SkipLoginButton), withText("Or, Skip Login Here"),
@@ -42,7 +40,7 @@ class EnableNotificationsTest {
                             0
                         )
                     ),
-                    4
+                    2
                 ),
                 isDisplayed()
             )
@@ -51,17 +49,86 @@ class EnableNotificationsTest {
 
         val materialButton2 = onView(
             allOf(
-                withId(android.R.id.button1), withText("Ok"),
+                withId(android.R.id.button2), withText("Cancel"),
                 childAtPosition(
                     childAtPosition(
                         withClassName(`is`("android.widget.ScrollView")),
                         0
                     ),
-                    3
+                    2
                 )
             )
         )
         materialButton2.perform(scrollTo(), click())
+
+        val tabView = onView(
+            allOf(
+                withContentDescription("Timers"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.navigation_bar),
+                        0
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        tabView.perform(click())
+
+        val appCompatEditText = onView(
+            allOf(
+                withId(R.id.TimerHours),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.activity_timers),
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        )
+                    ),
+                    6
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText.perform(replaceText("12"), closeSoftKeyboard())
+
+        val appCompatEditText2 = onView(
+            allOf(
+                withId(R.id.TimerMinutes),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.activity_timers),
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        )
+                    ),
+                    4
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText2.perform(replaceText("12"), closeSoftKeyboard())
+
+        val appCompatEditText3 = onView(
+            allOf(
+                withId(R.id.TimerSeconds),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.activity_timers),
+                        childAtPosition(
+                            withId(android.R.id.content),
+                            0
+                        )
+                    ),
+                    3
+                ),
+                isDisplayed()
+            )
+        )
+        appCompatEditText3.perform(replaceText("21"), closeSoftKeyboard())
     }
 
     private fun childAtPosition(
