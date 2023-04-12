@@ -86,6 +86,8 @@ class TimerActivity : AppCompatActivity() {
 //        //create timer storage
 //        createTimerStorage()
 
+        Log.d(AlarmActivity.TAG, "OnCreate: $numTimer")
+
         //Creates a value to check if connected to the internet
         val connected = isInternetConnected(this)
 
