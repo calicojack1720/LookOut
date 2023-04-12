@@ -1113,18 +1113,20 @@ class AlarmActivity : AppCompatActivity() {
 
                 //Correcting value to 12 hour time
                 if (isPM) {
-                    if (hours != 0) {
+                    if (hours != 0 && hours!= 12) {
                         displayHours = hours - 12
-                        Log.w(TAG, "displayHours was edited to be $displayHours")
                     }
-                    else {
-                        displayHours = 12
-                        Log.w(TAG, "displayHours was edited to be $displayHours")
+                    else if (hours == 12) {
+                        displayHours = hours
                     }
                 }
                 else {
-                    displayHours = hours
-                    Log.w(TAG, "displayHours was edited to be $displayHours")
+                    if (hours == 0) {
+                        displayHours = 12
+                    }
+                    else {
+                        displayHours = hours
+                    }
                 }
                 //Inputting the time into the alarmItem
                 if ((hours in 0..9) && (minutes > 9)) {
