@@ -12,8 +12,10 @@ package com.example.lologin
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.ConnectivityManager
@@ -1066,7 +1068,20 @@ class TimerActivity : AppCompatActivity() {
                         dialog.dismiss()
                         //return@setNegativeButton
                     }
-                    builder.show()
+                    val alertDialog = builder.show()
+                    val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                    if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                        val cloudButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                        val localButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                        localButton?.setTextColor(Color.WHITE)
+                        cloudButton?.setTextColor(Color.WHITE)
+
+                    } else {
+                        val cloudButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                        val localButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                        localButton?.setTextColor(Color.BLACK)
+                        cloudButton?.setTextColor(Color.BLACK)
+                    }
 
                     //Suspend the code here and wait for the user's response
                     val useCloudStorage = completableDeferred.await()
