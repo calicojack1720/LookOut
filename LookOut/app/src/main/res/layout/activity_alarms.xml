@@ -12,7 +12,9 @@
         android:id="@+id/navigation_bar"
         android:layout_width="411dp"
         android:layout_height="56dp"
-        android:background="@color/button_background"
+        android:background="?attr/colorOnPrimary"
+        app:tabTextColor="?attr/colorOnSecondary"
+        app:tabSelectedTextColor="?attr/colorOnSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -21,7 +23,6 @@
                 android:id="@+id/alarms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:color="@color/black"
                 android:text="@string/alarms"
                 tools:layout_editor_absoluteX="-2dp"
                 tools:layout_editor_absoluteY="825dp" />

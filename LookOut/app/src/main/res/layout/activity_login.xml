@@ -9,6 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="?attr/colorPrimary"
     tools:context=".LoginActivity">
 
     <EditText
@@ -24,7 +25,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AppName" />
+        app:layout_constraintTop_toBottomOf="@+id/AppName"
+        android:textColor="?attr/colorOnPrimary"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorOnPrimary"
+        />
 
     <EditText
         android:id="@+id/inputPassword"
@@ -41,7 +46,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputEmail" />
+        app:layout_constraintTop_toBottomOf="@+id/inputEmail"
+        android:textColor="?attr/colorOnPrimary"
+        android:textColorHint="?attr/colorOnPrimary"
+        android:backgroundTint="?attr/colorOnPrimary"
+        />
 
     <Button
         android:id="@+id/SkipLoginButton"
@@ -54,7 +63,10 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputPassword"
-        app:rippleColor="#FFFFFF" />
+        app:rippleColor="#FFFFFF"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:textColor="?attr/colorOnSecondary"
+        />
 
     <Button
         android:id="@+id/RegisterButton"
@@ -64,7 +76,10 @@
         android:layout_marginTop="16dp"
         android:text="@string/action_register"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:textColor="?attr/colorOnSecondary"
+        />
 
     <TextView
         android:id="@+id/AppName"
@@ -76,7 +91,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="?attr/colorOnPrimary"
+        />
 
     <Button
         android:id="@+id/LoginButton"
@@ -86,7 +103,10 @@
         android:layout_marginEnd="59dp"
         android:text="@string/action_sign_in_short"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword"
+        android:backgroundTint="?attr/colorOnPrimary"
+        android:textColor="?attr/colorOnSecondary"
+        />
 
     <TextView
         android:id="@+id/ForgotPasswordButton"
@@ -100,6 +120,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/SkipLoginButton" />
+        app:layout_constraintTop_toBottomOf="@+id/SkipLoginButton"
+        android:textColor="?attr/colorOnPrimary"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

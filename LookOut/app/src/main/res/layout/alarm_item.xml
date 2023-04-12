@@ -50,7 +50,7 @@
 
     <TextView
         android:id="@+id/deletion_button"
-        android:layout_width="26dp"
+        android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="4dp"
         android:clickable="true"

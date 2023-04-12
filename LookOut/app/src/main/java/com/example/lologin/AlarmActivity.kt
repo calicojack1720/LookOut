@@ -74,8 +74,10 @@ class AlarmActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        //Creates Alarm Storage File
-        createAlarmStorage()
+//        //Creates Alarm Storage File
+//        createAlarmStorage()
+
+        Log.d(TAG, "OnCreate: $numAlarm")
 
         //Creates a value to check if connected to the internet
         val connected = isInternetConnected(this)
@@ -113,32 +115,28 @@ class AlarmActivity : AppCompatActivity() {
 
         //Navigation bar
         val navigationBar = findViewById<TabLayout>(R.id.navigation_bar)
+
+        //set selected tab to the Timer tab
+        navigationBar.selectTab(navigationBar.getTabAt(0))
+
+        //set listener for tab selection
         navigationBar.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     //Sends the user back to the Alarms page when clicking on the alarms button. It has an issue I need to look into.
-                    //0 -> startActivity(Intent(this@AlarmActivity, AlarmActivity::class.java))
-                    0 -> Toast.makeText(
-                        applicationContext,
-                        "Timer Page is under Construction.",
-                        Toast.LENGTH_LONG
-                    ).show()
-
-
-                    //Here for TimerActivity page
                     1 -> startActivity(Intent(this@AlarmActivity, TimerActivity::class.java))
-
-                    // Add more cases for each tab as needed
                 }
             }
 
             //things we want to run when tab is reselected/unselected
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                // Handle tab unselection
+                //Handle tab unselection
+                numAlarm = -1
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
                 // Handle tab reselection
+
             }
         })
 
