@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -20,7 +21,9 @@ import java.io.InputStream
 import java.io.OutputStream
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -110,7 +113,20 @@ class AlarmActivity : AppCompatActivity() {
             builder.setNegativeButton("Cancel") { dialog, which ->
                 dialog.dismiss()
             }
-            builder.show()
+            val alertDialog = builder.show()
+            val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+                val okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                val cancelButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                cancelButton?.setTextColor(Color.WHITE)
+                okButton?.setTextColor(Color.WHITE)
+
+            } else {
+                val okButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE)
+                val cancelButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+                cancelButton?.setTextColor(Color.BLACK)
+                okButton?.setTextColor(Color.BLACK)
+            }
         }
 
         //Navigation bar
