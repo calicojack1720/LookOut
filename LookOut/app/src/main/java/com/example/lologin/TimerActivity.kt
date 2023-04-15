@@ -128,6 +128,9 @@ class TimerActivity : AppCompatActivity() {
 
         //if startTimer button is pressed, start the countdown
         startTimer.setOnClickListener {
+            //deactivate the startTimer button
+            startTimer.isEnabled = false
+
             //create values to hold input time
             var timerHours = inputTimerHours.text.toString().toIntOrNull()
             var timerMinutes = inputTimerMinutes.text.toString().toIntOrNull()
@@ -198,7 +201,11 @@ class TimerActivity : AppCompatActivity() {
                                 }
 
                                 override fun onFinish() {
+                                    //set background color back to blue
                                     startTimer.setBackgroundColor(Color.BLUE)
+
+                                    //reactivate the start timer button
+                                    startTimer.isEnabled = true
 
                                     //reset countHours, countMinutes, countSeconds
                                     countHours = 0
@@ -228,6 +235,9 @@ class TimerActivity : AppCompatActivity() {
                                 "Enter a Seconds value between 0-59",
                                 Toast.LENGTH_LONG
                             ).show()
+
+                            //enable startTimer button
+                            startTimer.isEnabled = true
                         }
                     } else {
                         Toast.makeText(
@@ -235,6 +245,9 @@ class TimerActivity : AppCompatActivity() {
                             "Enter a Minutes value between 0-59",
                             Toast.LENGTH_LONG
                         ).show()
+
+                        //enable startTimer button
+                        startTimer.isEnabled = true
                     }
                 } else {
                     Toast.makeText(
@@ -242,6 +255,9 @@ class TimerActivity : AppCompatActivity() {
                         "Enter an Hours value between 0-99",
                         Toast.LENGTH_LONG
                     ).show()
+
+                    //enable startTimer button
+                    startTimer.isEnabled = true
                 }
             } else {
                 Toast.makeText(
@@ -249,10 +265,16 @@ class TimerActivity : AppCompatActivity() {
                     "Invalid Time Value",
                     Toast.LENGTH_LONG
                 ).show()
+
+                //enable startTimer button
+                startTimer.isEnabled = true
             }
 
             //set listener for timer reset, stop timer when clicked
             resetTimer.setOnClickListener {
+                //ensure that the start timer button is enabled
+                startTimer.isEnabled = true
+
                 //cancel timer
                 timerItem?.let { scheduler.cancel(it) }
 
@@ -277,6 +299,9 @@ class TimerActivity : AppCompatActivity() {
 
             //set listener for stop button, pause timer when clicked
             stopTimer.setOnClickListener {
+                //ensure that the start timer button is enabled
+                startTimer.isEnabled = true
+
                 //cancel timer
                 timerItem?.let { scheduler.cancel(it) }
 
