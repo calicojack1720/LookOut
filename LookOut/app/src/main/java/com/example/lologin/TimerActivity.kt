@@ -453,7 +453,7 @@ class TimerActivity : AppCompatActivity() {
             Log.d(TAG, "preset: $presetHours $presetMinutes $presetSeconds")
 
             if (!allZero) {
-                if (presetHours in 0..99) {
+                if (presetHours in 0..23) {
                     if (presetMinutes in 0..59) {
                         if (presetSeconds in 0..59) {
 
