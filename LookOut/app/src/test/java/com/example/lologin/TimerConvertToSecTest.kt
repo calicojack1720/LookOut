@@ -7,8 +7,6 @@
 
 package com.example.lologin
 
-
-
 class TimerConvertToSecTest {
-    //var testConversion = convertToSec(0, 0, 0)
+    var testConversion = convertToSec()
 }

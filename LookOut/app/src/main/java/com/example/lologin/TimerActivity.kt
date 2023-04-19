@@ -351,7 +351,7 @@ class TimerActivity : AppCompatActivity() {
     /* Precondition: tHours, tMinutes, and tSeconds are all of type Int?
        Postcondition: returns hours:minutes:seconds as seconds
      */
-    private fun convertToSec(tHours: Int?, tMinutes: Int?, tSeconds: Int?): Long {
+    public fun convertToSec(tHours: Int?, tMinutes: Int?, tSeconds: Int?): Long {
         var toSec: Long = 0      //value for total milliseconds of time
 
         //convert seconds to milliseconds
